@@ -1,6 +1,6 @@
 # react-spring-jwt
 
-## Web app template created with React JS + Spring Boot + Spring Security + MongoDB
+### Web application template. Created with React JS + Spring Boot + Spring Security + MongoDB
 
 ## Usage
 1. Fork this repo
@@ -20,12 +20,15 @@ for the server, from the project directory you can run:
 `mvn spring-boot:run`
 
 for the client, navigate to "us-client" and run:
+<br/>
 `yarn start`
 Then use the app locally on [localhost:3000](http://localhost:3000/)
 
 To create an executable .jar file, in the project directory run:
+<br/>
 `mvn package`
-and
+<br/>
+and 
 `java -jar target/app-0.0.1-SNAPSHOT.jar.original`
-
-And you're up and running on [localhost:8080](http://localhost:8080/)
+<br/>
+Then you're up and running on [localhost:8080](http://localhost:8080/)
