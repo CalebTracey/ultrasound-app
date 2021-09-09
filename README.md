@@ -22,7 +22,7 @@ for the server, from the project directory you can run:
 `mvn spring-boot:run`
 <br />
 <br />
-for the client, navigate to "us-client" and run:
+for the client, navigate to "react-client" and run:
 <br />
 <br />
 `yarn start`
