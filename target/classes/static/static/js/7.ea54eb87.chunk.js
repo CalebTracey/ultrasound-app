@@ -1,0 +1,2 @@
+(this.webpackJsonpultrasound=this.webpackJsonpultrasound||[]).push([[7],{239:function(t,n,a){"use strict";a.r(n);a(0);var s=a(1),i=function(t){var n=t.data;return Object(s.jsx)("div",{className:"list-item",children:n})};n.default=function(t){return t.classifications.map((function(t){return Object(s.jsx)(i,{data:t.name},t._id)}))}}}]);
+//# sourceMappingURL=7.ea54eb87.chunk.js.map
