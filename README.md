@@ -17,18 +17,21 @@
 
 ## Available Scripts
 for the server, from the project directory you can run:
+<br/>
 `mvn spring-boot:run`
-
+<br/>
 for the client, navigate to "us-client" and run:
 <br/>
 `yarn start`
+<br/>
 Then use the app locally on [localhost:3000](http://localhost:3000/)
-
+<br/>
 To create an executable .jar file, in the project directory run:
 <br/>
 `mvn package`
 <br/>
 and 
+<br/>
 `java -jar target/app-0.0.1-SNAPSHOT.jar.original`
 <br/>
 Then you're up and running on [localhost:8080](http://localhost:8080/)
