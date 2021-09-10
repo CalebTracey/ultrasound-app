@@ -10,6 +10,10 @@
       <excludeFolder url="file://$MODULE_DIR$/${project.build.directory}/classes" />
       <excludeFolder url="file://$MODULE_DIR$/${project.build.directory}/test-classes" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
+      <excludeFolder url="file://$MODULE_DIR$/.idea/libraries" />
+      <excludeFolder url="file://$MODULE_DIR$/src/main/react-client/public/test-videos" />
+      <excludeFolder url="file://$MODULE_DIR$/src/main/react-client/build" />
+      <excludeFolder url="file://$MODULE_DIR$/src/main/react-client/node_modules" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
