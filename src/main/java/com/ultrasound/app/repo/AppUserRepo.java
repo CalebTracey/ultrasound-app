@@ -1,6 +1,6 @@
 package com.ultrasound.app.repo;
 
-import com.ultrasound.app.model.AppUser;
+import com.ultrasound.app.model.user.AppUser;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;

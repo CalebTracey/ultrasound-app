@@ -20,9 +20,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ultrasound.app.model.ERole;
-import com.ultrasound.app.model.Role;
-import com.ultrasound.app.model.AppUser;
+import com.ultrasound.app.model.user.ERole;
+import com.ultrasound.app.model.user.Role;
+import com.ultrasound.app.model.user.AppUser;
 import com.ultrasound.app.payload.request.LoginRequest;
 import com.ultrasound.app.payload.request.RegisterRequest;
 import com.ultrasound.app.payload.response.JwtResponse;

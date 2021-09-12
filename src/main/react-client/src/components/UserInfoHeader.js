@@ -1,11 +1,18 @@
 /* eslint-disable react/prop-types */
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useState } from 'react';
 
-const UserInfoHeader = () => {
-  const { user } = useSelector((state) => state.auth);
+const UserInfoHeader = ({ user }) => {
+  const [username, setUsername] = useState('');
+  useEffect(() => {
+    if (user) {
+      setUsername(user.username);
+    }
+    // return () => {
+    //   cleanup;
+    // };
+  }, [user]);
 
-  return <div className="form-group">{user.username}</div>;
+  return <div className="form-group">{username}</div>;
 };
 
 export default UserInfoHeader;

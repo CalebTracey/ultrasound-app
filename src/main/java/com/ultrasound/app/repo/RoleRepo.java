@@ -1,9 +1,8 @@
 package com.ultrasound.app.repo;
 
-import com.ultrasound.app.model.ERole;
-import com.ultrasound.app.model.Role;
+import com.ultrasound.app.model.user.ERole;
+import com.ultrasound.app.model.user.Role;
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 

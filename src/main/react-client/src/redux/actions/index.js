@@ -1,11 +1,13 @@
 import auth from './auth';
 import message from './message';
-import videos from './videos';
+import serverIn from './serverIn';
+import serverOut from './serverOut';
 
 const allActions = {
   auth,
   message,
-  videos,
+  serverIn,
+  serverOut,
 };
 
 export default allActions;

@@ -38,9 +38,7 @@ const Login = (props) => {
           props.history.push('/dashboard');
           // window.location.reload();
         })
-        .catch(() => {
-          setIsLoading(false);
-        });
+        .catch(() => {});
     } else {
       setIsLoading(false);
     }

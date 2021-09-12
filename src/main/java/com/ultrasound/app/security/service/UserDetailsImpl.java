@@ -1,7 +1,7 @@
 package com.ultrasound.app.security.service;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.ultrasound.app.model.AppUser;
+import com.ultrasound.app.model.user.AppUser;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

@@ -1,5 +1,6 @@
 package com.ultrasound.app.security;
 
+import com.ultrasound.app.model.user.ERole;
 import com.ultrasound.app.security.jwt.AuthEntryPointJwt;
 import com.ultrasound.app.security.service.UserDetailsServiceImpl;
 import com.ultrasound.app.security.jwt.AuthTokenFilter;
@@ -66,6 +67,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests().antMatchers("/api/all", "/api/auth/register").permitAll()
+//                .and()
+//                .authorizeRequests().antMatchers("/api/classifications").hasAuthority(ERole.ROLE_USER.toString())
                 .antMatchers("/**").permitAll()
                 .anyRequest().authenticated();
 

@@ -1,6 +1,6 @@
 package com.ultrasound.app.security.service;
 
-import com.ultrasound.app.model.AppUser;
+import com.ultrasound.app.model.user.AppUser;
 import com.ultrasound.app.repo.AppUserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

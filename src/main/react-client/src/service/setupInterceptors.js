@@ -15,10 +15,9 @@ const setup = (store) => {
       }
       return config;
     },
-    (error) => {
-      axiosInstance.isCancel(true);
-      return Promise.reject(error);
-    }
+    (error) =>
+      // axiosInstance.isCancel(true);
+      Promise.reject(error)
   );
   const { dispatch } = store;
 
