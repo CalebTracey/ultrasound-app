@@ -15,14 +15,12 @@ import java.util.Set;
 @Document(collection = "classifications")
 public class Classification {
     @Id
-    private String id;
+    private String _id;
 
     private String name;
-
-
     private List<String> categoryNames;
-
     private List<String> categoryIds;
+    private List<String> urls;
 
     public Classification(String name, List<String> categoryNames) {
         this.name = name;
@@ -31,14 +29,14 @@ public class Classification {
 
 
 
-    public Classification(String name, List<String> categoryNames, List<String> categoryIds) {
+    public Classification(String name, List<String> categoryNames, List<String> urls) {
         this.name = name;
         this.categoryNames = categoryNames;
-        this.categoryIds = categoryIds;
+        this.urls = urls;
     }
 
     public String uniqueAttributes() {
-        return id + name + categoryNames;
+        return _id + categoryIds;
     }
 
 }

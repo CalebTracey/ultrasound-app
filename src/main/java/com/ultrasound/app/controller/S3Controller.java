@@ -38,19 +38,19 @@ public class S3Controller {
         log.info("Fetching object: {}", key);
         return s3Repository.getObject(key);
     }
-
-    @GetMapping("/url/category/{name}")
-    public URL getObjectUrl(@PathVariable String name) {
-        log.info("Fetching object URL: {}", name);
-        Category category = categoryService.getCategoryByName(name);
-        String fileKey = "";
-        try {
-            fileKey = category.getFileId();
-        } catch (Exception e) {
-            throw e;
-        }
-        return s3Repository.getObjectUrl(fileKey);
-    }
+//
+//    @GetMapping("/url/category/{name}")
+//    public URL getObjectUrl(@PathVariable String name) {
+//        log.info("Fetching object URL: {}", name);
+//        Category category = categoryService.getCategoryByName(name);
+//        String fileKey = "";
+//        try {
+//            fileKey = category.getFileId();
+//        } catch (Exception e) {
+//            throw e;
+//        }
+//        return s3Repository.getObjectUrl(fileKey);
+//    }
 
     @PostMapping("/update")
     public ResponseEntity<?> updateBucket() {

@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.Id;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -15,11 +16,11 @@ import java.util.Set;
 public class Category {
 
     @Id
-    private String id;
+    private String _id;
 
     private String name;
 
-    private String fileId;
+    private List<String> urls;
 
     private String classification;
 
@@ -28,12 +29,17 @@ public class Category {
         this.classification = classification;
     }
 
+    public Category(String name, List<String> urls, String classification) {
+        this.name = name;
+        this.urls = urls;
+        this.classification = classification;
+    }
 
     public Category(String name) {
         this.name = name;
     }
 
     public String uniqueAttributes() {
-        return id + name;
+        return _id + urls;
     }
 }

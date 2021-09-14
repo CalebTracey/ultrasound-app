@@ -73,41 +73,41 @@ public class ContentController {
 //        classificationService.save(classification);
 //        return ResponseEntity.created(uri).body(categoryService.save(category));
 //    }
-
-    @PostMapping("/upload")
-    public ResponseEntity<?> uploadData(@RequestPart("file") MultipartFile file,
-                                        @RequestPart UploadData data) throws IOException {
-
-        String fileId;
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/api/upload").toUriString());
-
-        Category category = categoryService.checkIfCategoryExists(data.getCategory());
-        Classification classification = classificationService
-                .checkIfClassificationExists(data.getCategory());
-
-        if (!file.isEmpty() && category.getFileId().isEmpty()) {
-            log.info("File detected and the category {} has no file", category.getName());
-            fileId = s3Repository.saveObject(file);
-            category.setFileId(fileId);
-        } else if (!category.getFileId().isEmpty()){
-            log.info("The category {} already has an associated file key", category.getFileId());
-            if (!s3Repository.existsByKey(category.getFileId())) {
-                log.info("The Uploaded file is not already present in the S3 Bucket");
-               fileId = s3Repository.saveObject(file);
-               category.setFileId(fileId);
-               log.info("the category {} has a new file id: {}", category.getName(), fileId);
-            }
-        }
-        categoryService.save(category);
-        classificationService.save(classification);
-
-        Map<String, List<?>> returnData = new HashMap<>();
-        returnData.put("classifications", classificationService.all());
-        returnData.put("categories", categoryService.all());
-
-        return ResponseEntity.created(uri).body(returnData);
-    }
+//
+//    @PostMapping("/upload")
+//    public ResponseEntity<?> uploadData(@RequestPart("file") MultipartFile file,
+//                                        @RequestPart UploadData data) throws IOException {
+//
+//        String fileId;
+//        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath()
+//                .path("/api/upload").toUriString());
+//
+//        Category category = categoryService.checkIfCategoryExists(data.getCategory());
+//        Classification classification = classificationService
+//                .checkIfClassificationExists(data.getCategory());
+//
+//        if (!file.isEmpty() && category.getFileId().isEmpty()) {
+//            log.info("File detected and the category {} has no file", category.getName());
+//            fileId = s3Repository.saveObject(file);
+//            category.setFileId(fileId);
+//        } else if (!category.getFileId().isEmpty()){
+//            log.info("The category {} already has an associated file key", category.getFileId());
+//            if (!s3Repository.existsByKey(category.getFileId())) {
+//                log.info("The Uploaded file is not already present in the S3 Bucket");
+//               fileId = s3Repository.saveObject(file);
+//               category.setFileId(fileId);
+//               log.info("the category {} has a new file id: {}", category.getName(), fileId);
+//            }
+//        }
+//        categoryService.save(category);
+//        classificationService.save(classification);
+//
+//        Map<String, List<?>> returnData = new HashMap<>();
+//        returnData.put("classifications", classificationService.all());
+//        returnData.put("categories", categoryService.all());
+//
+//        return ResponseEntity.created(uri).body(returnData);
+//    }
 
     @PostMapping("/classification/add")
     public ResponseEntity<?> addClassification(@RequestBody Classification classification) {
