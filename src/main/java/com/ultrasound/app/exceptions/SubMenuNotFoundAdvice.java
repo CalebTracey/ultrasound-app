@@ -7,11 +7,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
-class FileNotFoundAdvice {
+public class SubMenuNotFoundAdvice {
     @ResponseBody
-    @ExceptionHandler(FileNotFoundException.class)
+    @ExceptionHandler(SubMenuNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    String fileNotFoundHandler(FileNotFoundException ex) {
+    String subMenuNotFoundAdvice(SubMenuNotFoundException ex) {
         return ex.getMessage();
     }
 }
+

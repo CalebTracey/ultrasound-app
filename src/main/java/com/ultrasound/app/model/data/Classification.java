@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.Id;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 @Data
 @AllArgsConstructor
@@ -18,25 +18,17 @@ public class Classification {
     private String _id;
 
     private String name;
-    private List<String> categoryNames;
-    private List<String> categoryIds;
-    private List<String> urls;
 
-    public Classification(String name, List<String> categoryNames) {
+    private Boolean hasSubMenu;
+    private List<ListItem> listItems;
+    private Map<String, String> subMenus;
+
+    public Classification(String name, Boolean hasSubMenu, List<ListItem> listItems, Map<String, String> subMenus) {
         this.name = name;
-        this.categoryNames = categoryNames;
+        this.hasSubMenu = hasSubMenu;
+        this.listItems = listItems;
+        this.subMenus = subMenus;
     }
 
-
-
-    public Classification(String name, List<String> categoryNames, List<String> urls) {
-        this.name = name;
-        this.categoryNames = categoryNames;
-        this.urls = urls;
-    }
-
-    public String uniqueAttributes() {
-        return _id + categoryIds;
-    }
 
 }

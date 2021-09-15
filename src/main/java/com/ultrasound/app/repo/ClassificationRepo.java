@@ -10,6 +10,5 @@ public interface ClassificationRepo extends MongoRepository<Classification, Stri
     Optional<Classification> findByName(String name);
     Optional<Classification> findById(String id);
     Boolean existsByName(String name);
-    List<Classification> findAllByName(String name);
 
 }
