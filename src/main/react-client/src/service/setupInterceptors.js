@@ -39,7 +39,7 @@ const setup = (store) => {
             updateLocalAccessToken(accessToken);
             return axiosInstance(originalConfig);
           } catch (error) {
-            return Promise.reject(error);
+            return Promise.reject(err);
           }
         }
       }

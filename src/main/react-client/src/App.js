@@ -5,14 +5,15 @@ import history from './helpers/history';
 import Routes from './routes/Routes';
 import { CLEAR_MESSAGE } from './redux/actions/types';
 import EventBus from './common/EventBus';
-import logout from './redux/actions/auth';
+// import logout from './redux/actions/auth';
+import allActions from './redux/actions';
 
 const App = () => {
   const { user: currentUser } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   const logOut = useCallback(() => {
-    dispatch(logout());
+    dispatch(allActions.auth.logout());
   }, [dispatch]);
 
   useEffect(() => {

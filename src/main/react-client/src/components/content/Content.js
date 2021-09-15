@@ -1,7 +1,9 @@
 import React from 'react';
-// import AddFormContainer from '../add/AddFormContainer';
+import VideoPlayer from './VideoPlayer';
 
 const Content = () => (
-  <div className="content">{/* <AddFormContainer /> */}</div>
+  <div className="content">
+    <VideoPlayer />
+  </div>
 );
 export default Content;

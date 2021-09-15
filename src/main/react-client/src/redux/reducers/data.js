@@ -3,11 +3,13 @@ import {
   UPLOAD_SUCCESS,
   SET_CATEGORIES,
   SET_CLASSIFICATIONS,
+  SET_SELECTED_VIDEO,
 } from '../actions/types';
 
 const initialState = {
   categories: [],
   classifications: [],
+  selectedVideo: {},
 };
 
 const data = (state = initialState, action) => {
@@ -33,6 +35,11 @@ const data = (state = initialState, action) => {
       return {
         ...state,
         classifications: payload.data,
+      };
+    case SET_SELECTED_VIDEO:
+      return {
+        ...state,
+        selectedVideo: payload,
       };
     default:
       return state;

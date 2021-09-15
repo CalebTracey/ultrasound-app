@@ -39,7 +39,9 @@ const Sidebar = () => {
     }
   }, [dispatch, classifications]);
 
-  return (
+  return isLoading ? (
+    'Loading...'
+  ) : (
     <div className="sidebar">
       <div className="sidebar-content">
         <Menu
@@ -52,7 +54,7 @@ const Sidebar = () => {
           //   backgroundColor: '#e9ecef',
           // }}
         >
-          {!isLoading && <SubMenuList />}
+          <SubMenuList />
         </Menu>
       </div>
     </div>

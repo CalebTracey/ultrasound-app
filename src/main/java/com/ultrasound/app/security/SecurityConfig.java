@@ -67,8 +67,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests().antMatchers("/api/all", "/api/auth/register").permitAll()
-//                .and()
-//                .authorizeRequests().antMatchers("/api/classifications").hasAuthority(ERole.ROLE_USER.toString())
+                .and()
+                .authorizeRequests().antMatchers("/api/classifications").hasAuthority(ERole.ROLE_USER.toString())
                 .antMatchers("/**").permitAll()
                 .anyRequest().authenticated();
 
