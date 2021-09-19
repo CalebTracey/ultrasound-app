@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Menu } from 'antd';
-import SubMenuList from './Sidebar/SubMenuList';
+import ClassificationListContainer from './Sidebar/ClassificationListContainer';
 import EventBus from '../../common/EventBus';
 import allActions from '../../redux/actions';
 import { SET_MESSAGE } from '../../redux/actions/types';
@@ -39,22 +39,35 @@ const Sidebar = () => {
     }
   }, [dispatch, classifications]);
 
+  // const clickHandler = (subMenus) => {
+  //   dispatch(allActions.user.subMenus(subMenus));
+  //   // dispatch(allActions.user.subMenu(item.subMenu._id)
+  // };
+  const handleSubMenuChange = () => {
+    dispatch(allActions.user.selectedVideo({}));
+    dispatch(allActions.user.videoTitle(''));
+  };
+
   return isLoading ? (
     'Loading...'
   ) : (
     <div className="sidebar">
       <div className="sidebar-content">
         <Menu
+          inlineIndent="20"
+          triggerSubMenuAction="click"
+          onOpenChange={() => handleSubMenuChange()}
+          // theme="dark"
           // className="sidebar"
           mode="inline"
-          // style={{
-          //   width: '12rem',
-          //   position: 'fixed',
-          //   top: '5rem',
-          //   backgroundColor: '#e9ecef',
-          // }}
+          style={{
+            width: '15rem',
+            // position: 'fixed',
+            // top: '5rem',
+            // backgroundColor: '#e9ecef',
+          }}
         >
-          <SubMenuList />
+          <ClassificationListContainer />
         </Menu>
       </div>
     </div>

@@ -2,8 +2,11 @@ package com.ultrasound.app.controller;
 
 import com.ultrasound.app.aws.S3Repository;
 import com.ultrasound.app.model.data.Classification;
+import com.ultrasound.app.model.data.SubMenu;
 import com.ultrasound.app.service.AppUserService;
 import com.ultrasound.app.service.ClassificationServiceImpl;
+import com.ultrasound.app.service.SubMenuService;
+import com.ultrasound.app.service.SubMenuServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +28,9 @@ public class ContentController {
     @Autowired
     private AppUserService userService;
     @Autowired
-    S3Repository s3Repository;
+    private S3Repository s3Repository;
+    @Autowired
+    private SubMenuServiceImpl subMenuService;
 
     @GetMapping("/all")
     public String allAccess() {
@@ -37,6 +42,12 @@ public class ContentController {
     public ResponseEntity<List<Classification>> classifications() {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/classifications").toUriString());
         return ResponseEntity.created(uri).body(classificationService.all());
+    }
+
+    @GetMapping("/submenu/{id}")
+    public ResponseEntity<SubMenu> subMenu(@PathVariable String id) {
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/submenu/{id}").toUriString());
+        return ResponseEntity.created(uri).body(subMenuService.getById(id));
     }
 }
 

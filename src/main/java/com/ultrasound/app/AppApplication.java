@@ -1,20 +1,8 @@
 package com.ultrasound.app;
 
-import com.ultrasound.app.model.user.AppUser;
-import com.ultrasound.app.model.user.ERole;
-import com.ultrasound.app.model.user.Role;
-import com.ultrasound.app.security.service.UserDetailsServiceImpl;
-import com.ultrasound.app.service.AppUserService;
-import com.ultrasound.app.service.ClassificationService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.HashSet;
-import java.util.Set;
 
 @SpringBootApplication
 public class AppApplication {

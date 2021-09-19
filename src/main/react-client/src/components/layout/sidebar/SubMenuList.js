@@ -14,7 +14,7 @@ const SubMenuList = () => {
 
   const listNode = classifications.map((item) => (
     <SubMenu key={`sm-${item._id}`} title={item.name}>
-      <SubMenuListItems listItems={item.listItems} />
+      <SubMenuListItems item={item} />
     </SubMenu>
   ));
   return <Menu.ItemGroup>{listNode}</Menu.ItemGroup>;

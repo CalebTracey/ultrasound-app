@@ -1,24 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+/* eslint-disable react/prop-types */
+import React from 'react';
+// import { useSelector, useDispatch } from 'react-redux';
 import ReactPlayer from 'react-player';
+// import allActions from '../../redux/actions';
 
-const VideoPlayer = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const selectedVideo = useSelector((state) => state.data.selectedVideo);
+const VideoPlayer = ({ selectedVideo }) => (
+  // const { selectedClassification } = useSelector((state) => state.user);
+  // const { selectedVideo, selectedVideoTitle } = useSelector(
+  //   (state) => state.data
+  // );
 
-  useEffect(() => {
-    if (selectedVideo) {
-      setIsLoading(false);
-    }
-  }, [selectedVideo]);
-
-  return isLoading ? (
-    'Select a video'
-  ) : (
-    <div>
-      <ReactPlayer url={selectedVideo.link} />
-    </div>
-  );
-};
+  // isLoading ? (
+  //   'Select a video'
+  // ) : (
+  <>
+    <ReactPlayer
+      className="react-player"
+      url={selectedVideo.link}
+      volume={null}
+      muted
+      playing
+      loop
+      width="90%"
+      height="90%"
+      controls
+    />
+  </>
+);
 
 export default VideoPlayer;

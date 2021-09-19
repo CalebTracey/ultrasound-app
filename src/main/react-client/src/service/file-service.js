@@ -5,7 +5,7 @@ const upload = (file) => {
 
   formData.append('File', file);
 
-  return api.post('/upload', formData, {
+  return api.post('upload', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -28,12 +28,12 @@ const uploadService = (incomingData) => {
 
   console.log(params);
   console.log(file);
-  return api.post('/upload', formData, params.data);
+  return api.post('upload', formData, params.data);
 };
 
-const getFiles = () => api.get('/files');
+const getFiles = () => api.get('files');
 
-const getFile = async (id) => Promise.resolve(api.get(`/file/${id}`));
+const getFile = async (id) => Promise.resolve(api.get(`file/${id}`));
 
 const UploadService = {
   uploadService,

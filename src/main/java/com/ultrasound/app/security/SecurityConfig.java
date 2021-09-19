@@ -68,7 +68,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests().antMatchers("/api/all", "/api/auth/register").permitAll()
                 .and()
-                .authorizeRequests().antMatchers("/api/classifications").hasAuthority(ERole.ROLE_USER.toString())
+                .authorizeRequests().antMatchers("/api/classifications", "/api/submenu/**").hasAuthority(ERole.ROLE_USER.toString())
                 .antMatchers("/**").permitAll()
                 .anyRequest().authenticated();
 
@@ -79,7 +79,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:8080"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:8080", "http://localhost", "http://frontend/**"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "response-type", "x-access-token"));
         configuration.setExposedHeaders(Arrays.asList("authorization", "accessToken", "refreshToken"));
