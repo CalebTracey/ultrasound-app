@@ -1,50 +1,30 @@
-import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { Typography } from 'antd';
-import VideoPlayer from './VideoPlayer';
-import allActions from '../../redux/actions';
+import React, { Suspense } from 'react';
+import SyncLoader from 'react-spinners/SyncLoader';
+import { useSelector } from 'react-redux';
+import { Media } from 'reactstrap';
+import ContentRoutes from '../../routes/ContentRoutes';
 
 const Content = () => {
-  // const [isLoading, setIsLoading] = useState(true);
-  // const [videoTitle, setVideoTitle] = useState('');
-  const { selectedClassification, subMenu, selectedVideo, selectedVideoTitle } =
-    useSelector((state) => state.user);
-  const { name } = selectedVideo;
-
-  // const { data } = subMenu;
-  // const subMenuName = subMenu.data.name;
-  const dispatch = useDispatch();
-  // const [videoTitle, setVideoTitle] = useState('');
-
-  useEffect(() => {
-    if (selectedClassification && subMenu.data && name) {
-      dispatch(
-        allActions.user.videoTitle(
-          `${selectedClassification.name} - ${subMenu.data.name} - ${name}`
-        )
-      );
-    } else if (selectedClassification && name) {
-      dispatch(
-        allActions.user.videoTitle(`${selectedClassification.name} - ${name}`)
-      );
-    } else if (!selectedClassification.hasSubMenu && name) {
-      dispatch(
-        allActions.user.videoTitle(`${selectedClassification.name} - ${name}`)
-      );
-    }
-  }, [name, selectedClassification, subMenu, dispatch]);
+  const { selectedVideo, selectedVideoTitle } = useSelector(
+    (state) => state.data
+  );
 
   return (
-    <div className="content">
-      <div className="content-wrapper">
-        <div className="video-title-wrapper">
-          <Typography.Title>{selectedVideoTitle}</Typography.Title>
-        </div>
-        <div className="player-wrapper">
-          <VideoPlayer selectedVideo={selectedVideo} />
+    <Suspense fallback={<SyncLoader />}>
+      <div className="content">
+        <div className="content-wrapper">
+          <div className="video-title-wrapper">
+            {/* <p className="video-header">{selectedVideoTitle}</p> */}
+            <Media style={{ fontSize: '2vw' }} heading>
+              {selectedVideoTitle}
+            </Media>
+          </div>
+          <div className="player-wrapper">
+            <ContentRoutes selectedVideo={selectedVideo} />
+          </div>
         </div>
       </div>
-    </div>
+    </Suspense>
   );
 };
 export default Content;

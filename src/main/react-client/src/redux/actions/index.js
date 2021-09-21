@@ -1,15 +1,11 @@
 import auth from './auth';
-import user from './user';
 import message from './message';
-import serverIn from './serverIn';
-import serverOut from './serverOut';
+import data from './data';
 
 const allActions = {
   auth,
-  user,
   message,
-  serverIn,
-  serverOut,
+  data,
 };
 
 export default allActions;

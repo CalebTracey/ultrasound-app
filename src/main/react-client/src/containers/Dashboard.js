@@ -1,8 +1,13 @@
 import React from 'react';
 import { withRouter, Redirect } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+
 import Sidebar from '../components/layout/Sidebar';
 import Body from '../components/layout/Body';
+
+// const Sidebar = lazy(() => import('../components/layout/Sidebar'));
+// const Body = lazy(() => import('../components/layout/Body'));
+
 // import UserService from '../service/user-service';
 // import EventBus from '../common/EventBus';
 // import allActions from '../redux/actions';
@@ -15,29 +20,6 @@ const Dashboard = () => {
   if (!user) {
     <Redirect to="login" />;
   }
-
-  // useEffect(() => {
-  //   if (classifications.length === 0) {
-  //     dispatch(allActions.videos.classifications())
-  //       .then((response) => {
-  //         setClassificationsContent(response.data);
-  //       })
-  //       .catch((error) => {
-  //         const err =
-  //           (error.response &&
-  //             error.response.data &&
-  //             error.response.data.message) ||
-  //           error.message ||
-  //           error.toString();
-
-  //         setClassificationsContent(err);
-
-  //         if (error.response && error.response.status === 401) {
-  //           EventBus.dispatch('logout');
-  //         }
-  //       });
-  //   }
-  // }, [dispatch, classifications]);
 
   return (
     <div className="app">

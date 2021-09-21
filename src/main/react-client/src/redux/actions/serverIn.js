@@ -1,4 +1,4 @@
-import { SET_CATEGORIES, SET_CLASSIFICATIONS, SET_MESSAGE } from './types';
+import { SET_CLASSIFICATIONS, SET_MESSAGE } from './types';
 import UserService from '../../service/user-service';
 
 const { getClassifications } = UserService;
@@ -33,11 +33,6 @@ const classifications = () => (dispatch) =>
     }
   );
 
-const categories = (data) => ({
-  type: SET_CATEGORIES,
-  payload: data,
-});
-
-const serverIn = { categories, classifications };
+const serverIn = { classifications };
 
 export default serverIn;

@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ListItem {
     private String name;
+    private String title;
     private String link;
 
 
