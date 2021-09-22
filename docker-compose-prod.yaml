@@ -8,6 +8,7 @@ services:
     image: {$AWS_ACCOUNT_ID}.dkr.ecr.{$AWS_DEFAULT_REGION}.amazonaws.com/frontend-deploy
     ports:
       - 80:80
+
   backend:
     build:
       context: ./
