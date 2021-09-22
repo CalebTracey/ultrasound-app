@@ -2,7 +2,7 @@ version: "3.8"
 services:
   frontend:
     build:
-      context: src/main/react-client/
+      context: ./src/main/react-client/
       dockerfile: Dockerfile
     container_name: frontend
     image: {$AWS_ACCOUNT_ID}.dkr.ecr.{$AWS_DEFAULT_REGION}.amazonaws.com/frontend-deploy
