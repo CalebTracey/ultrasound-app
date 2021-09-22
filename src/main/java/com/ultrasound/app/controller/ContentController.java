@@ -8,6 +8,7 @@ import com.ultrasound.app.service.ClassificationServiceImpl;
 import com.ultrasound.app.service.SubMenuService;
 import com.ultrasound.app.service.SubMenuServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,6 +36,12 @@ public class ContentController {
     @GetMapping("/all")
     public String allAccess() {
         return "Total Members: " + (long) userService.all().size();
+    }
+
+    @GetMapping("/time")
+    public String localTime() {
+        LocalDate localDate = LocalDate.now();
+        return localDate.getMonthOfYear() + " / " + localDate.getDayOfMonth() + " / " + localDate.getYear();
     }
 
     @GetMapping("/classifications")

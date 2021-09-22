@@ -1,6 +1,6 @@
 import api from './api';
 
-const getPublicContent = () => api.get(`all`);
+const getPublicContent = () => api.get(`time`);
 
 const getClassifications = () => api.get('classifications');
 

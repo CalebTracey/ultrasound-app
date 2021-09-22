@@ -1,4 +1,6 @@
 /* eslint-disable no-param-reassign */
+// import React from 'react';
+// import { Redirect } from 'react-router-dom';
 import axiosInstance from './api';
 import TokenService from './token-service';
 import allActions from '../redux/actions';
@@ -31,7 +33,7 @@ const setup = (store) => {
         if (err.response.status === 401 && !originalConfig.retry) {
           originalConfig.retry = true;
           try {
-            const rs = await axiosInstance.post('auth/token/refresh', {
+            const rs = axiosInstance.post('auth/token/refresh', {
               refreshToken: getLocalRefreshToken(),
             });
             const { accessToken } = rs.data;
@@ -39,7 +41,9 @@ const setup = (store) => {
             updateLocalAccessToken(accessToken);
             return axiosInstance(originalConfig);
           } catch (error) {
-            return Promise.reject(err);
+            // <Redirect to="/home" />;
+            window.location.reload();
+            // return Promise.reject(err);
           }
         }
       }

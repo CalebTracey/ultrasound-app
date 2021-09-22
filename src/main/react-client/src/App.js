@@ -5,7 +5,6 @@ import history from './helpers/history';
 import Routes from './routes/Routes';
 import { CLEAR_MESSAGE } from './redux/actions/types';
 import EventBus from './common/EventBus';
-// import logout from './redux/actions/auth';
 import allActions from './redux/actions';
 
 const App = () => {

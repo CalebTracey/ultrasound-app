@@ -4,9 +4,9 @@ import Content from '../content/Content';
 import Footer from './Footer';
 import Header from './Header';
 
-const Body = () => (
+const Body = ({ content }) => (
   <div className="body">
-    <Header />
+    <Header content={content} />
     <Content />
     <Footer />
   </div>

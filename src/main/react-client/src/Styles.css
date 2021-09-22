@@ -99,6 +99,7 @@
   flex-direction: row-reverse;
   padding: 1rem;
   align-items: center;
+  margin-top: 0.25rem;
 }
 
 .user-content {
@@ -239,4 +240,11 @@
   left: 40%;
   right: 40%;
   width: 20%;
+}
+
+.header-date {
+  position: fixed;
+  left: 2rem;
+  top: 1.75rem;
+  color: #6c757d;
 }
