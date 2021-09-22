@@ -16,7 +16,7 @@ const uploadService = (incomingData) => {
   const formData = new FormData();
   formData.append('file', incomingData.files[0]);
 
-  const file = incomingData.files[0];
+  // const file = incomingData.files[0];
   const params = {
     data: {
       category: incomingData.details.category,
@@ -26,8 +26,6 @@ const uploadService = (incomingData) => {
     },
   };
 
-  console.log(params);
-  console.log(file);
   return api.post('upload', formData, params.data);
 };
 

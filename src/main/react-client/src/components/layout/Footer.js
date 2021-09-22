@@ -3,7 +3,14 @@ import React from 'react';
 
 const Footer = () => (
   <div className="footer">
-    <p className="footer-text">Tracey 2021</p>
+    <div className="footer-text">
+      <footer>
+        <small>
+          &copy; Copyright {new Date().getFullYear()}, MMC Division of Emergency
+          Ultrasound
+        </small>
+      </footer>
+    </div>
   </div>
 );
 

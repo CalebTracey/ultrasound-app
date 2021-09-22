@@ -2,6 +2,7 @@ import React, { Suspense } from 'react';
 import SyncLoader from 'react-spinners/SyncLoader';
 import { useSelector } from 'react-redux';
 import { Media } from 'reactstrap';
+import { Redirect } from 'react-router-dom';
 import ContentRoutes from '../../routes/ContentRoutes';
 
 const Content = () => {
@@ -9,12 +10,15 @@ const Content = () => {
     (state) => state.data
   );
 
+  if (!selectedVideo || !selectedVideoTitle) {
+    <Redirect to="/dashboard" />;
+  }
+
   return (
     <Suspense fallback={<SyncLoader />}>
       <div className="content">
         <div className="content-wrapper">
           <div className="video-title-wrapper">
-            {/* <p className="video-header">{selectedVideoTitle}</p> */}
             <Media style={{ fontSize: '2vw' }} heading>
               {selectedVideoTitle}
             </Media>

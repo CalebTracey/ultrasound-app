@@ -23,7 +23,7 @@ const Home = () => {
           error.message ||
           error.toString();
 
-        setContent(cont);
+        setContent(cont.error);
       }
     );
     // .catch((err) => Promise.reject(err));

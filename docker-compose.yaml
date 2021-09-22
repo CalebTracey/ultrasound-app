@@ -4,38 +4,50 @@
 # docker-compose up -d --build --force-recreate
 
 
-#version: "3.8"
-#services:
-#  frontend:
-#    image: "frontend"
-#    container_name: "frontend"
-##    hostname: "frontend"
-#    build:
-#      context: src/main/react-client/
-#      dockerfile: Dockerfile
-#    ports:
-#      - 80:80
-#    depends_on:
-#      - backend
+version: "3.8"
+
+#x-aws-vpc: ${AWS_VPC}
+#x-aws-cluster: ${AWS_ECS_CLUSTER}
+#x-aws-loadbalancer: ${AWS_ELB}
+
+services:
+
+  frontend:
+#    image: frontend
+#    image: 218046717840.dkr.ecr.us-east-1.amazonaws.com/frontend-deploy
+    container_name: frontend
+#    hostname:
+#    build: ./frontend
+    build:
+      context: src/main/react-client/
+      dockerfile: Dockerfile
+#    environment:
+#      REDIS_URL: "backend"
+    ports:
+      - 80:80
+    depends_on:
+      - backend
 #    networks:
-#      - frontend
-#      - mongo-network
-#
-#  backend:
-#    image: "backend"
-#    container_name: "backend"
-##    hostname: "backend"
-#    build:
-#      context: ./
-#      dockerfile: Dockerfile
-#    ports:
-#      - 8080:8080
+#      - ultrasound-network
+
+  backend:
+#    image: backend
+#    image: 218046717840.dkr.ecr.us-east-1.amazonaws.com/backend-deploy
+    container_name: backend
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
 #    depends_on:
 #      - mongo
-#    networks: # Networks to join (Services on the same network can communicate with each other using their name)
-#      - backend
-#      - frontend
-#      - mongo-network
+#    networks:
+#      - ultrasound-network
+
+#networks:
+#  ultrasound-network:
+#    driver: bridge
+
 #  mongo:
 #    image: "mongo"
 #    container_name: "mongodb"
@@ -72,51 +84,33 @@
 #  backend:
 #  frontend:
 #  mongo-network:
-#
+
+
+#version: "3.8"
+#services:
+#  mongodb:
+#    image: mongo
+#    container_name: mongodb-local
+#    ports:
+#      - 27017:27017
 #    volumes:
-#      data: []
-#    networks:
-#      default:
-#        name: mongodb_network
-
-#    mongo-express:
-#      image: mongo-express
-#      container_name: mongo-express
-#      restart: always
-#      ports:
-#        - 8081:8081
-#      environment:
-#        - ME_CONFIG_MONGODB_ADMINUSERNAME=rootuser
-#        - ME_CONFIG_MONGODB_ADMINPASSWORD=rootpass
-#        - ME_CONFIG_MONGODB_SERVER=mongodb
-
-
-
-version: "3.8"
-services:
-  mongodb:
-    image: mongo
-    container_name: mongodb-local
-    ports:
-      - 27017:27017
-    volumes:
-      - data:/data
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=rootuser
-      - MONGO_INITDB_ROOT_PASSWORD=rootpass
-  mongo-express:
-    image: mongo-express
-    container_name: mongo-express
-    restart: always
-    ports:
-      - 8081:8081
-    environment:
-      - ME_CONFIG_MONGODB_ADMINUSERNAME=rootuser
-      - ME_CONFIG_MONGODB_ADMINPASSWORD=rootpass
-      - ME_CONFIG_MONGODB_SERVER=mongodb
-volumes:
-  data: {}
-
-networks:
-  default:
-    name: mongodb_network-local
+#      - data:/data
+#    environment:
+#      - MONGO_INITDB_ROOT_USERNAME=rootuser
+#      - MONGO_INITDB_ROOT_PASSWORD=rootpass
+#  mongo-express:
+#    image: mongo-express
+#    container_name: mongo-express
+#    restart: always
+#    ports:
+#      - 8081:8081
+#    environment:
+#      - ME_CONFIG_MONGODB_ADMINUSERNAME=rootuser
+#      - ME_CONFIG_MONGODB_ADMINPASSWORD=rootpass
+#      - ME_CONFIG_MONGODB_SERVER=mongodb
+#volumes:
+#  data: {}
+#
+#networks:
+#  default:
+#    name: mongodb_network-local

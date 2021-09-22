@@ -72,7 +72,11 @@ const Sidebar = () => {
             </Menu>
           </SidebarContent>
           <SidebarFooter>
-            <p className="sidebar-footer">2021</p>
+            <div className="sidebar-footer">
+              <footer>
+                <small>v0.5 {new Date().getFullYear()}</small>
+              </footer>
+            </div>
           </SidebarFooter>
         </ProSidebar>
       </div>

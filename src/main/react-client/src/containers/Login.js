@@ -36,9 +36,10 @@ const Login = (props) => {
       dispatch(allActions.auth.login(data))
         .then(() => {
           props.history.push('/dashboard');
-          // window.location.reload();
         })
-        .catch(() => {});
+        .catch(() => {
+          setIsLoading(false);
+        });
     } else {
       setIsLoading(false);
     }

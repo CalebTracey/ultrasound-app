@@ -167,4 +167,8 @@ sketch
 /target/classes/static/test-videos/LUNG - consolidation close-up - 2890404_crop.mp4
 /target/classes/static/test-videos/LUNG - consolidation 2 - 2890404_crop.mp4
 /target/classes/static/test-videos/LUNG - Heart in Zone 8 - 2890404 - 6_crop.mp4
-/src/main/react-client/AWSCLIV2.pkg
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml

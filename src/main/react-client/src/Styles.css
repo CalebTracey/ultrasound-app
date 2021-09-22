@@ -217,19 +217,21 @@
 }
 
 .sidebar-footer {
-  margin-top: 0.5rem;
   /* font-weight: 300; */
-  font-size: xx-small;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+  font-weight: 300;
+  font-size: small;
   display: flex;
   justify-content: center;
 }
 
 .footer-text {
   margin-top: 0.5rem;
-  /* font-weight: 300; */
-  font-size: x-small;
-  display: flex;
-  justify-content: center;
+  font-weight: 300;
+  font-size: small;
+  /* display: flex; */
+  /* justify-content: center; */
 }
 
 .search-bar {

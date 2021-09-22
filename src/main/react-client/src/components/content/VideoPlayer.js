@@ -10,8 +10,8 @@ const VideoPlayer = ({ selectedVideo }) => (
     muted
     playing
     loop
-    width="90%"
-    height="90%"
+    width="85%"
+    height="85%"
     controls
   />
 );
