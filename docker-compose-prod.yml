@@ -1,0 +1,16 @@
+version: '3'
+services:
+  frontend:
+    build:
+      context: src/main/react-client/
+    container_name: frontend
+    image: {$AWS_ACCOUNT_ID}.dkr.ecr.{$AWS_DEFAULT_REGION}.amazonaws.com/frontend-deploy
+    ports:
+      - 80:80
+  backend:
+    build:
+      context: ./
+    container_name: backend
+    image: {$AWS_ACCOUNT_ID}.dkr.ecr.{$AWS_DEFAULT_REGION}.amazonaws.com/backend-deploy
+    ports:
+      - 8080:8080
