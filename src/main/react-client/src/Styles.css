@@ -22,7 +22,7 @@
   /* z-index: 1; */
   top: 5rem;
   position: fixed;
-  overflow-y: scroll;
+  /* overflow-y: scroll; */
   bottom: 3rem;
 }
 
@@ -39,7 +39,7 @@
 
 .body {
   height: 100%;
-  background: #E9ECEF;
+  background: #e9ecef;
   position: absolute;
   left: 16rem;
   right: 0;
