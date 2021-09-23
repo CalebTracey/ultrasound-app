@@ -13,7 +13,7 @@ Created with React JS + Spring Boot + MongoDB. The app utilizes Spring Security 
 If you would like to try out the app for yourself, follow the steps below. You will need to create a collection in mongodb called "roles" and add documents "ROLE_USER" and optionally "ROLE_ADMIN" as shown here:
 <img src=./document-example.png />
 <br />
-If you want to use the admin privelages, uncomment the @CommandlineRunner method in the application's main method and log in with the same credentials.
+If you want to use the admin privelages, uncomment the @CommandlineRunner method in the application's main method and login with the same credentials.
 Also, make sure your application.properties file is configured as such:
 <img src=./app.properties-example-local.png />
 
