@@ -1,7 +1,7 @@
 # ultrasound-app-fullstack
 
 ## Overview
-This app was developed for a fellowship program through my local hospital. It provides an intuative and organized user interface for navagating 3000+ .mp4 files used for educational purposes. 
+This app was developed for a fellowship program through my local hospital. It provides an intuative and organized user interface for navagating 3000+ .mp4 files used for educational purposes. Files are parsed by name in the backed, triggered through a simple POST command
 
 Created with React JS + Spring Boot + MongoDB. The app utilizes Spring Security for JWT authentication and the enforcement of role-based routing and privelages.
 
@@ -32,7 +32,9 @@ Also, make sure your application.properties file is configured as such:
 
 5. Create the "roles" collection as mentioned above.
 
-6. Access the app on [localhost:80](http://localhost:80/) and register!
+6. To populate the database,  make this POST request with [Postman](https://www.postman.com/): http://localhost:8080/api/S3/update
+
+7. Access the app on [localhost:80](http://localhost:80/) and register!
 
 ## Available Scripts
 If you would rather skip the Docker proccess for the front/backend, follow the steps below. 
