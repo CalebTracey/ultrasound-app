@@ -6,7 +6,7 @@ This app was developed for a fellowship program through my local hospital. It pr
 Created with React JS + Spring Boot + MongoDB. The app utilizes Spring Security for JWT authentication and the enforcement of role-based routing and privelages.
 
 ## Usage
-If you would like to try out the app for yourself, follow the steps below. You will need to create a collection on mongodb called "roles" and add to documents "ROLE_USER" and optionally "ROLE_ADMIN" as shown here:
+If you would like to try out the app for yourself, follow the steps below. You will need to create a collection in mongodb called "roles" and add to documents "ROLE_USER" and optionally "ROLE_ADMIN" as shown here:
 <img src=./document-example.png />
 
 Also, make sure your application.properties file is configured as such:
