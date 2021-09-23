@@ -25,7 +25,7 @@ Also, make sure your application.properties file is configured as such:
 6. Access the app on [localhost:80](http://localhost:80/) and register!
 
 ## Available Scripts
-If you would rather skip the Docker proccess, from the project directory you can run:
+If you would rather skip the Docker proccess for the front/backend, follow the steps below. you still need to run the docker-compose file to get mongodb running locally, so just comment out the frontend/backend sections in the file.
 <br />
 <br />
 `mvn spring-boot:run`
