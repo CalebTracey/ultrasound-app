@@ -1,22 +1,36 @@
-# react-spring-jwt
+# ultrasound-app-fullstack
 
-### Web application template. Created with React JS + Spring Boot + Spring Security + MongoDB
+## Overview
+This app was developed for a fellowship program through my local hospital. It provides an intuative and organized user interface for navagating 3000+ .mp4 files used for educational purposes. 
+
+Created with React JS + Spring Boot + MongoDB. The app utilizes Spring Security for JWT authentication and the enforcement of role-based routing and privelages.
+
+[Frontend code](https://github.com/CalebTracey/ultrasound-app-fullstack/tree/main/src/main/react-client)
+<br />
+[Backend code](https://github.com/CalebTracey/ultrasound-app-fullstack/tree/main/src/main/java/com/ultrasound/app)
 
 ## Usage
-1. Fork this repo
+If you would like to try out the app for yourself, follow the steps below. You will need to create a collection in mongodb called "roles" and add documents "ROLE_USER" and optionally "ROLE_ADMIN" as shown here:
+<img src=./document-example.png />
+<br />
+If you want to use the admin privelages, uncomment the @CommandlineRunner method in the application's main method and log in with the same credentials.
+Also, make sure your application.properties file is configured as such:
+<img src=./app.properties-example-local.png />
+
+1. Fork/clone this repo
 
 2. Download [Docker Desktop App](https://www.docker.com/products/docker-desktop)
 
-3. Run the [Docker Compose](https://github.com/CalebTracey/react-spring-jwt/blob/main/docker-compose.yaml) file found in the base directory to start the data base.
+3. Run the [Docker Compose](./docker-compose.yaml) file found in the root directory.
 
 4. Access the Mongo Express UI at: [localhost:8081](http://localhost:8081/)
 
-5. Create "db_database" in Mongo Express. Then two collections, "roles" and "users".
+5. Create the "roles" collection as mentioned above.
 
-6. In the "roles" collection, add "ROLE_USER" and you'll be all set to register.
+6. Access the app on [localhost:80](http://localhost:80/) and register!
 
 ## Available Scripts
-for the server, from the project directory you can run:
+If you would rather skip the Docker proccess for the front/backend, follow the steps below. you still need to run the docker-compose file to get mongodb running locally, so just comment out the frontend/backend sections in the file.
 <br />
 <br />
 `mvn spring-boot:run`
@@ -31,16 +45,3 @@ for the client, navigate to "react-client" and run:
 Then use the app locally on [localhost:3000](http://localhost:3000/)
 <br />
 <br />
-To create an executable .jar file, in the project directory run:
-<br />
-<br />
-`mvn package`
-<br />
-<br />
-and
-<br />
-<br />
-`java -jar target/app-0.0.1-SNAPSHOT.jar.original`
-<br />
-<br />
-Then you're up and running on [localhost:8080](http://localhost:8080/)
