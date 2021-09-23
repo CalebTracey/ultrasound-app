@@ -1,5 +1,5 @@
 # ultrasound-app-fullstack
-![](ultrasound-app.gif)
+![](ultrasound-app2.gif)
 
 ## Overview
 This app was developed for a fellowship program through my local hospital. It provides an intuative and organized user interface for navagating 3000+ .mp4 files used for educational purposes. Files are parsed by name in the backed, triggered through a simple POST command
