@@ -12,7 +12,9 @@ Created with React JS + Spring Boot + MongoDB. The app utilizes Spring Security 
 ## Usage
 If you would like to try out the app for yourself, follow the steps below. 
 
-You will need to create a collection in mongodb called "roles" and add documents "ROLE_USER" and optionally "ROLE_ADMIN" as shown here:
+You will need to create a collection in mongodb called "roles" and add documents "ROLE_USER" and optionally "ROLE_ADMIN" as shown below.
+
+Uploading [this file](./roles) through Mongo Express should do the trick.
 <img src=./document-example.png />
 <br />
 <br />
