@@ -4,12 +4,12 @@ import Logout from '../LogoutButton';
 import UserInfoHeader from '../UserInfoHeader';
 // import SearchBar from '../SearchBar';
 
-const Header = ({ content }) => (
+const Header = ({ user, content }) => (
   <div className="header">
     <div className="button-wrapper">
       <div className="header-date">{content}</div>
       <Logout />
-      <UserInfoHeader />
+      <UserInfoHeader user={user} />
       {/* <SearchBar /> */}
     </div>
   </div>

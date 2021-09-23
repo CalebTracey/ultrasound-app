@@ -3,6 +3,8 @@ import TokenService from './token-service';
 
 const { removeUser } = TokenService;
 
+const userDetails = (username) => api.get(`auth/user/${username}`);
+
 const registerService = (data) => api.post(`auth/sign-up`, data);
 
 const loginService = (data) =>
@@ -18,6 +20,7 @@ const logoutService = () => {
 };
 
 const AuthService = {
+  userDetails,
   registerService,
   loginService,
   logoutService,

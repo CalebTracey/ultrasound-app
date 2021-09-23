@@ -24,7 +24,7 @@ const SubMenuComponent = ({ id, title }) => {
 
   return (
     <SubMenu
-      style={{ textTransform: 'uppercase' }}
+      // style={{ textTransform: 'uppercase' }}
       key={`sm${id}`}
       title={title}
       onClick={() => getItems(id)}

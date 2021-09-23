@@ -1,5 +1,5 @@
 import './Styles.css';
-import React, { Suspense, useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import history from './helpers/history';
 import Routes from './routes/Routes';
@@ -33,11 +33,9 @@ const App = () => {
   }, [currentUser, dispatch, logOut]);
 
   return (
-    <Suspense fallback="Loading...">
-      <div className="app">
-        <Routes />
-      </div>
-    </Suspense>
+    <div className="app">
+      <Routes />
+    </div>
   );
 };
 export default App;

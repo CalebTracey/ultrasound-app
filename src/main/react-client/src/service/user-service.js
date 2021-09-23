@@ -6,12 +6,15 @@ const getClassifications = () => api.get('classifications');
 
 const getAdminContent = () => api.get(`admin`);
 
+const getUrl = (link) => api.get(`S3/link/${link}`);
+
 const getSubMenu = (id) => api.get(`submenu/${id}`);
 
 const UserService = {
-  getSubMenu,
   getPublicContent,
   getClassifications,
   getAdminContent,
+  getSubMenu,
+  getUrl,
 };
 export default UserService;

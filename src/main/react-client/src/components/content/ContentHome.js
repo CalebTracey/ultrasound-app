@@ -1,6 +1,17 @@
 import React from 'react';
-// import { Jumbotron, Container } from 'reactstrap';
+import { Media, Jumbotron, Container } from 'reactstrap';
 
-const ContentHome = () => <h1>Welcome!</h1>;
-
+const ContentHome = () => (
+  <Jumbotron>
+    <Container>
+      <Media body>
+        <Media heading>
+          <p className="display-6">Welcome!</p>
+          <hr className="my-2" />
+        </Media>
+        <p className="lead">Utilize the sidebar to browse Ultrasound clips</p>
+      </Media>
+    </Container>
+  </Jumbotron>
+);
 export default ContentHome;

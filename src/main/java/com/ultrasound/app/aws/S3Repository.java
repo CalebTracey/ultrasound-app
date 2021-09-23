@@ -71,7 +71,10 @@ public class S3Repository implements S3Service {
                 }
             }
             List<String> filePartsFinal = Arrays.stream(fileParts).collect(Collectors.toList());
-            urlAndFileDataMap.put(s3Client.generatePresignedUrl(BUCKET_NAME, key, date.toDate()).toString(), filePartsFinal);
+//            urlAndFileDataMap.put(s3Client.generatePresignedUrl(BUCKET_NAME, key, date.toDate()).toString(), filePartsFinal);
+//            urlAndFileDataMap.put(s3Client.getUrl(BUCKET_NAME, key).toString(), filePartsFinal);
+            urlAndFileDataMap.put(key, filePartsFinal);
+
         });
 
         // get rid of the useless bits of the filename
@@ -197,19 +200,15 @@ public class S3Repository implements S3Service {
     }
 
     @Override
-    public String getObjectId(String name) {
-
-        return s3Client.getObject(BUCKET_NAME, name).getKey();
+    public String getPreSignedUrl(String link) {
+        log.info("Getting pre-signed URL for: {}", link);
+        LocalDate date = new LocalDate().plusDays(1);
+        return s3Client.generatePresignedUrl(BUCKET_NAME, link, date.toDate()).toString();
     }
 
     @Override
     public ObjectListing listObjectsV2() {
         return s3Client.listObjects(BUCKET_NAME);
-    }
-
-    @Override
-    public S3Object getObject(String key) {
-        return s3Client.getObject(BUCKET_NAME, key);
     }
 
 }

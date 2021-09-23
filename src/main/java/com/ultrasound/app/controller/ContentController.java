@@ -3,6 +3,7 @@ package com.ultrasound.app.controller;
 import com.ultrasound.app.aws.S3Repository;
 import com.ultrasound.app.model.data.Classification;
 import com.ultrasound.app.model.data.SubMenu;
+import com.ultrasound.app.security.service.UserDetailsServiceImpl;
 import com.ultrasound.app.service.AppUserService;
 import com.ultrasound.app.service.ClassificationServiceImpl;
 import com.ultrasound.app.service.SubMenuService;

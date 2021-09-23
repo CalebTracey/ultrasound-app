@@ -39,7 +39,7 @@
 
 .body {
   height: 100%;
-  background: #e9ecef;
+  background: #E9ECEF;
   position: absolute;
   left: 16rem;
   right: 0;
@@ -247,4 +247,34 @@
   left: 2rem;
   top: 1.75rem;
   color: #6c757d;
+}
+
+.menu-button {
+  position: sticky;
+  border: medium none;
+  /* top: 1rem; */
+  max-height: 40px;
+  min-height: 38.5px;
+}
+
+.spinner {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+}
+
+.danger-btn-edit {
+  position: absolute;
+  right: 3rem;
+  top: 3rem;
+}
+
+.reset-btn-edit {
+  position: absolute;
+  right: 9rem;
+  top: 3rem;
+}
+
+.edit-content {
+  position: relative;
 }

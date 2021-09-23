@@ -40,7 +40,7 @@ const auth = (state = initialState, action) => {
       return {
         ...state,
         isAuth: true,
-        user: payload,
+        user: payload.user,
       };
     case LOGIN_FAIL:
       return {

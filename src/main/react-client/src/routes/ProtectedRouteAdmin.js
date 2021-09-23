@@ -5,17 +5,17 @@ import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { Route, Redirect, withRouter } from 'react-router-dom';
 
-const ProtectedRoute = ({ component: Component, ...rest }) => {
+const ProtectedRouteAdmin = ({ component: Component, ...rest }) => {
   console.log(
-    `%c === Protected route === `,
+    `%c === Protected admin route === `,
     'font-size: 12px; color: black; background: lightGrey;'
   );
-  const { isAuth } = useSelector((state) => state.auth);
+  const { isAuth, user } = useSelector((state) => state.auth);
   return (
     <Route
       {...rest}
       render={(props) => {
-        if (isAuth) {
+        if (isAuth && user.roles.includes('ROLE_ADMIN')) {
           return <Component {...props} />;
         }
         return (
@@ -28,8 +28,8 @@ const ProtectedRoute = ({ component: Component, ...rest }) => {
   );
 };
 
-ProtectedRoute.propTypes = {
+ProtectedRouteAdmin.propTypes = {
   component: PropTypes.func.isRequired,
 };
 
-export default withRouter(ProtectedRoute);
+export default withRouter(ProtectedRouteAdmin);

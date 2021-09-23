@@ -8,9 +8,37 @@ import {
   LOGOUT,
   SET_MESSAGE,
   REFRESH_TOKEN,
+  USER_DATA,
 } from './types';
 
-const { registerService, loginService, logoutService } = AuthService;
+const { registerService, loginService, logoutService, userDetails } =
+  AuthService;
+
+const user = (username) => (dispatch) =>
+  userDetails(username).then(
+    (data) => {
+      dispatch({
+        type: USER_DATA,
+        payload: data,
+      });
+      return Promise.resolve(data);
+    },
+    (error) => {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+
+      dispatch({
+        type: SET_MESSAGE,
+        payload: message,
+      });
+
+      return Promise.reject(error);
+    }
+  );
 
 const login = (credentials) => (dispatch) =>
   loginService(credentials).then(
@@ -87,6 +115,7 @@ const refreshToken = (accessToken) => (dispatch) => {
 };
 
 const auth = {
+  user,
   refreshToken,
   login,
   register,

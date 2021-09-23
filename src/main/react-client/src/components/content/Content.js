@@ -1,12 +1,11 @@
-import React, { Suspense } from 'react';
-import SyncLoader from 'react-spinners/SyncLoader';
+import React from 'react';
 import { useSelector } from 'react-redux';
-import { Media } from 'reactstrap';
+import { Media, Jumbotron, Container } from 'reactstrap';
 import { Redirect } from 'react-router-dom';
 import ContentRoutes from '../../routes/ContentRoutes';
 
 const Content = () => {
-  const { selectedVideo, selectedVideoTitle } = useSelector(
+  const { selectedVideo, selectedVideoTitle, selectedVideoUrl } = useSelector(
     (state) => state.data
   );
 
@@ -15,20 +14,25 @@ const Content = () => {
   }
 
   return (
-    <Suspense fallback={<SyncLoader />}>
-      <div className="content">
-        <div className="content-wrapper">
-          <div className="video-title-wrapper">
-            <Media style={{ fontSize: '2vw' }} heading>
-              {selectedVideoTitle}
-            </Media>
-          </div>
-          <div className="player-wrapper">
-            <ContentRoutes selectedVideo={selectedVideo} />
-          </div>
-        </div>
+    <div className="content">
+      <div className="content-wrapper">
+        <Jumbotron fluid style={{ maxHeight: '80vh', paddingTop: '2rem' }}>
+          <Container fluid>
+            <div className="video-title-wrapper">
+              <Media style={{ fontSize: '2vw' }} heading>
+                {selectedVideoTitle}
+              </Media>
+            </div>
+            <Container fluid>
+              <ContentRoutes
+                selectedVideo={selectedVideo}
+                selectedVideoList={selectedVideoUrl}
+              />
+            </Container>
+          </Container>
+        </Jumbotron>
       </div>
-    </Suspense>
+    </div>
   );
 };
 export default Content;

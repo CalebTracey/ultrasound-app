@@ -13,7 +13,7 @@ import RegisterButton from '../components/register/RegisterButton';
 const Login = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const { message } = useSelector((state) => state.message);
-  const { isAuth } = useSelector((state) => state.auth);
+  const { isAuth, user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   const validationSchema = Yup.object().shape({
@@ -30,12 +30,15 @@ const Login = (props) => {
     resolver: yupResolver(validationSchema),
   });
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     setIsLoading(true);
     if (Array.from(errors).length === 0) {
-      dispatch(allActions.auth.login(data))
+      await dispatch(allActions.auth.login(data))
         .then(() => {
+          // console.log(res.data);
+          // if (res.data.roles) {
           props.history.push('/dashboard');
+          // }
         })
         .catch(() => {
           setIsLoading(false);
@@ -45,7 +48,7 @@ const Login = (props) => {
     }
   };
 
-  if (isAuth) {
+  if (isAuth && user) {
     <Redirect to="/dashboard" />;
   }
 

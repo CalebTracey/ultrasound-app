@@ -3,17 +3,22 @@ import {
   UPLOAD_SUCCESS,
   SET_CLASSIFICATIONS,
   SET_SELECTED_VIDEO,
-  SET_SELECTED_SUB_MENU,
   SET_SELECTED_CLASSIFICATION,
+  SET_SELECTED_SUB_MENU,
   SET_VIDEO_TITLE,
+  SELECTED_EDIT,
+  USER_DATA,
+  SET_URL,
 } from '../actions/types';
 
 const initialState = {
   classifications: [],
   selectedVideo: {},
-  selectedSubMenus: new Map(),
+  selectedVideoUrl: {},
+  selectedEdit: {},
   selectedClassification: '',
   selectedVideoTitle: '',
+  userData: {},
 };
 
 const data = (state = initialState, action) => {
@@ -34,16 +39,16 @@ const data = (state = initialState, action) => {
         ...state,
         classifications: payload.data,
       };
+    case SET_SELECTED_CLASSIFICATION:
+      return {
+        ...state,
+        selectedClassification: payload,
+      };
     case SET_SELECTED_SUB_MENU:
       return {
         ...state,
         // selectedSubMenus: [...state.selectedSubMenus, payload.data],
         // [selectedSubMenus.set(payload)],
-      };
-    case SET_SELECTED_CLASSIFICATION:
-      return {
-        ...state,
-        selectedClassification: payload,
       };
     case SET_SELECTED_VIDEO:
       return {
@@ -54,6 +59,21 @@ const data = (state = initialState, action) => {
       return {
         ...state,
         selectedVideoTitle: payload,
+      };
+    case SELECTED_EDIT:
+      return {
+        ...state,
+        selectedEdit: payload,
+      };
+    case USER_DATA:
+      return {
+        ...state,
+        userData: payload.data,
+      };
+    case SET_URL:
+      return {
+        ...state,
+        selectedVideoUrl: payload.data,
       };
     default:
       return state;

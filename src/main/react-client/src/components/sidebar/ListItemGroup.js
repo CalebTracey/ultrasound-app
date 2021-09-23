@@ -17,7 +17,7 @@ const ListItemGroup = ({ listItems }) => {
   };
   const subMenuGroup = listItems.map((item) => (
     <MenuItem
-      style={{ textTransform: 'uppercase' }}
+      // style={{ textTransform: 'uppercase' }}
       key={item.link}
       title={item.name}
       onClick={() => handleItemClick(item)}

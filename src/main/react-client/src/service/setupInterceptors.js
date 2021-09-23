@@ -46,6 +46,10 @@ const setup = (store) => {
             // return Promise.reject(err);
           }
         }
+        // if (err.response.status === 403) {
+        //   originalConfig.retry = true;
+        //   console.log(originalConfig);
+        // }
       }
       return Promise.reject(err);
     }
