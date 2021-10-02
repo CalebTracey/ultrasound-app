@@ -1,7 +1,8 @@
 # ultrasound-app-fullstack
+![](ultrasound-app2.gif)
 
 ## Overview
-This app was developed for a fellowship program through my local hospital. It provides an intuative and organized user interface for navagating 3000+ .mp4 files used for educational purposes. 
+This app was developed for a fellowship program through my local hospital. It provides an intuative and organized user interface for navagating 3000+ .mp4 files used for educational purposes. Files are parsed by name in the backed, triggered through a simple POST command
 
 Created with React JS + Spring Boot + MongoDB. The app utilizes Spring Security for JWT authentication and the enforcement of role-based routing and privelages.
 
@@ -10,10 +11,17 @@ Created with React JS + Spring Boot + MongoDB. The app utilizes Spring Security 
 [Backend code](https://github.com/CalebTracey/ultrasound-app-fullstack/tree/main/src/main/java/com/ultrasound/app)
 
 ## Usage
-If you would like to try out the app for yourself, follow the steps below. You will need to create a collection in mongodb called "roles" and add documents "ROLE_USER" and optionally "ROLE_ADMIN" as shown here:
+If you would like to try out the app for yourself, follow the steps below. 
+
+You will need to create a collection in mongodb called "roles" and add documents "ROLE_USER" and optionally "ROLE_ADMIN" as shown below.
+
+Uploading [this file](./roles) through Mongo Express should do the trick.
 <img src=./document-example.png />
 <br />
-If you want to use the admin privelages, uncomment the @CommandlineRunner method in the application's main method and log in with the same credentials.
+<br />
+If you want to use the admin privelages, uncomment the @CommandlineRunner method in the application's main method and then hit run. You'll then be able to login with the same credentials.
+<br />
+<br />
 Also, make sure your application.properties file is configured as such:
 <img src=./app.properties-example-local.png />
 
@@ -27,10 +35,14 @@ Also, make sure your application.properties file is configured as such:
 
 5. Create the "roles" collection as mentioned above.
 
-6. Access the app on [localhost:80](http://localhost:80/) and register!
+6. To populate the database,  make this POST request with [Postman](https://www.postman.com/): http://localhost:8080/api/S3/update
+
+7. Access the app on [localhost:80](http://localhost:80/) and register!
 
 ## Available Scripts
-If you would rather skip the Docker proccess for the front/backend, follow the steps below. you still need to run the docker-compose file to get mongodb running locally, so just comment out the frontend/backend sections in the file.
+If you would rather skip the Docker proccess for the front/backend, follow the steps below. 
+
+You will still need to run the docker-compose file to get mongodb running locally. Just comment out the frontend/backend sections in the file.
 <br />
 <br />
 `mvn spring-boot:run`
