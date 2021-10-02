@@ -8,6 +8,7 @@ import com.ultrasound.app.service.AppUserService;
 import com.ultrasound.app.service.ClassificationServiceImpl;
 import com.ultrasound.app.service.SubMenuService;
 import com.ultrasound.app.service.SubMenuServiceImpl;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,5 +58,30 @@ public class ContentController {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/submenu/{id}").toUriString());
         return ResponseEntity.created(uri).body(subMenuService.getById(id));
     }
+
+    @PostMapping("/edit/classification/name/{id}")
+    public ResponseEntity<?> editClassificationName(@PathVariable String id,
+                                                    @RequestBody Name name) {
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/api/edit/classification/name/{id}").toUriString());
+        return ResponseEntity.created(uri).body(classificationService.updateClassificationName(id, name.getName()));
+
+    }
+
+    @PostMapping("/edit/submenu/name/{classificationId}/{subMenuId}")
+    public ResponseEntity<?> editSubMenuName(@PathVariable String classificationId,
+                                             @PathVariable String subMenuId,
+                                             @RequestBody Name name) {
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/api/edit/submenu/name/{id}").toUriString());
+        return ResponseEntity.created(uri).body(classificationService
+                .updateSubMenuName(classificationId, subMenuId, name.getName()));
+    }
+
+}
+
+@Getter
+class Name {
+    private String name;
 }
 

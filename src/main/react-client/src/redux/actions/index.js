@@ -1,11 +1,13 @@
-import auth from './auth';
-import message from './message';
-import data from './data';
+import auth from './auth'
+import message from './message'
+import data from './data'
+import edit from './edit'
 
 const allActions = {
-  auth,
-  message,
-  data,
-};
+    auth,
+    message,
+    data,
+    edit,
+}
 
-export default allActions;
+export default allActions

@@ -14,4 +14,6 @@ public interface ClassificationService {
     Boolean classificationExists(String classification);
     List<Classification> all();
     String save(Classification classification);
+    String updateClassificationName(String id, String name);
+    String updateSubMenuName(String classificationId, String subMenuId, String name);
 }

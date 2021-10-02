@@ -18,6 +18,11 @@ public class SubMenuServiceImpl implements SubMenuService{
     }
 
     @Override
+    public String saveReturnName(SubMenu subMenu) {
+        return subMenuRepo.save(subMenu).getName();
+    }
+
+    @Override
     public SubMenu getById(String id) {
         return subMenuRepo.findById(id).orElseThrow(() -> new SubMenuNotFoundException(id));
     }

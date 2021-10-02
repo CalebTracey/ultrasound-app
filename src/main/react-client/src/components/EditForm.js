@@ -1,20 +1,20 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/jsx-props-no-spreading */
-import React from 'react';
+import React from 'react'
 // import { Button } from 'reactstrap';
 
 const EditForm = ({
-  successful,
-  onSubmit,
-  // errors,
-  // register,
-  handleSubmit,
-  message,
-  // reset,
+    successful,
+    onSubmit,
+    errors,
+    register,
+    handleSubmit,
+    message,
+    reset,
 }) => (
-  <div id="login" className="register-form">
-    <form id="signup" onSubmit={() => handleSubmit(onSubmit)}>
-      {/* <div className="form-group">
+    <div id="login" className="register-form">
+        <form id="signup" onSubmit={() => handleSubmit(onSubmit)}>
+            {/* <div className="form-group">
         <label htmlFor="classification">Classification</label>
         <input
           defaultValue=""
@@ -79,11 +79,11 @@ const EditForm = ({
         </div>
       </div> */}
 
-      <div className="form-group">
-        <button type="submit" className="btn btn-primary btn-block">
-          <span>Save</span>
-        </button>
-        {/* <Button
+            <div className="form-group">
+                <button type="submit" className="btn btn-primary btn-block">
+                    <span>Save</span>
+                </button>
+                {/* <Button
           style={{ marginTop: '2rem' }}
           type="button"
           color="warning"
@@ -91,7 +91,7 @@ const EditForm = ({
         >
           <span>Reset</span>
         </Button> */}
-        {/* <button
+                {/* <button
           type="button"
           onClick={() => reset()}
           className="btn btn-warning float-right"
@@ -99,21 +99,23 @@ const EditForm = ({
         >
           <span>Reset</span>
         </button> */}
-      </div>
-      {message && (
-        <div className="form-group">
-          <div
-            className={
-              successful ? 'alert alert-success' : 'alert alert-danger'
-            }
-            role="alert"
-          >
-            {message}
-          </div>
-        </div>
-      )}
-    </form>
-  </div>
-);
+            </div>
+            {message && (
+                <div className="form-group">
+                    <div
+                        className={
+                            successful
+                                ? 'alert alert-success'
+                                : 'alert alert-danger'
+                        }
+                        role="alert"
+                    >
+                        {message}
+                    </div>
+                </div>
+            )}
+        </form>
+    </div>
+)
 
-export default EditForm;
+export default EditForm

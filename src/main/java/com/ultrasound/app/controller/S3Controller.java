@@ -32,7 +32,7 @@ public class S3Controller {
         return ResponseEntity.created(uri).body(s3Repository.getPreSignedUrl(link));
     }
 
-    @PostMapping("/update")
+    @PostMapping("/update/")
     public ResponseEntity<?> updateBucket() {
         s3Repository.updateS3Bucket();
        return ResponseEntity.ok().build();

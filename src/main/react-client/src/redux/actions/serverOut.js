@@ -1,42 +1,42 @@
-import { UPLOAD_FAIL, UPLOAD_SUCCESS, SET_MESSAGE } from './types';
-import UploadService from '../../service/file-service';
+import { UPLOAD_FAIL, UPLOAD_SUCCESS, SET_MESSAGE } from './types'
+import UploadService from '../../service/file-service'
 
-const { uploadService } = UploadService;
+const { uploadService } = UploadService
 
 const upload = (data) => (dispatch) =>
-  uploadService(data).then(
-    (response) => {
-      dispatch({
-        type: UPLOAD_SUCCESS,
-        payload: {
-          categories: response.categories,
-          classifications: response.classifications,
+    uploadService(data).then(
+        (response) => {
+            dispatch({
+                type: UPLOAD_SUCCESS,
+                payload: {
+                    categories: response.categories,
+                    classifications: response.classifications,
+                },
+            })
         },
-      });
-    },
-    (error) => {
-      const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString();
+        (error) => {
+            const message =
+                (error.response &&
+                    error.response.data &&
+                    error.response.data.message) ||
+                error.message ||
+                error.toString()
 
-      dispatch({
-        type: UPLOAD_FAIL,
-      });
+            dispatch({
+                type: UPLOAD_FAIL,
+            })
 
-      dispatch({
-        type: SET_MESSAGE,
-        payload: message,
-      });
+            dispatch({
+                type: SET_MESSAGE,
+                payload: message,
+            })
 
-      return Promise.reject(error);
-    }
-  );
+            return Promise.reject(error)
+        }
+    )
 
 const serverOut = {
-  upload,
-};
+    upload,
+}
 
-export default serverOut;
+export default serverOut

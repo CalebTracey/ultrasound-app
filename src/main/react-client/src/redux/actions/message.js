@@ -1,17 +1,17 @@
-import { SET_MESSAGE, CLEAR_MESSAGE } from './types';
+import { SET_MESSAGE, CLEAR_MESSAGE } from './types'
 
 const setMessage = (message) => ({
-  type: SET_MESSAGE,
-  payload: message,
-});
+    type: SET_MESSAGE,
+    payload: message,
+})
 
 const clearMessage = () => ({
-  type: CLEAR_MESSAGE,
-});
+    type: CLEAR_MESSAGE,
+})
 
 const messages = {
-  setMessage,
-  clearMessage,
-};
+    setMessage,
+    clearMessage,
+}
 
-export default messages;
+export default messages

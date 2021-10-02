@@ -2,6 +2,7 @@ package com.ultrasound.app.service;
 
 import com.ultrasound.app.exceptions.ClassificationNotFoundException;
 import com.ultrasound.app.model.data.Classification;
+import com.ultrasound.app.model.data.SubMenu;
 import com.ultrasound.app.repo.ClassificationRepo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +54,45 @@ public class ClassificationServiceImpl implements ClassificationService {
     public String save(Classification classification) {
         log.info("Saving classification: {}", classification.getName());
         return classificationRepo.save(classification).get_id();
+    }
+
+    @Override
+    public String updateClassificationName(String id, String name) {
+        Classification classification = classificationRepo.findById(id)
+                .orElseThrow(() -> new ClassificationNotFoundException(id));
+        String origName = classification.getName();
+        classification.setName(name);
+        log.info("Changing Classification name {} to {}",origName, name);
+        classificationRepo.save(classification);
+        return "Changing Classification name " + origName + " to " + name;
+    }
+
+    @Override
+    public String updateSubMenuName(String classificationId, String subMenuId, String name) {
+        Classification classification = classificationRepo.findById(classificationId)
+                .orElseThrow(() -> new ClassificationNotFoundException(classificationId));
+        SubMenu subMenu = subMenuService.getById(subMenuId);
+        String origName = subMenu.getName();
+        // update the name of the submenu in the classification
+        Map<String, String> subMenus = classification.getSubMenus();
+        subMenus.put(name, subMenuId);
+        subMenus.remove(origName);
+        classification.setSubMenus(subMenus);
+        classificationRepo.save(classification);
+        // update the name of the submenu object in the database
+        StringBuilder stringBuilder = new StringBuilder();
+        subMenu.setName(name);
+        // update item titles
+        subMenu.getItemList().forEach(listItem -> {
+            stringBuilder.setLength(0);
+            stringBuilder.append(classification.getName()).append(" ").append(name).append(" ").append(listItem.getName());
+            listItem.setTitle(stringBuilder.toString());
+        });
+        stringBuilder.setLength(0);
+        log.info("Changing Submenu name {} to {} in Classification: {}",origName, name, classification.getName());
+        subMenuService.saveReturnName(subMenu);
+        stringBuilder.append("Changed Submenu name ").append(origName).append(" to ").append(name);
+        return stringBuilder.toString();
     }
 
 }
