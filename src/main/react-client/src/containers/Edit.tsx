@@ -9,18 +9,7 @@ import EditSubMenuContainer from '../components/edit/EditSubMenuContainer'
 import EditItemListContainer from '../components/edit/EditItemListContainer'
 import EditDataName from '../components/edit/EditDataName'
 import allActions from '../redux/actions'
-
-interface IState {
-    listItem: {
-        name: string
-        title: string
-        link: string
-    }
-    subMenu: {
-        key: string
-        value: string
-    }
-}
+import DeleteButton from '../components/buttons/DeleteButton'
 
 interface Props {
     history: RouteComponentProps['history']
@@ -28,19 +17,18 @@ interface Props {
 
 const Edit: FC<Props> = ({ history }) => {
     const { roles } = useAppSelector((state) => state.auth.user)
-    const messageState = useAppSelector((state) => state.message)
+    const { message } = useAppSelector((state) => state.message)
     const { selectedEdit } = useAppSelector((state) => state.data)
     const { _id, name, subMenus, listItems, hasSubMenu } = selectedEdit
-    const [listItemSelection, setListItemSelection] = useState<
-        IState['listItem'] | undefined
-    >(undefined)
+
     const [editingSubMenu, setEditingSubMenu] = useState(false)
-    // const { message } = messageState
+    const [editingListItem, setEditingListItem] = useState(false)
     const dispatch = useAppDispatch()
 
     const handleCancel = useCallback(() => {
         dispatch(allActions.data.clearSelectedSubMenu())
         setEditingSubMenu(false)
+        setEditingListItem(false)
     }, [dispatch])
 
     useEffect(() => {
@@ -53,9 +41,7 @@ const Edit: FC<Props> = ({ history }) => {
         <Jumbotron>
             <div className="edit-content">
                 <Container>
-                    {/* {message.message !== '' && (
-                        <Alert color="info">{message.message}</Alert>
-                    )} */}
+                    {message !== '' && <Alert color="info">{message}</Alert>}
                     <Media body>
                         <h4 className="lead">Editing:</h4>
                         <Media heading>
@@ -68,6 +54,11 @@ const Edit: FC<Props> = ({ history }) => {
                                     currentName={name}
                                     type="classification"
                                 />
+                                <DeleteButton
+                                    id={_id}
+                                    type="classification"
+                                    title="Delete"
+                                />
                                 {/* <ResetButton reset={reset} /> */}
                             </div>
                             <hr className="my-2" />
@@ -76,35 +67,25 @@ const Edit: FC<Props> = ({ history }) => {
                             fluid
                             style={{ display: 'flex', padding: '2rem' }}
                         >
-                            <EditSubMenuContainer
-                                // setSubMenuSelection={setSubMenuSelection}
-                                handleCancel={handleCancel}
-                                editingSubMenu={editingSubMenu}
-                                setEditingSubMenu={setEditingSubMenu}
-                                hasSubMenu={hasSubMenu}
-                                subMenus={subMenus}
-                                classificationId={_id}
-                            />
-                            {!editingSubMenu && (
-                                <EditItemListContainer
-                                    listItems={listItems}
-                                    setListItemSelection={setListItemSelection}
-                                    // subMenuSelection={subMenuSelection}
+                            {!editingListItem && (
+                                <EditSubMenuContainer
+                                    handleCancel={handleCancel}
+                                    editingSubMenu={editingSubMenu}
+                                    setEditingSubMenu={setEditingSubMenu}
+                                    hasSubMenu={hasSubMenu}
+                                    subMenus={subMenus}
+                                    classificationId={_id}
                                 />
                             )}
-                            <Media body>
-                                <Container fluid style={{ padding: '2rem' }}>
-                                    {/* <EditForm
-                                        successful={successful}
-                                        message={message}
-                                        onSubmit={onSubmit}
-                                        errors={errors}
-                                        register={register}
-                                        handleSubmit={handleSubmit}
-                                        reset={reset}
-                                    /> */}
-                                </Container>
-                            </Media>
+                            {!editingSubMenu && (
+                                <EditItemListContainer
+                                    handleCancel={handleCancel}
+                                    classificationId={_id}
+                                    listItems={listItems}
+                                    editingListItem={editingListItem}
+                                    setEditingListItem={setEditingListItem}
+                                />
+                            )}
                         </Container>
                     </Media>
                 </Container>

@@ -17,7 +17,6 @@ const EditDataName: FC<Props> = ({ id, currentName, type }) => {
     const [textValue, setTextValue] = useState<string>('')
     const dispatch = useAppDispatch()
     const onClickHandler = () => {
-        // editDataName({ id, textValue, type })
         dispatch(allActions.edit.dataName({ id, textValue, type }))
     }
 

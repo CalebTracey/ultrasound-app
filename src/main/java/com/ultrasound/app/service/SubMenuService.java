@@ -10,4 +10,6 @@ public interface SubMenuService {
     String saveReturnName(SubMenu subMenu);
     SubMenu getById(String id);
     String insert(SubMenu subMenu);
+    String deleteById(String id);
+    String deleteByIdClassification(String classificationId, String subMenuId);
 }

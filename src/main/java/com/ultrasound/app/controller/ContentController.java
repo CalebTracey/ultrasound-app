@@ -4,10 +4,7 @@ import com.ultrasound.app.aws.S3Repository;
 import com.ultrasound.app.model.data.Classification;
 import com.ultrasound.app.model.data.SubMenu;
 import com.ultrasound.app.security.service.UserDetailsServiceImpl;
-import com.ultrasound.app.service.AppUserService;
-import com.ultrasound.app.service.ClassificationServiceImpl;
-import com.ultrasound.app.service.SubMenuService;
-import com.ultrasound.app.service.SubMenuServiceImpl;
+import com.ultrasound.app.service.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.LocalDate;
@@ -29,11 +26,14 @@ public class ContentController {
     @Autowired
     private ClassificationServiceImpl classificationService;
     @Autowired
+    private SubMenuServiceImpl subMenuService;
+    @Autowired
+    private ItemServiceImpl itemService;
+    @Autowired
     private AppUserService userService;
     @Autowired
     private S3Repository s3Repository;
-    @Autowired
-    private SubMenuServiceImpl subMenuService;
+
 
     @GetMapping("/all")
     public String allAccess() {
@@ -49,13 +49,15 @@ public class ContentController {
     @GetMapping("/classifications")
 //    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<List<Classification>> classifications() {
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/classifications").toUriString());
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/api/classifications").toUriString());
         return ResponseEntity.created(uri).body(classificationService.all());
     }
 
     @GetMapping("/submenu/{id}")
     public ResponseEntity<SubMenu> subMenu(@PathVariable String id) {
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/submenu/{id}").toUriString());
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/api/submenu/{id}").toUriString());
         return ResponseEntity.created(uri).body(subMenuService.getById(id));
     }
 
@@ -78,6 +80,40 @@ public class ContentController {
                 .updateSubMenuName(classificationId, subMenuId, name.getName()));
     }
 
+    @DeleteMapping("/delete-data/classification/{id}")
+    public ResponseEntity<?> deleteClassification(@PathVariable String id) {
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/api/delete-data/classification/{id}").toUriString());
+        return ResponseEntity.created(uri).body(classificationService
+                .delete(id));
+    }
+
+    @DeleteMapping("/delete-data/submenu/{classificationId}/{subMenuId}")
+    public ResponseEntity<?> deleteSubmenu(@PathVariable String classificationId,
+                                           @PathVariable String subMenuId) {
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/api/delete-data/submenu/{id}").toUriString());
+        return ResponseEntity.created(uri).body(subMenuService
+                .deleteByIdClassification(classificationId, subMenuId));
+    }
+
+    @DeleteMapping("/delete-item/classification/{classificationId}/{title}/{name}")
+    public ResponseEntity<?> deleteItemClassification(@PathVariable String classificationId,
+                                                      @PathVariable String title,
+                                                      @PathVariable String name) {
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/api/delete-item/classification/{classificationId}/{title}/{name}").toUriString());
+        return ResponseEntity.created(uri).body(itemService.deleteItemClassification(classificationId, title, name));
+    }
+
+    @DeleteMapping("/delete-item/submenu/{classificationId}/{title}/{name}")
+    public ResponseEntity<?> deleteItemSubmenu(@PathVariable String classificationId,
+                                                      @PathVariable String title,
+                                                      @PathVariable String name) {
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/api/delete-item/submenu/{classificationId}/{title}/{name}").toUriString());
+        return ResponseEntity.created(uri).body(itemService.deleteItemSubMenu(classificationId, title, name));
+    }
 }
 
 @Getter

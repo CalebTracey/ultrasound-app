@@ -1,10 +1,17 @@
+import { AnyAction } from '@reduxjs/toolkit'
 import { SET_MESSAGE, CLEAR_MESSAGE } from '../actions/types'
 
-const initialState = {
-    message: {},
+interface MessageState {
+    message: string
 }
 
-const message = (state = initialState, action) => {
+const initialState: MessageState = {
+    message: '',
+}
+
+type IResponseType = { message: string }
+
+const message = (state = initialState, action: AnyAction): IResponseType => {
     const { type, payload } = action
 
     switch (type) {

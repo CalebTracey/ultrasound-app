@@ -1,7 +1,6 @@
 import React, { FC, useState, useEffect } from 'react'
 import { Label } from 'reactstrap'
 import { useAppSelector, useAppDispatch } from '../../redux/hooks'
-
 import SubMenuDropdownContainer from '../edit-dropdowns/SubMenuDropdownContainer'
 import EditSubMenu from './EditSubMenu'
 import allActions from '../../redux/actions'
@@ -17,12 +16,12 @@ interface ISubMenu {
     value: string
 }
 interface Props {
-    setEditingSubMenu: (state: boolean) => void
     subMenus: { [key: string]: ISubMenu }
     hasSubMenu: boolean
     editingSubMenu: boolean
     handleCancel: () => void
     classificationId: string
+    setEditingSubMenu: (editingSubMenu: boolean) => void
 }
 const EditSubMenuContainer: FC<Props> = ({
     subMenus,
@@ -62,8 +61,8 @@ const EditSubMenuContainer: FC<Props> = ({
             {itemList !== undefined && editingSubMenu && (
                 <EditSubMenu
                     handleCancel={handleCancel}
-                    // subMenuData={selectedSubMenu}
-                    id={`${classificationId}/${_id}`}
+                    subMenuId={_id}
+                    classificationId={classificationId}
                     name={name}
                     itemList={itemList}
                 />

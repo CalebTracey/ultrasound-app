@@ -5,7 +5,6 @@ import { TDispatch, RootState } from '../store'
 import { SET_MESSAGE } from './types'
 
 type TPromise = Promise<string | Error>
-
 type TAction = PayloadAction<string>
 
 interface IDataNameProps {
@@ -31,7 +30,7 @@ const dataName =
             .catch((error: Error): Promise<Error> => {
                 dispatch({
                     type: SET_MESSAGE,
-                    payload: error,
+                    payload: error.message,
                 })
                 return Promise.reject(error)
             })

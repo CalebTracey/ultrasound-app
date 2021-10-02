@@ -1,1 +1,6 @@
 src/main/react-client -linguist-detectable
+*.js linguist-language=JavaScript
+*.jsx linguist-language=JavaScript
+*.ts linguist-language=TypeScript
+*.tsx linguist-language=TypeScript
+

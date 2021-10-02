@@ -1,280 +1,280 @@
 .wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  width: 100%;
-  height: 100%;
-  padding-right: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 100%;
+    height: 100%;
+    padding-right: 1rem;
 }
 
 .app {
-  box-sizing: border-box;
-  min-height: 100vh;
+    box-sizing: border-box;
+    min-height: 100vh;
 }
 
 /* .antd-menu {
   background: #e9ecef;
 } */
 .sidebar {
-  width: 16rem;
-  /* height: 100%; */
-  /* position: absolute; */
-  /* z-index: 1; */
-  top: 5rem;
-  position: fixed;
-  /* overflow-y: scroll; */
-  bottom: 3rem;
+    width: 16rem;
+    /* height: 100%; */
+    /* position: absolute; */
+    /* z-index: 1; */
+    top: 5rem;
+    position: fixed;
+    /* overflow-y: scroll; */
+    bottom: 3rem;
 }
 
 .sidebar-content {
-  /* background-color: #001529; */
+    /* background-color: #001529; */
 
-  width: 100%;
-  height: 100%;
-  /* background-color: #ced4da; */
-  display: flex;
-  flex-direction: column;
-  /* border-right: 1px solid #dee2e6; */
+    width: 100%;
+    height: 100%;
+    /* background-color: #ced4da; */
+    display: flex;
+    flex-direction: column;
+    /* border-right: 1px solid #dee2e6; */
 }
 
 .body {
-  height: 100%;
-  background: #e9ecef;
-  position: absolute;
-  left: 16rem;
-  right: 0;
+    height: 100%;
+    background: #e9ecef;
+    position: absolute;
+    left: 16rem;
+    right: 0;
 }
 
 .header {
-  border-bottom: 1px solid #dee2e6;
-  background-color: #f8f9fa;
-  text-align: center;
-  height: 5rem;
-  position: fixed;
-  top: 0;
-  right: 0;
-  left: 0;
+    border-bottom: 1px solid #dee2e6;
+    background-color: #f8f9fa;
+    text-align: center;
+    height: 5rem;
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
 }
 
 .content {
-  /* box-shadow: 0 0.15rem 0.5rem -0.15rem rgba(0, 0, 0, 0.25); */
-  border: 1px solid #dee2e6;
-  background-color: #f8f9fa;
-  border-radius: 5px;
-  position: fixed;
-  top: 6rem;
-  bottom: 4rem;
-  left: 16rem;
-  right: 1rem;
-  /* display: flex; */
-  /* justify-content: center; */
-  padding: 1rem;
+    /* box-shadow: 0 0.15rem 0.5rem -0.15rem rgba(0, 0, 0, 0.25); */
+    border: 1px solid #dee2e6;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    position: fixed;
+    top: 6rem;
+    bottom: 4rem;
+    left: 16rem;
+    right: 1rem;
+    /* display: flex; */
+    /* justify-content: center; */
+    padding: 1rem;
 }
 
 .footer {
-  border-top: 1px solid #dee2e6;
-  background-color: #f8f9fa;
-  text-align: center;
-  height: 3rem;
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  left: 0;
+    border-top: 1px solid #dee2e6;
+    background-color: #f8f9fa;
+    text-align: center;
+    height: 3rem;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    left: 0;
 }
 .form {
-  border: 1px solid #dee2e6;
-  background-color: #f8f9fa;
-  padding: 2rem;
-  border-radius: 10px;
-  position: fixed;
-  left: 40%;
-  right: 40%;
-  width: 20%;
-  min-width: 20rem;
-  top: 3rem;
+    border: 1px solid #dee2e6;
+    background-color: #f8f9fa;
+    padding: 2rem;
+    border-radius: 10px;
+    position: fixed;
+    left: 40%;
+    right: 40%;
+    width: 20%;
+    min-width: 20rem;
+    top: 3rem;
 }
 
 .button-wrapper {
-  display: flex;
-  flex-direction: row-reverse;
-  padding: 1rem;
-  align-items: center;
-  margin-top: 0.25rem;
+    display: flex;
+    flex-direction: row-reverse;
+    padding: 1rem;
+    align-items: center;
+    margin-top: 0.25rem;
 }
 
 .user-content {
-  align-items: center;
-  padding: 3rem;
-  font-size: x-large;
-  margin-top: auto;
-  margin-bottom: auto;
+    align-items: center;
+    padding: 3rem;
+    font-size: x-large;
+    margin-top: auto;
+    margin-bottom: auto;
 }
 
 .text-center {
-  position: absolute;
-  left: 45%;
-  right: 45%;
-  width: 10%;
+    position: absolute;
+    left: 45%;
+    right: 45%;
+    width: 10%;
 }
 
 .player-wrapper {
-  height: 100%;
-  width: 100%;
+    height: 100%;
+    width: 100%;
 }
 
 .list-item {
-  border-bottom: 1px solid #ced4da;
-  border-top: 1px solid #ced4da;
-  /* border-right: 1px solid #adb5bd; */
-  background-color: #e9ecef;
-  padding: 1rem;
-  text-align: center;
-  transition: all;
-  transition-duration: 150ms;
-  transition-timing-function: ease-in-out;
-  z-index: 1;
+    border-bottom: 1px solid #ced4da;
+    border-top: 1px solid #ced4da;
+    /* border-right: 1px solid #adb5bd; */
+    background-color: #e9ecef;
+    padding: 1rem;
+    text-align: center;
+    transition: all;
+    transition-duration: 150ms;
+    transition-timing-function: ease-in-out;
+    z-index: 1;
 }
 
 .list-item:hover {
-  border-bottom: 1px solid #adb5bdab;
-  border-top: 1px solid #adb5bdab;
-  background-color: #dee2e6;
-  color: #212529;
-  /* transform: scale(115%); */
-  /* box-shadow: 2px 0 0px #434343; */
-  cursor: pointer;
+    border-bottom: 1px solid #adb5bdab;
+    border-top: 1px solid #adb5bdab;
+    background-color: #dee2e6;
+    color: #212529;
+    /* transform: scale(115%); */
+    /* box-shadow: 2px 0 0px #434343; */
+    cursor: pointer;
 }
 
 .sub-menu {
-  position: absolute;
-  transform: translate(-45%);
-  padding: 1rem;
-  overflow: hidden;
+    position: absolute;
+    transform: translate(-45%);
+    padding: 1rem;
+    overflow: hidden;
 }
 
 .menu {
-  width: 100%;
+    width: 100%;
 }
 
 .menu-primary-enter {
-  position: absolute;
-  transform: translateY(-110%);
+    position: absolute;
+    transform: translateY(-110%);
 }
 
 .menu-primary-enter-active {
-  transform: translateY(0%);
-  transition: all 150ms ease;
+    transform: translateY(0%);
+    transition: all 150ms ease;
 }
 
 .menu-primary-exit {
-  position: absolute;
+    position: absolute;
 }
 
 .menu-primary-exit-active {
-  transform: translateY(-110%);
-  transition: all 150ms ease;
+    transform: translateY(-110%);
+    transition: all 150ms ease;
 }
 
 .form-wrapper {
-  display: flex;
-  flex-direction: column;
+    display: flex;
+    flex-direction: column;
 }
 
 .video-title-wrapper {
-  text-transform: capitalize;
-  text-align: center;
+    text-transform: capitalize;
+    text-align: center;
 }
 
 .player-wrapper {
-  justify-content: center;
-  display: flex;
-  position: relative;
-  /* margin: 1rem; */
-  padding-top: 56.25%; /* Player ratio: 100 / (1280 / 720) */
+    justify-content: center;
+    display: flex;
+    position: relative;
+    /* margin: 1rem; */
+    padding-top: 56.25%; /* Player ratio: 100 / (1280 / 720) */
 }
 
 .react-player {
-  position: absolute;
-  top: 0;
-  margin-left: auto;
-  margin-right: auto;
-  /* width: 100%; */
+    position: absolute;
+    top: 0;
+    margin-left: auto;
+    margin-right: auto;
+    /* width: 100%; */
 }
 
 .sidebar-header {
-  margin-top: 0.5rem;
-  font-weight: 450;
-  display: flex;
-  justify-content: center;
-  font-size: larger;
+    margin-top: 0.5rem;
+    font-weight: 450;
+    display: flex;
+    justify-content: center;
+    font-size: larger;
 }
 
 .video-header {
-  margin-left: 4rem;
-  margin-top: 1rem;
-  font-weight: 500;
-  font-size: 2vw;
-  color: #495057;
+    margin-left: 4rem;
+    margin-top: 1rem;
+    font-weight: 500;
+    font-size: 2vw;
+    color: #495057;
 }
 
 .sidebar-footer {
-  /* font-weight: 300; */
-  margin-top: 0.5rem;
-  margin-bottom: 1rem;
-  font-weight: 300;
-  font-size: small;
-  display: flex;
-  justify-content: center;
+    /* font-weight: 300; */
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+    font-weight: 300;
+    font-size: small;
+    display: flex;
+    justify-content: center;
 }
 
 .footer-text {
-  margin-top: 0.5rem;
-  font-weight: 300;
-  font-size: small;
-  /* display: flex; */
-  /* justify-content: center; */
+    margin-top: 0.5rem;
+    font-weight: 300;
+    font-size: small;
+    /* display: flex; */
+    /* justify-content: center; */
 }
 
 .search-bar {
-  position: fixed;
-  left: 40%;
-  right: 40%;
-  width: 20%;
+    position: fixed;
+    left: 40%;
+    right: 40%;
+    width: 20%;
 }
 
 .header-date {
-  position: fixed;
-  left: 2rem;
-  top: 1.75rem;
-  color: #6c757d;
+    position: fixed;
+    left: 2rem;
+    top: 1.75rem;
+    color: #6c757d;
 }
 
 .menu-button {
-  position: sticky;
-  border: medium none;
-  /* top: 1rem; */
-  max-height: 40px;
-  min-height: 38.5px;
+    position: sticky;
+    border: medium none;
+    /* top: 1rem; */
+    max-height: 40px;
+    min-height: 38.5px;
 }
 
 .spinner {
-  position: absolute;
-  left: 50%;
-  top: 50%;
+    position: absolute;
+    left: 50%;
+    top: 50%;
 }
 
 .danger-btn-edit {
-  position: absolute;
-  right: 3rem;
-  top: 3rem;
+    /* position: absolute; */
+    right: 3rem;
+    top: 3rem;
 }
 
 .reset-btn-edit {
-  position: absolute;
-  right: 9rem;
-  top: 3rem;
+    position: absolute;
+    right: 9rem;
+    top: 3rem;
 }
 
 .edit-content {
-  position: relative;
+    position: relative;
 }

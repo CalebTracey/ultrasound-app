@@ -12,5 +12,4 @@ public class ListItem {
     private String title;
     private String link;
 
-
 }
