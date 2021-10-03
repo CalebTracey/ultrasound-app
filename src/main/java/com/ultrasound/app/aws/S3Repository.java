@@ -156,7 +156,7 @@ public class S3Repository implements S3Service {
                                 matchList.add(listItem);
 //                                matchList.addAll(itemList);
                                 match.setItemList(matchList);
-                                currentSubMenus.put(subMenuName, subMenuService.save(match));
+                                currentSubMenus.put(subMenuName, subMenuService.save(match).get_id());
                             }
                             // if not, create a new sublist, and save it to the classification, and save it to the db.
                         } else {

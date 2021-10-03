@@ -1,39 +1,25 @@
 /* eslint-disable react/prop-types */
-import React, { useState, FC } from 'react'
+import React, { useState } from 'react'
 import { ButtonDropdown, DropdownToggle } from 'reactstrap'
 import SubMenuDropdown from './SubMenuDropdown'
+import { useAppSelector } from '../../redux/hooks'
 
-interface ISubMenu {
-    key: string
-    value: string
-}
-interface Props {
-    setSubMenuSelection: (subMenu: ISubMenu) => void
-    hasSubMenu: boolean
-    subMenus: { [key: string]: ISubMenu }
-}
-const SubMenuDropdownContainer: FC<Props> = ({
-    setSubMenuSelection,
-    hasSubMenu,
-    subMenus,
-}) => {
+const SubMenuDropdownContainer = (): JSX.Element => {
     const [subMenuOpen, setSubMenuOpen] = useState(false)
+    const { subMenus } = useAppSelector((state) => state.data.selectedEdit)
     const subMenuToggle = () => setSubMenuOpen((prevState) => !prevState)
+
     return (
         <ButtonDropdown
             style={{ margin: '1rem' }}
             addonType="prepend"
-            disabled={!hasSubMenu}
             isOpen={subMenuOpen}
             toggle={subMenuToggle}
         >
             <DropdownToggle caret>
                 {`Sub Menus: ${Array.from(Object.keys(subMenus)).length}`}
             </DropdownToggle>
-            <SubMenuDropdown
-                setSubMenuSelection={setSubMenuSelection}
-                subMenus={subMenus}
-            />
+            <SubMenuDropdown />
         </ButtonDropdown>
     )
 }

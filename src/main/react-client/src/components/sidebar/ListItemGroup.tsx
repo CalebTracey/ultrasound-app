@@ -1,16 +1,27 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-underscore-dangle */
 import { MenuItem } from 'react-pro-sidebar'
-import { useDispatch } from 'react-redux'
-import PropTypes from 'prop-types'
-import React from 'react'
+import React, { FC } from 'react'
 import allActions from '../../redux/actions'
 import history from '../../helpers/history'
+import { useAppDispatch } from '../../redux/hooks'
+import allSlices from '../../redux/slices'
 
-const ListItemGroup = ({ listItems }) => {
-    const dispatch = useDispatch()
+interface listItem {
+    name: string
+    title: string
+    link: string
+}
+interface Props {
+    listItems: listItem[]
+}
 
-    const handleItemClick = (item) => {
+const ListItemGroup: FC<Props> = ({ listItems }): JSX.Element => {
+    const dispatch = useAppDispatch()
+
+    const handleItemClick = (item: listItem) => {
+        dispatch(allSlices.items.actions.setSelectedItem(item))
+        dispatch(allSlices.edit.actions.editingItem(true))
         dispatch(allActions.data.videoTitle(item.title))
         dispatch(allActions.data.selectedVideo(item))
         history.push(`/dashboard/video/${item.name}`)
@@ -24,17 +35,7 @@ const ListItemGroup = ({ listItems }) => {
             {item.name}
         </MenuItem>
     ))
-    return subMenuGroup
-}
-
-ListItemGroup.propTypes = {
-    listItems: PropTypes.arrayOf(
-        PropTypes.shape({
-            name: PropTypes.string,
-            title: PropTypes.string,
-            link: PropTypes.string,
-        })
-    ).isRequired,
+    return <>{subMenuGroup}</>
 }
 
 export default ListItemGroup

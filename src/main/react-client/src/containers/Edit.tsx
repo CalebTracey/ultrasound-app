@@ -1,7 +1,5 @@
-/* eslint-disable react/jsx-props-no-spreading */
-/* eslint-disable react/destructuring-assignment */
-/* eslint-disable react/prop-types */
-import React, { useEffect, useState, FC, useCallback } from 'react'
+/* eslint-disable no-underscore-dangle */
+import React, { useEffect, useState, FC, useCallback, useMemo } from 'react'
 import { withRouter, Redirect, RouteComponentProps } from 'react-router-dom'
 import { Media, Jumbotron, Container, Alert } from 'reactstrap'
 import { useAppSelector, useAppDispatch } from '../redux/hooks'
@@ -10,7 +8,25 @@ import EditItemListContainer from '../components/edit/EditItemListContainer'
 import EditDataName from '../components/edit/EditDataName'
 import allActions from '../redux/actions'
 import DeleteButton from '../components/buttons/DeleteButton'
+import EventBus from '../common/EventBus'
+// import editSlice from '../redux/slices/edit'
 
+interface IListItem {
+    name: string
+    title: string
+    link: string
+}
+interface ISubMenu {
+    key: string
+    value: string
+}
+interface IClassification {
+    _id: string
+    name: string
+    hasSubMenu: boolean
+    listItems: IListItem[]
+    subMenus: { [key: string]: ISubMenu }
+}
 interface Props {
     history: RouteComponentProps['history']
 }
@@ -19,17 +35,21 @@ const Edit: FC<Props> = ({ history }) => {
     const { roles } = useAppSelector((state) => state.auth.user)
     const { message } = useAppSelector((state) => state.message)
     const { selectedEdit } = useAppSelector((state) => state.data)
+    const { classifications } = useAppSelector((state) => state.data)
+    const { editingListItem, editingSubMenu } = useAppSelector(
+        (state) => state.edit
+    )
+    const [editState, setEditState] = useState(selectedEdit)
     const { _id, name, subMenus, listItems, hasSubMenu } = selectedEdit
-
-    const [editingSubMenu, setEditingSubMenu] = useState(false)
-    const [editingListItem, setEditingListItem] = useState(false)
     const dispatch = useAppDispatch()
 
     const handleCancel = useCallback(() => {
         dispatch(allActions.data.clearSelectedSubMenu())
-        setEditingSubMenu(false)
-        setEditingListItem(false)
     }, [dispatch])
+
+    const updateData = useCallback(() => {
+        dispatch(allActions.data.selectedEdit(editState))
+    }, [dispatch, editState])
 
     useEffect(() => {
         history.listen((location) => {
@@ -37,7 +57,7 @@ const Edit: FC<Props> = ({ history }) => {
         })
     }, [dispatch, history, handleCancel])
 
-    return roles.includes('ROLE_ADMIN') && selectedEdit.name !== undefined ? (
+    return roles.includes('ROLE_ADMIN') && name !== undefined ? (
         <Jumbotron>
             <div className="edit-content">
                 <Container>
@@ -47,7 +67,7 @@ const Edit: FC<Props> = ({ history }) => {
                         <Media heading>
                             <div style={{ display: 'flex' }}>
                                 <span className="display-4">
-                                    {selectedEdit.name.toUpperCase()}
+                                    {name.toUpperCase()}
                                 </span>
                                 <EditDataName
                                     id={_id}
@@ -67,25 +87,8 @@ const Edit: FC<Props> = ({ history }) => {
                             fluid
                             style={{ display: 'flex', padding: '2rem' }}
                         >
-                            {!editingListItem && (
-                                <EditSubMenuContainer
-                                    handleCancel={handleCancel}
-                                    editingSubMenu={editingSubMenu}
-                                    setEditingSubMenu={setEditingSubMenu}
-                                    hasSubMenu={hasSubMenu}
-                                    subMenus={subMenus}
-                                    classificationId={_id}
-                                />
-                            )}
-                            {!editingSubMenu && (
-                                <EditItemListContainer
-                                    handleCancel={handleCancel}
-                                    classificationId={_id}
-                                    listItems={listItems}
-                                    editingListItem={editingListItem}
-                                    setEditingListItem={setEditingListItem}
-                                />
-                            )}
+                            {!editingListItem && <EditSubMenuContainer />}
+                            {!editingSubMenu && <EditItemListContainer />}
                         </Container>
                     </Media>
                 </Container>

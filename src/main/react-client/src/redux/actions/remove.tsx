@@ -15,7 +15,7 @@ interface IDeleteItemProps {
     parentId: string
     parentType: string
     name: string
-    title: string
+    link: string
 }
 
 const deleteData =
@@ -43,9 +43,10 @@ const deleteData =
 const deleteItem =
     (props: IDeleteItemProps): ThunkAction<TPromise, RootState, any, TAction> =>
     (dispatch: TDispatch): TPromise => {
-        const { parentId, parentType, name, title } = props
+        const { parentId, parentType, name, link } = props
+        const itemDetails = { name, link }
         return api
-            .delete(`/delete-item/${parentType}/${parentId}/${title}/${name}`)
+            .post(`/delete-item/${parentType}/${parentId}`, itemDetails)
             .then((results: { data: string }): Promise<string> => {
                 dispatch({
                     type: SET_MESSAGE,

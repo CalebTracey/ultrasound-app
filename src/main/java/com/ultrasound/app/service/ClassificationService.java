@@ -1,6 +1,7 @@
 package com.ultrasound.app.service;
 
 import com.ultrasound.app.model.data.Classification;
+import com.ultrasound.app.model.data.SubMenu;
 
 import java.util.List;
 
@@ -13,8 +14,8 @@ public interface ClassificationService {
     List<Classification> all();
     Classification getById(String id);
     String save(Classification classification);
-    String updateClassificationName(String id, String name);
-    String updateSubMenuName(String classificationId, String subMenuId, String name);
+    String editName(Classification classification, String name);
     String delete(String id);
     void deleteSubMenu(String classificationId, String subMenuId);
+    String editItemName(String id, String currentName, String name, String link);
 }

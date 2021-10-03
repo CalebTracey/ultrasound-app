@@ -14,6 +14,7 @@ const DeleteButton: FC<Props> = ({ id, type, title }) => {
 
     const onClickHandler = () => {
         dispatch(allActions.remove.deleteData({ id, type }))
+        dispatch(allActions.edit.update())
     }
     return (
         <Button

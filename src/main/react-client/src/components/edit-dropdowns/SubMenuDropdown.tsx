@@ -1,19 +1,9 @@
 /* eslint-disable react/prop-types */
-import React, { FC } from 'react'
+import React from 'react'
 import { DropdownMenu } from 'reactstrap'
 import SubMenuItemList from './SubMenuItemList'
 
-interface ISubMenu {
-    key: string
-    value: string
-}
-
-interface Props {
-    setSubMenuSelection: (subMenu: ISubMenu) => void
-    subMenus: { [key: string]: ISubMenu }
-}
-
-const SubMenuDropdown: FC<Props> = ({ setSubMenuSelection, subMenus }) => (
+const SubMenuDropdown = (): JSX.Element => (
     <DropdownMenu
         modifiers={{
             setMaxHeight: {
@@ -30,10 +20,7 @@ const SubMenuDropdown: FC<Props> = ({ setSubMenuSelection, subMenus }) => (
             },
         }}
     >
-        <SubMenuItemList
-            setSubMenuSelection={setSubMenuSelection}
-            subMenus={subMenus}
-        />
+        <SubMenuItemList />
     </DropdownMenu>
 )
 

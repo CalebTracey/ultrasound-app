@@ -22,9 +22,10 @@ public class ClassificationServiceImpl implements ClassificationService {
 
     @Autowired
     private ClassificationRepo classificationRepo;
-
     @Autowired
     private SubMenuServiceImpl subMenuService;
+    @Autowired
+    private ItemServiceImpl itemService;
 
     @Override
     public Boolean subMenuExists(String id, String subMenu) {
@@ -66,8 +67,7 @@ public class ClassificationServiceImpl implements ClassificationService {
     }
 
     @Override
-    public String updateClassificationName(String id, String name) {
-        Classification classification = getById(id);
+    public String editName(Classification classification, String name) {
         String origName = classification.getName();
         classification.setName(name);
         log.info("Changing Classification name {} to {}",origName, name);
@@ -76,30 +76,24 @@ public class ClassificationServiceImpl implements ClassificationService {
     }
 
     @Override
-    public String updateSubMenuName(String classificationId, String subMenuId, String name) {
-        Classification classification = getById(classificationId);
-        SubMenu subMenu = subMenuService.getById(subMenuId);
-        String origName = subMenu.getName();
-        // update the name of the submenu in the classification
-        Map<String, String> subMenus = classification.getSubMenus();
-        subMenus.put(name, subMenuId);
-        subMenus.remove(origName);
-        classification.setSubMenus(subMenus);
-        classificationRepo.save(classification);
-        // update the name of the submenu object in the database
-        StringBuilder stringBuilder = new StringBuilder();
-        subMenu.setName(name);
-        // update item titles
-        subMenu.getItemList().forEach(listItem -> {
-            stringBuilder.setLength(0);
-            stringBuilder.append(classification.getName()).append(" ").append(name).append(" ").append(listItem.getName());
-            listItem.setTitle(stringBuilder.toString());
-        });
-        stringBuilder.setLength(0);
-        log.info("Changing Submenu name {} to {} in Classification: {}",origName, name, classification.getName());
-        subMenuService.saveReturnName(subMenu);
-        stringBuilder.append("Changed Submenu name ").append(origName).append(" to ").append(name);
-        return stringBuilder.toString();
+    public String editItemName(String id, String currentName, String name, String link) {
+        Classification classification = getById(id);
+        String className = classification.getName();
+        List<ListItem> listItems = classification.getListItems();
+
+        ListItem item = itemService.findByLink(listItems, link, name, "classification", className);
+        List<ListItem> itemList;
+        if (listItems.size() > 1) {
+            itemList = itemService.removeItemFromList(listItems, link);
+        } else {
+            itemList = new ArrayList<>();
+            itemList.add(item);
+        }
+        item.setName(name);
+        itemList.add(item);
+        classification.setListItems(itemList);
+        save(classification);
+        return "Saved " + currentName + " as " + name + " in " + className;
     }
 
     @Override

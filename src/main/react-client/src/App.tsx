@@ -24,33 +24,18 @@ const App: FC<Props> = ({ history }): JSX.Element => {
         dispatch(allActions.auth.logout())
     }, [dispatch])
 
-    // onLocationUpdate = (location: Location<unknown>): void => {}
-
     useEffect(() => {
         history.listen((location) => {
             dispatch({ type: CLEAR_MESSAGE })
         })
     }, [dispatch, history])
-    // useEffect(() => {
-    // eslint-disable-next-line no-unused-vars
-    // history.listen(location) => {
-    // clear message when changing location
-    // dispatch({ type: CLEAR_MESSAGE })
-    // }
-    // }, [dispatch, history])
-    // useEffect(() => {
-    //     window.addEventListener('popstate', (event) => {
-    //         dispatch({ type: CLEAR_MESSAGE })
-    //     })
-    //     return () => window.removeEventListener('popstate')
-    // }, [dispatch])
 
     useEffect(() => {
         EventBus.on('logout', () => {
             logOut()
         })
         return () => {
-            EventBus.remove('logout')
+            EventBus.remove('logout', logOut)
         }
     }, [currentUser, dispatch, logOut])
 

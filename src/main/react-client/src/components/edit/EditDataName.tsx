@@ -1,9 +1,7 @@
 import React, { FC, useState } from 'react'
 import { Button } from 'reactstrap'
-// import { FiEdit3 } from 'react-icons/fi'
 import EditDataNameForm from './EditDataNameForm'
-// const { editDataName } = EditService
-import { useAppSelector, useAppDispatch } from '../../redux/hooks'
+import { useAppDispatch } from '../../redux/hooks'
 import allActions from '../../redux/actions'
 
 interface Props {
@@ -13,21 +11,22 @@ interface Props {
 }
 
 const EditDataName: FC<Props> = ({ id, currentName, type }) => {
-    const [editClassNameActive, setEditClassNameActive] = useState(false)
+    const [editDataNameActive, setEditDataNameActive] = useState(false)
     const [textValue, setTextValue] = useState<string>('')
     const dispatch = useAppDispatch()
-    const onClickHandler = () => {
+
+    const onSubmit = () => {
         dispatch(allActions.edit.dataName({ id, textValue, type }))
     }
 
-    return editClassNameActive ? (
+    return editDataNameActive ? (
         <div style={{ display: 'flex' }}>
             <EditDataNameForm
                 currentName={currentName}
                 textValue={textValue}
                 setInputText={setTextValue}
             />
-            <Button color="primary" size="sm" onClick={onClickHandler}>
+            <Button color="primary" size="sm" onClick={onSubmit}>
                 Save
             </Button>
         </div>
@@ -36,7 +35,7 @@ const EditDataName: FC<Props> = ({ id, currentName, type }) => {
             outline
             size="sm"
             color="primary"
-            onClick={() => setEditClassNameActive(true)}
+            onClick={() => setEditDataNameActive(true)}
         >
             <span>Edit Name</span>
         </Button>

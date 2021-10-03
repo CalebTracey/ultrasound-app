@@ -1,7 +1,9 @@
-import React, { FC, useState, useEffect } from 'react'
+import React, { FC, useState, useEffect, useReducer } from 'react'
 import { Button } from 'reactstrap'
 import allActions from '../../redux/actions'
-import { useAppDispatch } from '../../redux/hooks'
+import { useAppDispatch, useAppSelector } from '../../redux/hooks'
+import EditItemName from './EditItemName'
+import { itemsReducer } from '../../redux/slices/items'
 
 type DefaultProps = {
     classificationId: string | undefined
@@ -11,28 +13,19 @@ const defaultProps = {
     classificationId: undefined,
     subMenuId: undefined,
 } as DefaultProps
-interface IListItem {
-    name: string
-    title: string
-    link: string
-}
 interface Props {
-    handleCancel: () => void
     classificationId?: string
     subMenuId?: string
-    listItemSelection: IListItem
 }
 
-const EditItemList: FC<Props> = ({
-    handleCancel,
-    classificationId,
-    subMenuId,
-    listItemSelection,
-}) => {
-    const { name, title, link } = listItemSelection
-    const dispatch = useAppDispatch()
+const EditItemList: FC<Props> = ({ classificationId, subMenuId }) => {
+    const itemsState = useAppSelector((state) => state.items)
+    const [state, dispatch] = useReducer(itemsReducer, itemsState)
+    const { selectedItem } = state
     const [parentId, setParentId] = useState('')
     const [parentType, setParentType] = useState('')
+
+    const appDispatch = useAppDispatch()
 
     useEffect(() => {
         if (classificationId !== undefined && subMenuId === undefined) {
@@ -47,22 +40,41 @@ const EditItemList: FC<Props> = ({
     }, [classificationId, subMenuId])
 
     const handleDelete = () => {
-        dispatch(
-            allActions.remove.deleteItem({ parentId, parentType, title, name })
-        )
+        if (selectedItem !== undefined) {
+            if (selectedItem.link !== '' && selectedItem.name !== '') {
+                const { link, name } = selectedItem
+                appDispatch(
+                    allActions.remove.deleteItem({
+                        parentId,
+                        parentType,
+                        link,
+                        name,
+                    })
+                )
+            }
+        }
     }
 
-    return (
+    return selectedItem !== undefined ? (
         <div>
-            <span style={{ textTransform: 'uppercase' }}>{name}</span>
-            <Button outline color="danger" onClick={() => handleCancel()}>
+            <span style={{ textTransform: 'uppercase' }}>
+                {selectedItem.name}
+            </span>
+            {/* <Button outline color="danger" onClick={() => handleCancel()}>
                 <span>Cancel</span>
-            </Button>
+            </Button> */}
             <Button color="danger" onClick={handleDelete}>
                 <span>Delete</span>
             </Button>
-            {/* <EditDataName id={id} type="submenu" currentName={name} /> */}
+            <EditItemName
+                id={parentId}
+                type={parentType}
+                link={selectedItem.link}
+                currentName={selectedItem.name}
+            />
         </div>
+    ) : (
+        <>Loading...</>
     )
 }
 EditItemList.defaultProps = defaultProps

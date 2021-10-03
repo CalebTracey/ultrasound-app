@@ -1,6 +1,5 @@
 /* eslint-disable class-methods-use-this */
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
-import { FC } from 'react'
+import axios from 'axios'
 
 // const { REACT_APP_API_URL } = process.env;
 
@@ -12,10 +11,8 @@ const instance = axios.create({
     },
 })
 
-// instance.CancelToken = axios.CancelToken;
-// instance.isCancel = axios.isCancel;
-
 export default instance
+
 // const headers: Readonly<Record<string, string | boolean>> = {
 //     Accept: 'application/json',
 //     'Content-Type': 'application/json; charset=utf-8',

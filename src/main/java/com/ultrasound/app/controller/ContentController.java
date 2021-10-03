@@ -5,7 +5,9 @@ import com.ultrasound.app.model.data.Classification;
 import com.ultrasound.app.model.data.SubMenu;
 import com.ultrasound.app.security.service.UserDetailsServiceImpl;
 import com.ultrasound.app.service.*;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,14 +50,14 @@ public class ContentController {
 
     @GetMapping("/classifications")
 //    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<List<Classification>> classifications() {
+    public ResponseEntity<?> classifications() {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/api/classifications").toUriString());
         return ResponseEntity.created(uri).body(classificationService.all());
     }
 
     @GetMapping("/submenu/{id}")
-    public ResponseEntity<SubMenu> subMenu(@PathVariable String id) {
+    public ResponseEntity<?> subMenu(@PathVariable String id) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/api/submenu/{id}").toUriString());
         return ResponseEntity.created(uri).body(subMenuService.getById(id));
@@ -66,7 +68,8 @@ public class ContentController {
                                                     @RequestBody Name name) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/api/edit/classification/name/{id}").toUriString());
-        return ResponseEntity.created(uri).body(classificationService.updateClassificationName(id, name.getName()));
+        Classification classification = classificationService.getById(id);
+        return ResponseEntity.created(uri).body(classificationService.editName(classification, name.getName()));
 
     }
 
@@ -76,8 +79,29 @@ public class ContentController {
                                              @RequestBody Name name) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/api/edit/submenu/name/{id}").toUriString());
+        Classification classification = classificationService.getById(classificationId);
+        SubMenu subMenu = subMenuService.getById(subMenuId);
+        return ResponseEntity.created(uri).body(subMenuService
+                .editName(classification, subMenu, subMenuId, name.getName()));
+    }
+
+    @PostMapping("/edit/submenu/item/name/{id}")
+    public ResponseEntity<?> editSubmenuItemName(@PathVariable String id,
+                                                 @RequestBody NewItemName item) {
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/api/edit/submenu/item/name/{id}").toUriString());
+        return ResponseEntity.created(uri).body(subMenuService
+                .editItemName(id, item.getName(), item.getNewName(), item.getLink()));
+    }
+
+    @PostMapping("/edit/classification/item/name/{id}")
+    public ResponseEntity<?> editClassificationItemName(@PathVariable String id,
+                                                        @RequestBody NewItemName item) {
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/api/edit/classification/item/name/{id}").toUriString());
         return ResponseEntity.created(uri).body(classificationService
-                .updateSubMenuName(classificationId, subMenuId, name.getName()));
+                .editItemName(id, item.getName(), item.getNewName(), item.getLink()));
+
     }
 
     @DeleteMapping("/delete-data/classification/{id}")
@@ -97,22 +121,22 @@ public class ContentController {
                 .deleteByIdClassification(classificationId, subMenuId));
     }
 
-    @DeleteMapping("/delete-item/classification/{classificationId}/{title}/{name}")
+    @PostMapping("/delete-item/classification/{classificationId}")
     public ResponseEntity<?> deleteItemClassification(@PathVariable String classificationId,
-                                                      @PathVariable String title,
-                                                      @PathVariable String name) {
+                                                      @RequestBody ItemLink item) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/api/delete-item/classification/{classificationId}/{title}/{name}").toUriString());
-        return ResponseEntity.created(uri).body(itemService.deleteItemClassification(classificationId, title, name));
+                .path("/api/delete-item/classification/{classificationId}").toUriString());
+        Classification classification = classificationService.getById(classificationId);
+        return ResponseEntity.created(uri).body(itemService.deleteItem(classification, item.getLink(), item.getName()));
     }
 
-    @DeleteMapping("/delete-item/submenu/{classificationId}/{title}/{name}")
-    public ResponseEntity<?> deleteItemSubmenu(@PathVariable String classificationId,
-                                                      @PathVariable String title,
-                                                      @PathVariable String name) {
+    @PostMapping("/delete-item/submenu/{subMenuId}")
+    public ResponseEntity<?> deleteItemSubmenu(@PathVariable String subMenuId,
+                                               @RequestBody ItemLink item) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/api/delete-item/submenu/{classificationId}/{title}/{name}").toUriString());
-        return ResponseEntity.created(uri).body(itemService.deleteItemSubMenu(classificationId, title, name));
+                .path("/api/delete-item/submenu/{subMenuId}").toUriString());
+        SubMenu subMenu = subMenuService.getById(subMenuId);
+        return ResponseEntity.created(uri).body(itemService.deleteItem(subMenu, item.getLink(), item.getName()));
     }
 }
 
@@ -120,4 +144,17 @@ public class ContentController {
 class Name {
     private String name;
 }
+@Getter
+class ItemLink {
+    private String name;
+    private String link;
+}
+@Getter
+class NewItemName {
+    private String newName;
+    private String link;
+    private String name;
+}
+
+
 

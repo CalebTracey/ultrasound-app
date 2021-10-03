@@ -37,9 +37,10 @@ const data = (state = initialState, action) => {
                 classifications: payload.data,
             }
         case SET_CLASSIFICATIONS:
+            console.log(payload)
             return {
                 ...state,
-                classifications: payload.data,
+                classifications: payload,
             }
         case SET_SELECTED_CLASSIFICATION:
             return {

@@ -2,8 +2,8 @@ package com.ultrasound.app.exceptions;
 
 public class ClassificationNotFoundException extends RuntimeException{
 
-    public ClassificationNotFoundException(String id) {
-        super ("Could not find a Classification with the id: " + id);
+    public ClassificationNotFoundException(String identifier) {
+        super ("Could not find a Classification with the identifier: " + identifier);
     }
 
 }

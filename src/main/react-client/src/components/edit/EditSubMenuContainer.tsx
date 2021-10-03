@@ -1,75 +1,19 @@
-import React, { FC, useState, useEffect } from 'react'
-import { Label } from 'reactstrap'
-import { useAppSelector, useAppDispatch } from '../../redux/hooks'
+import React from 'react'
+// import { Label } from 'reactstrap'
+import { useAppSelector } from '../../redux/hooks'
 import SubMenuDropdownContainer from '../edit-dropdowns/SubMenuDropdownContainer'
 import EditSubMenu from './EditSubMenu'
-import allActions from '../../redux/actions'
 
-interface IState {
-    subMenu: {
-        key: string
-        value: string
-    }
-}
-interface ISubMenu {
-    key: string
-    value: string
-}
-interface Props {
-    subMenus: { [key: string]: ISubMenu }
-    hasSubMenu: boolean
-    editingSubMenu: boolean
-    handleCancel: () => void
-    classificationId: string
-    setEditingSubMenu: (editingSubMenu: boolean) => void
-}
-const EditSubMenuContainer: FC<Props> = ({
-    subMenus,
-    hasSubMenu,
-    editingSubMenu,
-    setEditingSubMenu,
-    handleCancel,
-    classificationId,
-}) => {
-    const { selectedSubMenu } = useAppSelector((state) => state.data)
-    const { _id, name, itemList } = selectedSubMenu
-    const [isLoading, setIsLoading] = useState(false)
-    const dispatch = useAppDispatch()
+const EditSubMenuContainer = (): JSX.Element => {
+    const { editingSubMenu } = useAppSelector((state) => state.edit)
+    const { selectedEdit } = useAppSelector((state) => state.data)
+    const { hasSubMenu } = selectedEdit
 
-    const [subMenuSelection, setSubMenuSelection] = useState<
-        IState['subMenu'] | undefined
-    >(undefined)
-
-    useEffect(() => {
-        if (subMenuSelection !== undefined) {
-            setIsLoading(true)
-            setEditingSubMenu(true)
-            dispatch(allActions.data.subMenu(subMenuSelection))
-            setIsLoading(false)
-        }
-    }, [subMenuSelection, dispatch, setEditingSubMenu])
-
-    return !isLoading ? (
+    return (
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {hasSubMenu && (
-                <SubMenuDropdownContainer
-                    setSubMenuSelection={setSubMenuSelection}
-                    hasSubMenu={hasSubMenu}
-                    subMenus={subMenus}
-                />
-            )}
-            {itemList !== undefined && editingSubMenu && (
-                <EditSubMenu
-                    handleCancel={handleCancel}
-                    subMenuId={_id}
-                    classificationId={classificationId}
-                    name={name}
-                    itemList={itemList}
-                />
-            )}
+            {hasSubMenu && <SubMenuDropdownContainer />}
+            {editingSubMenu && <EditSubMenu />}
         </div>
-    ) : (
-        <> Loading...</>
     )
 }
 

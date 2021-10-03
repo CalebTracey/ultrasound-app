@@ -1,18 +1,8 @@
-import React, { FC } from 'react'
+import React from 'react'
 import { DropdownMenu } from 'reactstrap'
 import ItemListComponentList from './ItemListComponentList'
 
-interface IListItem {
-    name: string
-    title: string
-    link: string
-}
-interface Props {
-    listItems: IListItem[]
-    setListItemSelection: (listItemSelection: IListItem) => void
-}
-
-const ItemListDropdown: FC<Props> = ({ listItems, setListItemSelection }) => (
+const ItemListDropdown = (): JSX.Element => (
     <DropdownMenu
         modifiers={{
             setMaxHeight: {
@@ -29,10 +19,7 @@ const ItemListDropdown: FC<Props> = ({ listItems, setListItemSelection }) => (
             },
         }}
     >
-        <ItemListComponentList
-            listItems={listItems}
-            setListItemSelection={setListItemSelection}
-        />
+        <ItemListComponentList />
     </DropdownMenu>
 )
 

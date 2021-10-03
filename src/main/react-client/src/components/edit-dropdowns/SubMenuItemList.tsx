@@ -1,21 +1,20 @@
-import React, { FC } from 'react'
+import React from 'react'
 import { DropdownItem } from 'reactstrap'
+import allActions from '../../redux/actions'
+import { useAppSelector, useAppDispatch } from '../../redux/hooks'
 
-interface ISubMenu {
-    key: string
-    value: string
-}
-interface Props {
-    subMenus: { [key: string]: ISubMenu }
-    setSubMenuSelection: (subMenu: ISubMenu) => void
-}
+const SubMenuItemList = (): JSX.Element => {
+    const { subMenus } = useAppSelector((state) => state.data.selectedEdit)
+    const dispatch = useAppDispatch()
 
-const SubMenuItemList: FC<Props> = ({ subMenus, setSubMenuSelection }) => {
+    const setSelectedSubMenu = (id: string) => {
+        dispatch(allActions.data.subMenu(id))
+    }
     const listNode = Object.keys(subMenus).map((key: string) => {
         return (
             <DropdownItem
                 style={{ textTransform: 'uppercase' }}
-                onClick={() => setSubMenuSelection(subMenus[key])}
+                onClick={() => setSelectedSubMenu(subMenus[key])}
             >
                 {key}
             </DropdownItem>
