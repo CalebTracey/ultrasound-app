@@ -5,14 +5,15 @@ import { Redirect } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as Yup from 'yup'
+import history from '../helpers/history'
 import LoginForm from '../components/login/LoginForm'
-import allActions from '../redux/actions'
 import HomeButton from '../components/buttons/HomeButton'
 import RegisterButton from '../components/register/RegisterButton'
+import { login } from '../redux/slices/auth'
 
-const Login = (props) => {
+const Login = () => {
     const [isLoading, setIsLoading] = useState(false)
-    const { message } = useSelector((state) => state.message)
+    const message = useSelector((state) => state.message.text)
     const { isAuth, user } = useSelector((state) => state.auth)
     const dispatch = useDispatch()
 
@@ -33,11 +34,11 @@ const Login = (props) => {
     const onSubmit = async (data) => {
         setIsLoading(true)
         if (Array.from(errors).length === 0) {
-            await dispatch(allActions.auth.login(data))
+            dispatch(login(data))
                 .then(() => {
                     // console.log(res.data);
                     // if (res.data.roles) {
-                    props.history.push('/dashboard')
+                    history.push('/dashboard')
                     // }
                 })
                 .catch(() => {

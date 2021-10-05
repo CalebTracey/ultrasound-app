@@ -1,15 +1,12 @@
 /* eslint-disable no-underscore-dangle */
-import React, { useEffect, useState, FC, useCallback, useMemo } from 'react'
+import React, { useEffect, FC, useCallback } from 'react'
 import { withRouter, Redirect, RouteComponentProps } from 'react-router-dom'
 import { Media, Jumbotron, Container, Alert } from 'reactstrap'
 import { useAppSelector, useAppDispatch } from '../redux/hooks'
 import EditSubMenuContainer from '../components/edit/EditSubMenuContainer'
 import EditItemListContainer from '../components/edit/EditItemListContainer'
 import EditDataName from '../components/edit/EditDataName'
-import allActions from '../redux/actions'
 import DeleteButton from '../components/buttons/DeleteButton'
-import EventBus from '../common/EventBus'
-// import editSlice from '../redux/slices/edit'
 
 interface IListItem {
     name: string
@@ -32,24 +29,23 @@ interface Props {
 }
 
 const Edit: FC<Props> = ({ history }) => {
-    const { roles } = useAppSelector((state) => state.auth.user)
-    const { message } = useAppSelector((state) => state.message)
-    const { selectedEdit } = useAppSelector((state) => state.data)
-    const { classifications } = useAppSelector((state) => state.data)
-    const { editingListItem, editingSubMenu } = useAppSelector(
-        (state) => state.edit
-    )
-    const [editState, setEditState] = useState(selectedEdit)
-    const { _id, name, subMenus, listItems, hasSubMenu } = selectedEdit
+    const roles = useAppSelector((state) => state.auth.user?.roles)
+    const { message } = useAppSelector((state) => state)
+    const classifications = useAppSelector((state) => state.classification)
+    const editingSubMenu = useAppSelector((state) => state.subMenu.editing)
+    const editingListItem = useAppSelector((state) => state.item.editing)
+    const selectedClassification = classifications.selected
+    const { _id, name, listItems } = selectedClassification
     const dispatch = useAppDispatch()
 
     const handleCancel = useCallback(() => {
-        dispatch(allActions.data.clearSelectedSubMenu())
-    }, [dispatch])
+        // dispatch(allActions.data.clearSelectedSubMenu())
+        console.log('cancel')
+    }, [])
 
-    const updateData = useCallback(() => {
-        dispatch(allActions.data.selectedEdit(editState))
-    }, [dispatch, editState])
+    // const updateData = useCallback(() => {
+    //     dispatch(allActions.data.selectedEdit(editState))
+    // }, [dispatch, editState])
 
     useEffect(() => {
         history.listen((location) => {
@@ -57,11 +53,11 @@ const Edit: FC<Props> = ({ history }) => {
         })
     }, [dispatch, history, handleCancel])
 
-    return roles.includes('ROLE_ADMIN') && name !== undefined ? (
+    return roles && roles.includes('ROLE_ADMIN') && name !== undefined ? (
         <Jumbotron>
             <div className="edit-content">
                 <Container>
-                    {message !== '' && <Alert color="info">{message}</Alert>}
+                    {message && <Alert color="info">{message}</Alert>}
                     <Media body>
                         <h4 className="lead">Editing:</h4>
                         <Media heading>
@@ -88,7 +84,12 @@ const Edit: FC<Props> = ({ history }) => {
                             style={{ display: 'flex', padding: '2rem' }}
                         >
                             {!editingListItem && <EditSubMenuContainer />}
-                            {!editingSubMenu && <EditItemListContainer />}
+                            {!editingSubMenu && (
+                                <EditItemListContainer
+                                    listItems={listItems}
+                                    classificationId={_id}
+                                />
+                            )}
                         </Container>
                     </Media>
                 </Container>

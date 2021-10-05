@@ -1,14 +1,15 @@
 import React from 'react'
 import { DropdownItem } from 'reactstrap'
-import allActions from '../../redux/actions'
-import { useAppSelector, useAppDispatch } from '../../redux/hooks'
+import { useAppSelector } from '../../redux/hooks'
+import { getOne } from '../../redux/slices/subMenu'
 
 const SubMenuItemList = (): JSX.Element => {
-    const { subMenus } = useAppSelector((state) => state.data.selectedEdit)
-    const dispatch = useAppDispatch()
+    const { subMenus } = useAppSelector(
+        (state) => state.classification.selected
+    )
 
     const setSelectedSubMenu = (id: string) => {
-        dispatch(allActions.data.subMenu(id))
+        getOne(id)
     }
     const listNode = Object.keys(subMenus).map((key: string) => {
         return (

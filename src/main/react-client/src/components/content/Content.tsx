@@ -1,15 +1,13 @@
-import React from 'react'
-import { useSelector } from 'react-redux'
+import React, { FC } from 'react'
 import { Media, Jumbotron, Container } from 'reactstrap'
 import { Redirect } from 'react-router-dom'
 import ContentRoutes from '../../routes/ContentRoutes'
+import { useAppSelector } from '../../redux/hooks'
 
-const Content = () => {
-    const { selectedVideo, selectedVideoTitle, selectedVideoUrl } = useSelector(
-        (state) => state.data
-    )
+const Content: FC = () => {
+    const { selected, editing } = useAppSelector((state) => state.item)
 
-    if (!selectedVideo || !selectedVideoTitle) {
+    if (!selected || editing) {
         ;<Redirect to="/dashboard" />
     }
 
@@ -23,14 +21,11 @@ const Content = () => {
                     <Container fluid>
                         <div className="video-title-wrapper">
                             <Media style={{ fontSize: '2vw' }} heading>
-                                {selectedVideoTitle}
+                                {selected.title}
                             </Media>
                         </div>
                         <Container fluid>
-                            <ContentRoutes
-                                selectedVideo={selectedVideo}
-                                selectedVideoList={selectedVideoUrl}
-                            />
+                            <ContentRoutes />
                         </Container>
                     </Container>
                 </Jumbotron>

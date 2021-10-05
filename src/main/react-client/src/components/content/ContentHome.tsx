@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { Media, Jumbotron, Container } from 'reactstrap'
 
-const ContentHome = (): JSX.Element => {
+const ContentHome: FC = () => {
     return (
         <Jumbotron>
             <Container>

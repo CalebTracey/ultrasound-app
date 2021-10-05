@@ -2,25 +2,23 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { ThunkDispatch } from 'redux-thunk'
 import { AnyAction, Store } from 'redux'
-import auth from './reducers/auth'
-import message from './reducers/message'
-import data from './reducers/data'
-import edit from './slices/edit'
-import items from './slices/items'
-import subMenus from './slices/subMenus'
+import auth from './slices/auth'
+import item from './slices/item'
+import classification from './slices/classification'
+import subMenu from './slices/subMenu'
+import message from './slices/message'
 
-export const store = configureStore({
+const store = configureStore({
     reducer: {
-        auth,
-        message,
-        data,
-        edit: edit.reducer,
-        items: items.reducer,
-        subMenus: subMenus.reducer,
+        auth: auth.reducer,
+        item: item.reducer,
+        message: message.reducer,
+        subMenu: subMenu.reducer,
+        classification: classification.reducer,
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
 })
-
+export default store
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
 export type TDispatch = ThunkDispatch<RootState, void, AnyAction>

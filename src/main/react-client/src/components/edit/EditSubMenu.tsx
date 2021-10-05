@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import React from 'react'
+import React, { FC } from 'react'
 import { Button } from 'reactstrap'
 import EditDataName from './EditDataName'
 import DeleteButton from '../buttons/DeleteButton'
@@ -7,11 +7,12 @@ import EditItemListContainer from './EditItemListContainer'
 import { useAppSelector } from '../../redux/hooks'
 import EventBus from '../../common/EventBus'
 
-const EditSubMenu = (): JSX.Element => {
-    const { selectedSubMenu } = useAppSelector((state) => state.data)
-    const { selectedEdit } = useAppSelector((state) => state.data)
-    const classificationId = selectedEdit._id
-    const { _id, name } = selectedSubMenu
+const EditSubMenu: FC = () => {
+    const { selected } = useAppSelector((state) => state.subMenu)
+    const classificationId = useAppSelector(
+        (state) => state.classification.selected._id
+    )
+    const { _id, name, itemList } = selected
 
     const dispatchCancel = () => {
         EventBus.dispatch('cancel')
@@ -33,7 +34,11 @@ const EditSubMenu = (): JSX.Element => {
                 type="submenu"
                 currentName={name}
             />
-            <EditItemListContainer />
+            <EditItemListContainer
+                listItems={itemList}
+                classificationId={classificationId}
+                subMenuId={_id}
+            />
         </div>
     )
 }

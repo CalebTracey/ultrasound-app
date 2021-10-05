@@ -2,7 +2,6 @@ import React, { FC, useState } from 'react'
 import { Button } from 'reactstrap'
 import EditDataNameForm from './EditDataNameForm'
 import { useAppDispatch } from '../../redux/hooks'
-import allActions from '../../redux/actions'
 
 interface Props {
     id: string
@@ -17,9 +16,10 @@ const EditItemName: FC<Props> = ({ id, link, currentName, type }) => {
     const dispatch = useAppDispatch()
 
     const onSubmit = () => {
-        dispatch(
-            allActions.edit.itemName({ id, link, textValue, type, currentName })
-        )
+        // dispatch(
+        //     allActions.edit.itemName({ id, link, textValue, type, currentName })
+        // )
+        console.log('edit')
     }
 
     return editClassNameActive ? (

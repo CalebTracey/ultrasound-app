@@ -1,6 +1,5 @@
 import React, { FC } from 'react'
 import { Button } from 'reactstrap'
-import allActions from '../../redux/actions'
 import { useAppDispatch } from '../../redux/hooks'
 
 interface Props {
@@ -13,8 +12,9 @@ const DeleteButton: FC<Props> = ({ id, type, title }) => {
     const dispatch = useAppDispatch()
 
     const onClickHandler = () => {
-        dispatch(allActions.remove.deleteData({ id, type }))
-        dispatch(allActions.edit.update())
+        // dispatch(allActions.remove.deleteData({ id, type }))
+        // dispatch(allActions.edit.update())
+        console.log('delete')
     }
     return (
         <Button

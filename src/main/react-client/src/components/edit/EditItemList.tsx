@@ -1,27 +1,21 @@
-import React, { FC, useState, useEffect, useReducer } from 'react'
+import React, { FC, useState, useEffect } from 'react'
 import { Button } from 'reactstrap'
-import allActions from '../../redux/actions'
 import { useAppDispatch, useAppSelector } from '../../redux/hooks'
 import EditItemName from './EditItemName'
-import { itemsReducer } from '../../redux/slices/items'
 
 type DefaultProps = {
-    classificationId: string | undefined
     subMenuId: string | undefined
 }
 const defaultProps = {
-    classificationId: undefined,
     subMenuId: undefined,
 } as DefaultProps
 interface Props {
-    classificationId?: string
+    classificationId: string
     subMenuId?: string
 }
 
 const EditItemList: FC<Props> = ({ classificationId, subMenuId }) => {
-    const itemsState = useAppSelector((state) => state.items)
-    const [state, dispatch] = useReducer(itemsReducer, itemsState)
-    const { selectedItem } = state
+    const { selected } = useAppSelector((state) => state.item)
     const [parentId, setParentId] = useState('')
     const [parentType, setParentType] = useState('')
 
@@ -40,26 +34,24 @@ const EditItemList: FC<Props> = ({ classificationId, subMenuId }) => {
     }, [classificationId, subMenuId])
 
     const handleDelete = () => {
-        if (selectedItem !== undefined) {
-            if (selectedItem.link !== '' && selectedItem.name !== '') {
-                const { link, name } = selectedItem
-                appDispatch(
-                    allActions.remove.deleteItem({
-                        parentId,
-                        parentType,
-                        link,
-                        name,
-                    })
-                )
+        if (selected !== undefined) {
+            if (selected.link !== '' && selected.name !== '') {
+                const { link, name } = selected
+                // appDispatch(
+                //     allActions.remove.deleteItem({
+                //         parentId,
+                //         parentType,
+                //         link,
+                //         name,
+                //     })
+                // )
             }
         }
     }
 
-    return selectedItem !== undefined ? (
+    return selected !== undefined ? (
         <div>
-            <span style={{ textTransform: 'uppercase' }}>
-                {selectedItem.name}
-            </span>
+            <span style={{ textTransform: 'uppercase' }}>{selected.name}</span>
             {/* <Button outline color="danger" onClick={() => handleCancel()}>
                 <span>Cancel</span>
             </Button> */}
@@ -69,8 +61,8 @@ const EditItemList: FC<Props> = ({ classificationId, subMenuId }) => {
             <EditItemName
                 id={parentId}
                 type={parentType}
-                link={selectedItem.link}
-                currentName={selectedItem.name}
+                link={selected.link}
+                currentName={selected.name}
             />
         </div>
     ) : (

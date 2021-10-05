@@ -1,7 +1,7 @@
-import React, { useReducer } from 'react'
+import React from 'react'
 import { DropdownItem } from 'reactstrap'
 import { useAppSelector } from '../../redux/hooks'
-import itemSlice, { itemsReducer } from '../../redux/slices/items'
+import { selectedItem } from '../../redux/slices/item'
 
 interface IListItem {
     name: string
@@ -10,20 +10,14 @@ interface IListItem {
 }
 
 const ItemListComponentList = (): JSX.Element => {
-    const itemsState = useAppSelector((state) => state.items)
-    const [state, dispatch] = useReducer(itemsReducer, itemsState)
-    const { selectedItemList } = state
-    const dispatchItemSelection = (item: IListItem) => {
-        dispatch(
-            itemSlice.actions.setSelectedItem({
-                item,
-            })
-        )
+    const { entities } = useAppSelector((state) => state.item)
+    const handleItemSelection = (item: IListItem) => {
+        selectedItem(item)
     }
     const listNode =
-        selectedItemList !== undefined ? (
-            selectedItemList.map((listItem: IListItem) => (
-                <DropdownItem onClick={() => dispatchItemSelection(listItem)}>
+        entities !== undefined ? (
+            (entities as IListItem[]).map((listItem: IListItem) => (
+                <DropdownItem onClick={() => handleItemSelection(listItem)}>
                     {listItem.name}
                 </DropdownItem>
             ))

@@ -1,34 +1,36 @@
-import React, { useEffect, useState, FC, useCallback } from 'react'
-import { withRouter, Redirect } from 'react-router-dom'
-import { useSelector } from 'react-redux'
-import EventBus from '../common/EventBus'
+import React, { useEffect, useCallback } from 'react'
+import { withRouter } from 'react-router-dom'
 import { useAppSelector, useAppDispatch } from '../redux/hooks'
 import Sidebar from './Sidebar'
 import Body from '../components/layout/Body'
-import allActions from '../redux/actions'
+import { getAll } from '../redux/slices/classification'
+import EventBus from '../common/EventBus'
 
 const Dashboard = () => {
-    const { classifications } = useAppSelector((state) => state.data)
-    const [isLoading, setIsLoading] = useState(false)
+    const { entities, loading } = useAppSelector(
+        (state) => state.classification
+    )
+    const { isAuth } = useAppSelector((state) => state.auth)
     const dispatch = useAppDispatch()
 
+    useEffect(() => {
+        if (!isAuth) {
+            EventBus.dispatch('logout')
+        }
+    }, [isAuth])
+
     const loadData = useCallback(() => {
-        dispatch(allActions.edit.update())
+        dispatch(getAll())
     }, [dispatch])
 
     useEffect(() => {
-        if (classifications.length === 0) {
-            setIsLoading(true)
+        if (entities.length === 0) {
             loadData()
         }
-        if (classifications) {
-            setIsLoading(false)
-        }
-    }, [classifications, loadData])
-
+    }, [entities, loadData])
     return (
         <div className="app">
-            {!isLoading && <Sidebar />}
+            {loading !== 'pending' && <Sidebar />}
             <Body />
         </div>
     )

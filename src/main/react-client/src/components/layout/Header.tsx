@@ -1,10 +1,10 @@
 /* eslint-disable react/prop-types */
-import React from 'react'
+import React, { FC } from 'react'
 import Logout from '../buttons/LogoutButton'
 import UserInfoHeader from '../UserInfoHeader'
 import { useAppSelector } from '../../redux/hooks'
 
-const Header = (): JSX.Element => {
+const Header: FC = () => {
     const { user } = useAppSelector((state) => state.auth)
     return (
         <div className="header">

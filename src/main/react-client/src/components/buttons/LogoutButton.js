@@ -1,15 +1,13 @@
 import React from 'react'
-import { useDispatch } from 'react-redux'
-import allActions from '../../redux/actions'
+import EventBus from '../../common/EventBus'
 
-const Logout = () => {
-    const dispatch = useDispatch()
+const LogoutButton = () => {
     return (
         <div className="form-group" style={{ marginLeft: '1rem' }}>
             <button
                 type="button"
                 className="btn btn-outline-primary"
-                onClick={() => dispatch(allActions.auth.logout())}
+                onClick={() => EventBus.dispatch('logout')}
             >
                 Logout
             </button>
@@ -17,4 +15,4 @@ const Logout = () => {
     )
 }
 
-export default Logout
+export default LogoutButton

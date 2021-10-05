@@ -4,9 +4,11 @@ import { useSelector, useDispatch } from 'react-redux'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as Yup from 'yup'
 import RegisterForm from '../components/register/RegisterForm'
-import allActions from '../redux/actions'
 import LoginButton from '../components/login/LoginButton'
 import HomeButton from '../components/buttons/HomeButton'
+import auth from '../redux/slices/auth'
+
+const { userRegister } = auth
 
 const Register = () => {
     const [successful, setSuccessful] = useState(false)
@@ -45,7 +47,7 @@ const Register = () => {
 
     const onSubmit = (data) => {
         if (Array.from(errors).length === 0) {
-            dispatch(allActions.auth.register(data))
+            dispatch(userRegister(data))
                 .then(() => {
                     setSuccessful(true)
                 })

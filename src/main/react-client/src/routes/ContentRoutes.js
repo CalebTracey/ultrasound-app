@@ -11,7 +11,7 @@ const Classification = lazy(() => import('../containers/Classification'))
 const ContentHome = lazy(() => import('../components/content/ContentHome'))
 const ProtectedRouteAdmin = lazy(() => import('./ProtectedRouteAdmin'))
 
-const ContentRoutes = ({ selectedVideo, selectedVideoUrl }) => (
+const ContentRoutes = () => (
     <Suspense
         fallback={
             <div className="spinner">
@@ -26,18 +26,13 @@ const ContentRoutes = ({ selectedVideo, selectedVideoUrl }) => (
                     path="/dashboard/classification/:id"
                     component={Classification}
                 />
-                <ProtectedRouteAdmin
+                {/* <ProtectedRouteAdmin
                     path="/dashboard/edit/:id"
                     component={Edit}
-                />
+                /> */}
                 <Route
                     path="/dashboard/video/:id"
-                    render={() => (
-                        <VideoPlayer
-                            selectedVideo={selectedVideo}
-                            selectedVideoList={selectedVideoUrl}
-                        />
-                    )}
+                    render={() => <VideoPlayer />}
                 />
                 <Redirect from="/dashboard" to="/dashboard/home" exact />
             </Switch>

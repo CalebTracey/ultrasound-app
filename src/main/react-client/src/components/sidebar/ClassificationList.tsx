@@ -1,26 +1,21 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable react/prop-types */
 import { SubMenu } from 'react-pro-sidebar'
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import { FiEdit3 } from 'react-icons/fi'
 import { Link } from 'react-router-dom'
 import SubMenuItemGroup from './SubMenuItemGroup'
 import ListItemGroup from './ListItemGroup'
-import allActions from '../../redux/actions'
 import { useAppSelector, useAppDispatch } from '../../redux/hooks'
-import allSlices from '../../redux/slices'
+import { selectedClassification } from '../../redux/slices/classification'
 
-type TSubMenu = {
-    key: string
-    value: string
-}
-interface ISubMenu {
-    [key: string]: string
-}
 interface IListItem {
     name: string
     title: string
     link: string
+}
+interface ISubMenu {
+    [key: string]: string
 }
 interface IClassification {
     _id: string
@@ -29,19 +24,16 @@ interface IClassification {
     listItems: IListItem[]
     subMenus: ISubMenu[]
 }
-
 interface Props {
     classifications: IClassification[]
 }
 
-const ClassificationList: FC<Props> = ({ classifications }): JSX.Element => {
-    const { roles } = useAppSelector((state) => state.auth.user)
+const ClassificationList: FC<Props> = ({ classifications }) => {
+    const roles = useAppSelector((state) => state.auth.user?.roles)
     const dispatch = useAppDispatch()
 
-    const handleEditClick = async (classification: IClassification) => {
-        const { listItems } = classification
-        dispatch(allSlices.items.actions.setSelectedItemList(listItems))
-        dispatch(allActions.data.selectedEdit(classification))
+    const handleClick = async (classification: IClassification) => {
+        dispatch(selectedClassification(classification))
     }
     const classificationListNode = classifications.map(
         (classification: IClassification) => {
@@ -53,7 +45,7 @@ const ClassificationList: FC<Props> = ({ classifications }): JSX.Element => {
                             key={`edit-button${classification._id}`}
                             type="button"
                             className="btn btn-outline-secondary menu-button"
-                            onClick={() => handleEditClick(classification)}
+                            onClick={() => handleClick(classification)}
                         >
                             <Link
                                 to={`/dashboard/edit/${classification._id}`}
@@ -73,6 +65,7 @@ const ClassificationList: FC<Props> = ({ classifications }): JSX.Element => {
                         id={`sm-id${classification._id}`}
                         key={`sm${classification._id}`}
                         title={classification.name}
+                        onClick={() => handleClick(classification)}
                     >
                         {hasSubMenu && (
                             <SubMenuItemGroup
@@ -80,10 +73,13 @@ const ClassificationList: FC<Props> = ({ classifications }): JSX.Element => {
                                 subMenus={subMenus}
                             />
                         )}
-                        <ListItemGroup
-                            key={`lig${classification._id}`}
-                            listItems={listItems}
-                        />
+                        {listItems && (
+                            <ListItemGroup
+                                key={`lig${classification._id}`}
+                                listItems={listItems}
+                                type="classification"
+                            />
+                        )}
                     </SubMenu>
                 </div>
             )

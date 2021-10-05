@@ -1,139 +1,145 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable class-methods-use-this */
-import axios from 'axios'
+import React from 'react'
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
+import history from '../helpers/history'
+import EventBus from '../common/EventBus'
+import TokenService from './token-service'
 
-// const { REACT_APP_API_URL } = process.env;
+enum StatusCode {
+    Unauthorized = 401,
+    Forbidden = 403,
+    TooManyRequests = 429,
+    InternalServerError = 500,
+}
 
-const instance = axios.create({
-    // baseURL: REACT_APP_API_URL,
-    baseURL: 'http://localhost:8080/api/',
-    headers: {
-        'Content-Type': 'application/json',
-    },
-})
+const headers: Readonly<Record<string, string | boolean>> = {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+    // 'Access-Control-Allow-Credentials': true,
+    // 'X-Requested-With': 'XMLHttpRequest',
+}
+const { getLocalAccessToken } = TokenService
+const injectToken = (config: AxiosRequestConfig): AxiosRequestConfig => {
+    try {
+        const token = getLocalAccessToken()
+        if (token != null) {
+            config.headers.Authorization = `Bearer ${token}`
+        }
+        return config
+    } catch (error) {
+        throw new Error('Error!')
+        // console.error(error)
+    }
+}
 
-export default instance
+class Http {
+    private instance: AxiosInstance | null = null
 
-// const headers: Readonly<Record<string, string | boolean>> = {
-//     Accept: 'application/json',
-//     'Content-Type': 'application/json; charset=utf-8',
-//     'Access-Control-Allow-Credentials': true,
-//     'X-Requested-With': 'XMLHttpRequest'
-// }
+    private get http(): AxiosInstance {
+        return this.instance != null ? this.instance : this.initHttp()
+    }
 
-// // We can use the following function to inject the JWT token through an interceptor
-// // We get the `accessToken` from the localStorage that we set when we authenticate
-// const injectToken = (config: AxiosRequestConfig): AxiosRequestConfig => {
-//     try {
-//         const token = localStorage.getItem('accessToken')
+    initHttp() {
+        const http = axios.create({
+            baseURL: 'http://localhost:8080/api/',
+            headers,
+            withCredentials: true,
+        })
 
-//         if (token != null) {
-//             // eslint-disable-next-line no-param-reassign
-//             config.headers.Authorization = `Bearer ${token}`
-//         }
-//         return config
-//     } catch (error) {
-//         throw new Error(error)
-//     }
-// }
+        http.interceptors.request.use(injectToken, (error) =>
+            Promise.reject(error)
+        )
 
-// class Http {
-//     private instance: AxiosInstance | null = null
+        http.interceptors.response.use(
+            (response) => response,
+            (error) => {
+                const { response } = error
+                console.log(`ERROR ${response}`)
+                return this.handleError(response)
+            }
+        )
 
-//     private get http(): AxiosInstance {
-//         return this.instance != null ? this.instance : this.initHttp()
-//     }
+        this.instance = http
+        return http
+    }
 
-//     private handleError(error: any): Promise<any> {
-//         // const { error } = this.instance
-//         console.error('An error occurred', error) // for demo purposes only
-//         return Promise.reject(error.message || error)
-//     }
+    request<T = any, R = AxiosResponse<T>>(
+        config: AxiosRequestConfig
+    ): Promise<R> {
+        return this.http.request(config)
+    }
 
-//     initHttp() {
-//         const http = axios.create({
-//             baseURL: 'https://api.example.com',
-//             headers,
-//             withCredentials: true
-//         })
+    get<T = any, R = AxiosResponse<T>>(
+        url: string,
+        config?: AxiosRequestConfig
+    ): Promise<R> {
+        return this.http.get<T, R>(url, config)
+    }
 
-//         http.interceptors.request.use(injectToken, (error) =>
-//             Promise.reject(error)
-//         )
+    post<T = any, R = AxiosResponse<T>>(
+        url: string,
+        data?: T,
+        config?: AxiosRequestConfig
+    ): Promise<R> {
+        return this.http.post<T, R>(url, data, config)
+    }
 
-//         http.interceptors.response.use(
-//             (response) => response,
-//             (error) => {
-//                 const { response } = error
-//                 return this.handleError(response)
-//             }
-//         )
+    put<T = any, R = AxiosResponse<T>>(
+        url: string,
+        data?: T,
+        config?: AxiosRequestConfig
+    ): Promise<R> {
+        return this.http.put<T, R>(url, data, config)
+    }
 
-//         this.instance = http
-//         return http
-//     }
+    delete<T = any, R = AxiosResponse<T>>(
+        url: string,
+        config?: AxiosRequestConfig
+    ): Promise<R> {
+        return this.http.delete<T, R>(url, config)
+    }
 
-//     request<T = any, R = AxiosResponse<T>>(
-//         config: AxiosRequestConfig
-//     ): Promise<R> {
-//         return this.http.request(config)
-//     }
+    // Handle global app errors
+    // We can handle generic app errors depending on the status code
+    private handleError(error: { status: any }) {
+        const { status } = error
+        switch (status) {
+            case StatusCode.InternalServerError:
+                // Handle InternalServerError
+                break
+            // no default
 
-//     get<T = any, R = AxiosResponse<T>>(
-//         url: string,
-//         config?: AxiosRequestConfig
-//     ): Promise<R> {
-//         return this.http.get<T, R>(url, config)
-//     }
+            case StatusCode.Forbidden:
+                // Handle Forbidden
+                break
+            // no default
 
-//     post<T = any, R = AxiosResponse<T>>(
-//         url: string,
-//         data?: T,
-//         config?: AxiosRequestConfig
-//     ): Promise<R> {
-//         return this.http.post<T, R>(url, data, config)
-//     }
+            case StatusCode.Unauthorized:
+                history.push('/home')
+                EventBus.dispatch('logout')
+                break
+            // no default
 
-//     put<T = any, R = AxiosResponse<T>>(
-//         url: string,
-//         data?: T,
-//         config?: AxiosRequestConfig
-//     ): Promise<R> {
-//         return this.http.put<T, R>(url, data, config)
-//     }
+            case StatusCode.TooManyRequests:
+                // Handle TooManyRequests
+                break
+            // no default
+        }
 
-//     delete<T = any, R = AxiosResponse<T>>(
-//         url: string,
-//         config?: AxiosRequestConfig
-//     ): Promise<R> {
-//         return this.http.delete<T, R>(url, config)
-//     }
+        return Promise.reject(error)
+    }
+}
 
-//     // Handle global app errors
-//     // We can handle generic app errors depending on the status code
-//     // private handleError(error) {
-//     //     const { status } = error
+export const api = new Http()
+// // const { REACT_APP_API_URL } = process.env;
 
-//     //     switch (status) {
-//     //         case StatusCode.InternalServerError: {
-//     //             // Handle InternalServerError
-//     //             break
-//     //         }
-//     //         case StatusCode.Forbidden: {
-//     //             // Handle Forbidden
-//     //             break
-//     //         }
-//     //         case StatusCode.Unauthorized: {
-//     //             // Handle Unauthorized
-//     //             break
-//     //         }
-//     //         case StatusCode.TooManyRequests: {
-//     //             // Handle TooManyRequests
-//     //             break
-//     //         }
-//     //     }
+// const instance = axios.create({
+//     // baseURL: REACT_APP_API_URL,
+//     baseURL: 'http://localhost:8080/api/',
+//     headers: {
+//         'Content-Type': 'application/json',
+//     },
+// })
 
-//     //     return Promise.reject(error)
-//     // }
-// }
-
-// export const api = new Http()
+// export default instance

@@ -6,7 +6,7 @@ import { useAppSelector } from '../../redux/hooks'
 
 const SubMenuDropdownContainer = (): JSX.Element => {
     const [subMenuOpen, setSubMenuOpen] = useState(false)
-    const { subMenus } = useAppSelector((state) => state.data.selectedEdit)
+    const items = useAppSelector((state) => state.subMenu.selected.itemList)
     const subMenuToggle = () => setSubMenuOpen((prevState) => !prevState)
 
     return (
@@ -17,7 +17,7 @@ const SubMenuDropdownContainer = (): JSX.Element => {
             toggle={subMenuToggle}
         >
             <DropdownToggle caret>
-                {`Sub Menus: ${Array.from(Object.keys(subMenus)).length}`}
+                {`Sub Menus: ${items.length}`}
             </DropdownToggle>
             <SubMenuDropdown />
         </ButtonDropdown>

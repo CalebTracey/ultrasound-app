@@ -17,7 +17,7 @@ const updateLocalAccessToken = (token) => {
 const getUser = () => JSON.parse(localStorage.getItem('user'))
 
 const setUser = (user) => {
-    localStorage.setItem('user', JSON.stringify(user))
+    localStorage.setItem('user', JSON.stringify(user.data))
 }
 
 const removeUser = () => {

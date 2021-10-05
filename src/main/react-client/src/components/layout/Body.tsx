@@ -1,11 +1,11 @@
 /* eslint-disable react/prop-types */
-import React from 'react'
+import React, { FC } from 'react'
 import Content from '../content/Content'
 import Footer from './Footer'
 import Header from './Header'
 // import { useAppSelector, useAppDispatch } from '../../redux/hooks'
 
-const Body = (): JSX.Element => {
+const Body: FC = () => {
     return (
         <div className="body">
             <Header />

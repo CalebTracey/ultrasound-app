@@ -5,8 +5,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as Yup from 'yup'
 import AddForm from './AddForm'
-import allActions from '../../redux/actions'
-import Upload from '../content/Upload'
+import allActions from '../../redux/actions -- old'
 
 const AddFormContainer = () => {
     const [isLoading, setIsLoading] = useState(false)
@@ -98,7 +97,7 @@ const AddFormContainer = () => {
                     <span>Upload</span>
                 </button>
             </div>
-            <Upload setIsLoading={setIsLoading} setFiles={setFiles} />
+            {/* <Upload setIsLoading={setIsLoading} setFiles={setFiles} /> */}
         </div>
     )
 }

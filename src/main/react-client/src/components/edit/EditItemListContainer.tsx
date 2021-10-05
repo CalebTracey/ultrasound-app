@@ -1,28 +1,44 @@
 /* eslint-disable no-underscore-dangle */
-import React from 'react'
+import React, { FC } from 'react'
 import ItemListDropdownContainer from '../edit-dropdowns/ItemListDropdownContainer'
 import EditItemList from './EditItemList'
 import { useAppSelector } from '../../redux/hooks'
 
-const EditItemListContainer = (): JSX.Element => {
-    const { editingListItem } = useAppSelector((state) => state.edit)
-    const { selectedSubMenu } = useAppSelector((state) => state.subMenus)
-    const { listItems } = useAppSelector((state) => state.data.selectedEdit)
-    const classificationId = useAppSelector(
-        (state) => state.data.selectedEdit._id
-    )
+type DefaultProps = {
+    subMenuId: string | undefined
+}
+const defaultProps = {
+    subMenuId: undefined,
+} as DefaultProps
+interface IListItem {
+    name: string
+    title: string
+    link: string
+}
+interface Props {
+    listItems: IListItem[]
+    classificationId: string
+    subMenuId?: string
+}
+
+const EditItemListContainer: FC<Props> = ({
+    listItems,
+    classificationId,
+    subMenuId,
+}) => {
+    const editingListItem = useAppSelector((state) => state.item.editing)
 
     return (
         <>
             {listItems.length !== 0 && <ItemListDropdownContainer />}
-            {editingListItem && selectedSubMenu !== undefined && (
+            {editingListItem && (
                 <EditItemList
                     classificationId={classificationId}
-                    subMenuId={selectedSubMenu._id}
+                    subMenuId={subMenuId}
                 />
             )}
         </>
     )
 }
-
+EditItemListContainer.defaultProps = defaultProps
 export default EditItemListContainer
