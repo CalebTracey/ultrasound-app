@@ -1,23 +1,20 @@
 /* eslint-disable import/no-cycle */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-param-reassign */
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
-import UserService from '../../service/user-service'
-import { newListEntity } from './item'
-import { AppDispatch } from '../store'
+import {
+    createAsyncThunk,
+    createSlice,
+    PayloadAction,
+    Reducer,
+} from '@reduxjs/toolkit'
+import { selectedItemList } from './item'
+import { IListItem, ISubMenuObj } from '../../schemas'
+import { api } from '../../service/api'
+import { editingClassification } from './classification'
 
-interface IListItem {
-    name: string
-    title: string
-    link: string
-}
-interface ISubMenuObj {
-    _id: string
-    name: string
-    itemList: IListItem[]
-}
 interface subMenuSliceState {
     selected: ISubMenuObj | Record<string, never>
+    subMenuList: { [key: string]: ISubMenuObj } | Record<string, never>
     itemList: IListItem[] | []
     editing: boolean
     itemCount: number
@@ -25,59 +22,96 @@ interface subMenuSliceState {
 }
 const initialSubMenuState: subMenuSliceState = {
     selected: {},
+    subMenuList: {},
     itemList: [],
     editing: false,
     itemCount: 0,
     loading: 'idle',
 }
-export const getOne = createAsyncThunk<
-    ISubMenuObj,
-    string,
-    { dispatch: AppDispatch }
->('subMenu/getOne', async (id: string, thunkApi) => {
-    const result = await UserService.getSubMenu(id)
-    const newMapItem = { key: result._id, value: result.itemList }
-    thunkApi.dispatch(newListEntity(newMapItem))
-    return result
-})
+
+const isSubMenuObj = (value: unknown): value is ISubMenuObj => {
+    return !!value && !!(value as ISubMenuObj)
+}
+
+export const selectedSubMenu = createAsyncThunk(
+    'subMenu/selected',
+    async (subMenu: ISubMenuObj, thunkApi) => {
+        const value: ISubMenuObj = subMenu
+        const { _id, itemList, type } = value
+        if (value && isSubMenuObj(value) && type === 'TYPE_SUBMENU') {
+            if (itemList && itemList.length !== 0) {
+                const listItems: IListItem[] = itemList
+                thunkApi.dispatch(
+                    selectedItemList({
+                        parentId: _id,
+                        list: listItems,
+                    })
+                )
+            }
+        }
+        return value
+    }
+)
+
+export const getOne = createAsyncThunk<ISubMenuObj, string>(
+    'subMenu/getOne',
+    async (id: string, thunkApi) => {
+        const response = await api.get(`submenu/${id}`).then((res) => {
+            return res.data
+        })
+        thunkApi.dispatch(selectedSubMenu(response))
+        return response
+    }
+)
 
 export const subMenuSlice = createSlice({
     name: 'subMenu',
     initialState: initialSubMenuState,
     reducers: {
-        removeListItem: (state, action: PayloadAction<string>) => {
-            state.itemList = state.itemList.filter(
-                ({ link }) => link !== action.payload
-            )
-        },
-        clearSubmenu: (state) => {
+        resetSubMenuSelection: (state) => {
             state.selected = {}
             state.itemList = []
             state.editing = false
             state.itemCount = 0
             state.loading = 'idle'
         },
+        editingSubMenu: (state, action: PayloadAction<boolean>) => {
+            state.editing = action.payload
+        },
+        removeListItem: (state, action: PayloadAction<string>) => {
+            state.itemList = state.itemList.filter(
+                ({ link }) => link !== action.payload
+            )
+        },
     },
     extraReducers: (builder) => {
         builder.addCase(getOne.pending, (state) => {
             state.loading = 'pending'
+            state.editing = false
+        })
+        builder.addCase(selectedSubMenu.pending, (state) => {
+            state.loading = 'pending'
         })
         builder.addCase(
-            getOne.fulfilled,
+            selectedSubMenu.fulfilled,
             (state, action: PayloadAction<ISubMenuObj>) => {
                 const subMenu = action.payload
                 state.selected = subMenu
-                state.itemCount = subMenu.itemList.length
                 state.itemList = subMenu.itemList
                 state.loading = 'successful'
+                state.itemCount = subMenu.itemList.length
+                if (state.subMenuList[subMenu._id] === undefined) {
+                    state.subMenuList[subMenu._id] = subMenu
+                }
             }
         )
+        builder.addDefaultCase((state) => {
+            state.loading = 'idle'
+            state.editing = false
+        })
     },
 })
-export const {
-    // getSubMenu,
-    // subMenuReceived,
-    removeListItem,
-} = subMenuSlice.actions
+export const { removeListItem, resetSubMenuSelection, editingSubMenu } =
+    subMenuSlice.actions
 
-export default subMenuSlice
+export default subMenuSlice.reducer as Reducer<typeof initialSubMenuState>

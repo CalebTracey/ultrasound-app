@@ -52,7 +52,7 @@ const Dropzone = ({ setFiles, setIsLoading }) => {
                         console.log('file reading was aborted')
                     reader.onerror = () =>
                         console.log('file reading has failed')
-                    reader.onload = () => {}
+                    // reader.onload = () => {}
                     reader.readAsArrayBuffer(file)
                 })
                 setFiles(acceptedFiles)

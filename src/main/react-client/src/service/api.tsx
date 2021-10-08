@@ -5,6 +5,7 @@ import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 import history from '../helpers/history'
 import EventBus from '../common/EventBus'
 import TokenService from './token-service'
+import { newError } from '../redux/slices/message'
 
 enum StatusCode {
     Unauthorized = 401,
@@ -23,6 +24,7 @@ const { getLocalAccessToken } = TokenService
 const injectToken = (config: AxiosRequestConfig): AxiosRequestConfig => {
     try {
         const token = getLocalAccessToken()
+        console.log(token)
         if (token != null) {
             config.headers.Authorization = `Bearer ${token}`
         }
@@ -54,7 +56,7 @@ class Http {
         http.interceptors.response.use(
             (response) => response,
             (error) => {
-                const { response } = error
+                const { response, message } = error
                 console.log(`ERROR ${response}`)
                 return this.handleError(response)
             }
@@ -102,8 +104,8 @@ class Http {
 
     // Handle global app errors
     // We can handle generic app errors depending on the status code
-    private handleError(error: { status: any }) {
-        const { status } = error
+    private handleError(error: { status: any; message: string }) {
+        const { status, message } = error
         switch (status) {
             case StatusCode.InternalServerError:
                 // Handle InternalServerError
@@ -116,6 +118,7 @@ class Http {
             // no default
 
             case StatusCode.Unauthorized:
+                newError(message)
                 history.push('/home')
                 EventBus.dispatch('logout')
                 break

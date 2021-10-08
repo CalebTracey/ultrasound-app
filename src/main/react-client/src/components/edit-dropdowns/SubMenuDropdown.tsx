@@ -1,9 +1,9 @@
 /* eslint-disable react/prop-types */
-import React from 'react'
+import React, { FC } from 'react'
 import { DropdownMenu } from 'reactstrap'
 import SubMenuItemList from './SubMenuItemList'
 
-const SubMenuDropdown = (): JSX.Element => (
+const SubMenuDropdown: FC = () => (
     <DropdownMenu
         modifiers={{
             setMaxHeight: {

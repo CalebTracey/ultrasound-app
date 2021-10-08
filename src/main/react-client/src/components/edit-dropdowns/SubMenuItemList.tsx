@@ -1,24 +1,19 @@
-import React from 'react'
-import { DropdownItem } from 'reactstrap'
+import React, { FC } from 'react'
 import { useAppSelector } from '../../redux/hooks'
-import { getOne } from '../../redux/slices/subMenu'
+import SubMenuDropdownItem from './SubMenuDropdownItem'
 
-const SubMenuItemList = (): JSX.Element => {
+const SubMenuItemList: FC = () => {
     const { subMenus } = useAppSelector(
         (state) => state.classification.selected
     )
 
-    const setSelectedSubMenu = (id: string) => {
-        getOne(id)
-    }
     const listNode = Object.keys(subMenus).map((key: string) => {
         return (
-            <DropdownItem
-                style={{ textTransform: 'uppercase' }}
-                onClick={() => setSelectedSubMenu(subMenus[key])}
-            >
-                {key}
-            </DropdownItem>
+            <SubMenuDropdownItem
+                key={subMenus[key]}
+                id={subMenus[key]}
+                title={key}
+            />
         )
     })
     return <>{listNode}</>

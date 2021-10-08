@@ -1,22 +1,20 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { DropdownItem } from 'reactstrap'
-import { useAppSelector } from '../../redux/hooks'
+import { useAppSelector, useAppDispatch } from '../../redux/hooks'
 import { selectedItem } from '../../redux/slices/item'
+import { IListItem } from '../../schemas'
 
-interface IListItem {
-    name: string
-    title: string
-    link: string
-}
-
-const ItemListComponentList = (): JSX.Element => {
-    const { entities } = useAppSelector((state) => state.item)
+const ItemListComponentList: FC = () => {
+    const { itemList, parentId } = useAppSelector((state) => state.item)
+    const dispatch = useAppDispatch()
     const handleItemSelection = (item: IListItem) => {
-        selectedItem(item)
+        if (parentId !== undefined) {
+            dispatch(selectedItem({ parentId, item }))
+        }
     }
     const listNode =
-        entities !== undefined ? (
-            (entities as IListItem[]).map((listItem: IListItem) => (
+        itemList !== undefined ? (
+            (itemList as IListItem[]).map((listItem: IListItem) => (
                 <DropdownItem onClick={() => handleItemSelection(listItem)}>
                     {listItem.name}
                 </DropdownItem>

@@ -2,14 +2,10 @@
 import React, { FC, useEffect, useState } from 'react'
 import ReactPlayer from 'react-player'
 import SyncLoader from 'react-spinners/SyncLoader'
+import { PayloadAction } from '@reduxjs/toolkit'
 import { useAppDispatch, useAppSelector } from '../../redux/hooks'
-import UserService from '../../service/user-service'
-
-interface IListItem {
-    name: string
-    title: string
-    link: string
-}
+import { getLinkUrl } from '../../redux/slices/item'
+import { IListItem } from '../../schemas'
 
 const VideoPlayer: FC = () => {
     const { selected } = useAppSelector((state) => state.item)
@@ -19,19 +15,15 @@ const VideoPlayer: FC = () => {
 
     const selectedItem: IListItem | Record<string, never> = selected
 
-    /**
-     * TODO: create new slice for 'content' and implement getURL as asyncThunk
-     */
     useEffect(() => {
         setIsLoading(true)
         if (selectedItem !== undefined || selectedItem !== {}) {
-            dispatch(UserService.getUrl(selectedItem.link)).then(
-                (res: string) => {
-                    setSignedLink(res)
-                    setIsLoading(false)
-                    return Promise.resolve('done')
+            dispatch(getLinkUrl(selectedItem.link)).then(
+                (res: PayloadAction<any>) => {
+                    setSignedLink(res.payload)
                 }
             )
+            setIsLoading(false)
         }
     }, [selected, dispatch, selectedItem])
 

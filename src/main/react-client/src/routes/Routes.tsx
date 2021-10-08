@@ -32,6 +32,7 @@ const Routes: FC = () => {
                         authenticationPath="/login"
                         component={Dashboard}
                     />
+                    )
                 </Switch>
             </Router>
         </Suspense>

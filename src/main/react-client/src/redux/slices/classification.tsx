@@ -1,48 +1,97 @@
+/* eslint-disable import/no-cycle */
 /* eslint-disable no-param-reassign */
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
-import UserService from '../../service/user-service'
+import {
+    createAsyncThunk,
+    createSlice,
+    PayloadAction,
+    Reducer,
+} from '@reduxjs/toolkit'
+import { selectedItemList } from './item'
+import { IClassification } from '../../schemas'
+import { api } from '../../service/api'
 
-interface IListItem {
-    name: string
-    title: string
-    link: string
-}
-interface ISubMenu {
-    [key: string]: string
-}
-interface IClassification {
-    _id: string
-    name: string
-    hasSubMenu: boolean
-    listItems: IListItem[]
-    subMenus: ISubMenu[]
-}
 interface classificationSliceState {
     entities: IClassification[] | []
     selected: IClassification | Record<string, never>
     editing: boolean
-    size: number
+    subMenuCount: number
+    listItemsCount: number
     loading: 'idle' | 'pending' | 'successful'
 }
 const initialClassificationState: classificationSliceState = {
     entities: [],
     selected: {},
     editing: false,
-    size: 0,
+    subMenuCount: 0,
+    listItemsCount: 0,
     loading: 'idle',
 }
-export const getAll = createAsyncThunk('classifications/getAll', async () => {
-    return UserService.getClassifications()
-})
+
+const isClassification = (value: unknown): value is IClassification => {
+    return !!value && !!(value as IClassification)
+}
+
+export const selectedClassification = createAsyncThunk(
+    'classifications/selected',
+    async (classification: IClassification, thunkApi) => {
+        const value: IClassification = classification
+        const { _id, listItems, type } = value
+        if (
+            value &&
+            isClassification(value) &&
+            type === 'TYPE_CLASSIFICATION'
+        ) {
+            if (listItems && listItems.length !== 0) {
+                thunkApi.dispatch(
+                    selectedItemList({
+                        parentId: _id,
+                        list: listItems,
+                    })
+                )
+            }
+        }
+        return value
+    }
+)
+
+export const getAllClassifications = createAsyncThunk(
+    'classifications/getAll',
+    async () =>
+        api.get('classifications').then((res) => {
+            return res.data
+        })
+)
+
+// export const editClassification = createAsyncThunk(
+//     'classifications/editing',
+//     async (classification: IClassification, thunkApi) => {
+//         const retVal = await thunkApi.dispatch(
+//             selectedClassification(classification)
+//         )
+//         return retVal.payload
+//     }
+// )
+
 export const classificationSlice = createSlice({
     name: 'classifications',
     initialState: initialClassificationState,
     reducers: {
-        selectedClassification: (
+        editingClassification: (state, action: PayloadAction<boolean>) => {
+            state.editing = action.payload
+        },
+        resetClassificationSelection: (state) => {
+            state.selected = {}
+            state.editing = false
+            state.subMenuCount = 0
+            state.listItemsCount = 0
+            state.loading = 'idle'
+        },
+        setClassifications: (
             state,
-            action: PayloadAction<IClassification>
+            action: PayloadAction<IClassification[]>
         ) => {
-            state.selected = action.payload
+            const classifications = action.payload
+            state.entities = classifications
         },
         removeClassification: (state, action: PayloadAction<string>) => {
             state.entities = state.entities.filter(
@@ -51,20 +100,47 @@ export const classificationSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
-        builder.addCase(getAll.pending, (state) => {
+        builder.addCase(selectedClassification.pending, (state) => {
             state.loading = 'pending'
         })
-        builder.addCase(getAll.fulfilled, (state, action) => {
-            state.entities = action.payload
-            state.loading = 'successful'
+        builder.addCase(
+            selectedClassification.fulfilled,
+            (state, action: PayloadAction<IClassification>) => {
+                const classification = action.payload
+                state.selected = classification
+                state.subMenuCount = Array.from(
+                    Object.keys(classification.subMenus)
+                ).length
+                state.listItemsCount = classification.listItems.length
+                state.loading = 'idle'
+            }
+        )
+        builder.addCase(getAllClassifications.pending, (state) => {
+            state.loading = 'pending'
+        })
+        builder.addCase(
+            getAllClassifications.fulfilled,
+            (state, action: PayloadAction<IClassification[]>) => {
+                state.entities = action.payload
+                state.loading = 'idle'
+            }
+        )
+        // builder.addCase(editClassification.fulfilled, (state) => {
+        //     state.editing = true
+        // })
+        builder.addDefaultCase((state) => {
+            state.loading = 'idle'
+            state.editing = false
         })
     },
 })
 export const {
-    selectedClassification,
-    // startGetClassifications,
-    // classificationsReceived,
     removeClassification,
+    setClassifications,
+    resetClassificationSelection,
+    editingClassification,
 } = classificationSlice.actions
 
-export default classificationSlice
+export default classificationSlice.reducer as Reducer<
+    typeof initialClassificationState
+>

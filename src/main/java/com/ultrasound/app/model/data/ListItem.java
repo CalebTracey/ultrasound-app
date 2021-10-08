@@ -11,5 +11,11 @@ public class ListItem {
     private String name;
     private String title;
     private String link;
+    private EType type = EType.TYPE_ITEM;
 
+    public ListItem(String name, String title, String link) {
+        this.name = name;
+        this.title = title;
+        this.link = link;
+    }
 }

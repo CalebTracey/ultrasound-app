@@ -27,8 +27,10 @@ type TUserLoginResponse = {
 }
 const { removeUser, setUser } = TokenService
 
-const userDetails = async (username: string): Promise<TUserDetails> =>
-    api.get(`auth/user/${username}`)
+const userDetails = async (username: string): Promise<TUserDetails> => {
+    const response = await api.get(`auth/user/${username}`)
+    return response.data
+}
 
 const registerService = async (data: TNewUser): Promise<string> =>
     api.post<TNewUser, string>(`auth/sign-up`, data)
@@ -36,14 +38,14 @@ const registerService = async (data: TNewUser): Promise<string> =>
 const loginService = async (details: TUserLogin): Promise<TUserLoginResponse> =>
     api
         .post<TUserLogin, TUserLoginResponse>(`auth/sign-in`, details)
-        .then((data) => {
-            if (data) {
-                setUser(data)
+        .then((res) => {
+            if (res) {
+                setUser(res)
             }
-            return Promise.resolve(data)
+            return res
         })
 
-const logoutService = () => {
+const logoutService = (): void => {
     removeUser()
 }
 

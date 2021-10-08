@@ -1,6 +1,5 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit'
-import { useAppSelector } from '../hooks'
 
 export const editState = {
     editingListItem: false,
@@ -28,4 +27,4 @@ export const { editingItem, editingSubMenu, subMenusLoading } =
     editSlice.actions
 export const editReducer = editSlice.reducer
 
-export default editSlice
+export default editSlice.reducer

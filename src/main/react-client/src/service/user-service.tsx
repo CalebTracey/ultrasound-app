@@ -1,40 +1,30 @@
-import { AxiosResponse } from 'axios'
 import { api } from './api'
 import { IClassification, ISubMenuObj } from '../schemas'
 
-type TSMResponse = { data: ISubMenuObj }
 const getPublicContent = () => api.get(`time`)
 
-const getClassifications = (): Promise<IClassification[]> => {
-    const response = api.get('classifications').then((res) => {
-        return Promise.resolve(res.data)
-    })
-    return response
+const getClassifications = async (): Promise<IClassification[]> => {
+    const response = await api.get('classifications')
+    return response.data
 }
 
 const getAdminContent = () => api.get(`admin`)
 
-const getUrl = (link: string): Promise<string> => {
-    const response = api.get(`S3/link/${link}`).then((res) => {
-        return Promise.resolve(res.data)
-    })
-    return response
+const getUrl = async (link: string): Promise<string> => {
+    const response = await api.get(`S3/link/${link}`)
+    return response.data
 }
 
-const getSubMenu = (id: string): Promise<ISubMenuObj> => {
-    const response = api
-        .get<string, TSMResponse>(`submenu/${id}`)
-        .then((res) => {
-            return Promise.resolve(res.data)
-        })
-    return response
+const getSubMenuObj = async (id: string): Promise<ISubMenuObj> => {
+    const response = await api.get(`submenu/${id}`)
+    return response.data
 }
 
 const UserService = {
     getClassifications,
     getPublicContent,
     getAdminContent,
-    getSubMenu,
+    getSubMenuObj,
     getUrl,
 }
 export default UserService

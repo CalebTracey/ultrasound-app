@@ -25,7 +25,6 @@ const Home = () => {
                         (error.response && error.response.data) ||
                         error.message ||
                         error.toString()
-
                     setContent(cont.error)
                 }
             )

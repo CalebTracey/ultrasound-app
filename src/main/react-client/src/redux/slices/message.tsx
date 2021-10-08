@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction, Reducer } from '@reduxjs/toolkit'
 
 interface messageSliceState {
     text: string | null
@@ -30,4 +30,4 @@ export const messageSlice = createSlice({
 })
 export const { newMessage, newError, clearAll } = messageSlice.actions
 
-export default messageSlice
+export default messageSlice.reducer as Reducer<typeof initialMessageState>

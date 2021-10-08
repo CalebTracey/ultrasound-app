@@ -1,17 +1,15 @@
-import React, { useEffect, useCallback } from 'react'
+import React, { useEffect } from 'react'
 import { withRouter } from 'react-router-dom'
-import { useAppSelector, useAppDispatch } from '../redux/hooks'
+import { Alert } from 'reactstrap'
+import { useAppSelector } from '../redux/hooks'
 import Sidebar from './Sidebar'
 import Body from '../components/layout/Body'
-import { getAll } from '../redux/slices/classification'
+// import { getAllClassifications } from '../redux/slices/classification'
 import EventBus from '../common/EventBus'
 
 const Dashboard = () => {
-    const { entities, loading } = useAppSelector(
-        (state) => state.classification
-    )
     const { isAuth } = useAppSelector((state) => state.auth)
-    const dispatch = useAppDispatch()
+    const { text, error } = useAppSelector((state) => state.message)
 
     useEffect(() => {
         if (!isAuth) {
@@ -19,20 +17,20 @@ const Dashboard = () => {
         }
     }, [isAuth])
 
-    const loadData = useCallback(() => {
-        dispatch(getAll())
-    }, [dispatch])
-
-    useEffect(() => {
-        if (entities.length === 0) {
-            loadData()
-        }
-    }, [entities, loadData])
-    return (
-        <div className="app">
-            {loading !== 'pending' && <Sidebar />}
-            <Body />
-        </div>
+    return isAuth ? (
+        <>
+            {text && !error ? (
+                <Alert color="info">{text}</Alert>
+            ) : (
+                <Alert color="danger">{text}</Alert>
+            )}
+            <div className="app">
+                <Sidebar />
+                <Body />
+            </div>
+        </>
+    ) : (
+        <>Dashboard Loading...</>
     )
 }
 export default withRouter(Dashboard)

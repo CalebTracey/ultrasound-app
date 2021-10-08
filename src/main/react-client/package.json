@@ -55,7 +55,7 @@
         "test": "react-scripts test",
         "eject": "react-scripts eject",
         "lint": "eslint 'src/**/*.js'",
-        "lint-fix": "npm run lint -- --fix"
+        "lint-fix": "yarn lint -- --fix"
     },
     "eslintConfig": {
         "env": {
@@ -65,7 +65,10 @@
         "extends": [
             "plugin:react/recommended",
             "airbnb",
+            "prettier",
+            "plugin:@typescript-eslint/eslint-recommended",
             "plugin:@typescript-eslint/recommended",
+            "eslint:recommended",
             "plugin:prettier/recommended"
         ],
         "parser": "@typescript-eslint/parser",
@@ -83,6 +86,7 @@
             "prettier"
         ],
         "rules": {
+            "no-unused-vars": "warn",
             "brace-style": [
                 1,
                 "1tbs",

@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { DropdownMenu } from 'reactstrap'
 import ItemListComponentList from './ItemListComponentList'
 
-const ItemListDropdown = (): JSX.Element => (
+const ItemListDropdown: FC = () => (
     <DropdownMenu
         modifiers={{
             setMaxHeight: {

@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useCallback, ChangeEvent } from 'react'
-import { RouteComponentProps } from 'react-router-dom'
+import { Redirect, RouteComponentProps } from 'react-router-dom'
 import { useAppSelector, useAppDispatch } from './redux/hooks'
 // import history from './helpers/history'
 import EventBus from './common/EventBus'
@@ -13,7 +13,7 @@ interface Props {
 }
 
 const App: FC<Props> = ({ history }) => {
-    const { user: currentUser } = useAppSelector((state) => state.auth)
+    const { isAuth, loading } = useAppSelector((state) => state.auth)
     const dispatch = useAppDispatch()
 
     const logOut = useCallback(() => {
@@ -22,7 +22,7 @@ const App: FC<Props> = ({ history }) => {
 
     useEffect(() => {
         history.listen((location) => {
-            dispatch(clearAll())
+            clearAll()
         })
     }, [dispatch, history])
 
@@ -34,7 +34,13 @@ const App: FC<Props> = ({ history }) => {
         return () => {
             EventBus.remove('logout', logOut)
         }
-    }, [currentUser, dispatch, logOut, history])
+    }, [dispatch, logOut, history])
+
+    useEffect(() => {
+        if (isAuth && loading === 'successful') {
+            history.push('/dashboard')
+        }
+    })
 
     return (
         <div className="app">

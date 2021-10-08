@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 /* eslint-disable import/no-extraneous-dependencies */
 import { configureStore } from '@reduxjs/toolkit'
 import { ThunkDispatch } from 'redux-thunk'
@@ -10,11 +11,11 @@ import message from './slices/message'
 
 const store = configureStore({
     reducer: {
-        auth: auth.reducer,
-        item: item.reducer,
-        message: message.reducer,
-        subMenu: subMenu.reducer,
-        classification: classification.reducer,
+        auth,
+        item,
+        message,
+        subMenu,
+        classification,
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
 })

@@ -1,11 +1,10 @@
 /* eslint-disable react/prop-types */
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as Yup from 'yup'
 import AddForm from './AddForm'
-import allActions from '../../redux/actions -- old'
 
 const AddFormContainer = () => {
     const [isLoading, setIsLoading] = useState(false)
@@ -16,7 +15,7 @@ const AddFormContainer = () => {
     const [category, setCategory] = useState('')
     const [classification, setClassification] = useState('')
     const [payload, setPayload] = useState(null)
-    const dispatch = useDispatch()
+    // const dispatch = useDispatch()
 
     const validationSchema = Yup.object().shape({
         classification: Yup.string().required('Classification is required'),
@@ -62,17 +61,17 @@ const AddFormContainer = () => {
         }
     }
 
-    useEffect(() => {
-        if (payload) {
-            dispatch(allActions.serverOut.upload(payload))
-                .then(() => {
-                    setSuccessful(true)
-                })
-                .catch(() => {
-                    setSuccessful(false)
-                })
-        }
-    }, [payload, dispatch])
+    // useEffect(() => {
+    //     if (payload) {
+    //         dispatch(allActions.serverOut.upload(payload))
+    //             .then(() => {
+    //                 setSuccessful(true)
+    //             })
+    //             .catch(() => {
+    //                 setSuccessful(false)
+    //             })
+    //     }
+    // }, [payload, dispatch])
     return (
         <div className="form-wrapper">
             <div>{`Classification: ${classification}\n`}</div>

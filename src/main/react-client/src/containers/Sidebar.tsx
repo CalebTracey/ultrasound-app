@@ -7,17 +7,10 @@ import {
     SidebarContent,
     SidebarFooter,
 } from 'react-pro-sidebar'
-import { useAppSelector } from '../redux/hooks'
 import ClassificationList from '../components/sidebar/ClassificationList'
 import '../components/custom.scss'
 
 const Sidebar: FC = () => {
-    const classifications = useAppSelector(
-        (state) => state.classification.entities
-    )
-    /**
-     * TODO set the onToggle value for subMenu change to clear selected subMenu state
-     */
     return (
         <div className="sidebar">
             <div className="sidebar-content">
@@ -27,11 +20,7 @@ const Sidebar: FC = () => {
                     </SidebarHeader>
                     <SidebarContent>
                         <Menu iconShape="square">
-                            {classifications.length !== 0 && (
-                                <ClassificationList
-                                    classifications={classifications}
-                                />
-                            )}
+                            <ClassificationList />
                         </Menu>
                     </SidebarContent>
                     <SidebarFooter>

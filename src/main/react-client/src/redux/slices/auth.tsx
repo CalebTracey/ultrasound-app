@@ -1,35 +1,42 @@
 /* eslint-disable no-param-reassign */
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import {
+    createAsyncThunk,
+    createSlice,
+    PayloadAction,
+    Reducer,
+} from '@reduxjs/toolkit'
 import AuthService from '../../service/auth-service'
+import TokenService from '../../service/token-service'
+import { IAppUser, IUserLogin } from '../../schemas'
+import { api } from '../../service/api'
 
 interface authSliceState {
     isAuth: boolean
-    user: IAppUser | null
+    user: IAppUser | Record<string, null>
     loading: 'idle' | 'pending' | 'successful'
+    error: string | null
 }
-interface IAppUser {
-    accessToken: string
-    email: string
-    id: string
-    roles: string[]
-    tokenType: string
-}
-interface TUserLogin {
-    username: string
-    password: string
-}
+
 const data: string | null = localStorage.getItem('user')
 const user = data ? JSON.parse(data) : null
 const initialAuthState: authSliceState = user
-    ? { isAuth: true, user, loading: 'successful' }
-    : { isAuth: false, user: null, loading: 'idle' }
+    ? { isAuth: true, user, loading: 'successful', error: null }
+    : { isAuth: false, user: {}, loading: 'idle', error: null }
 
+const isUser = (value: unknown): value is IAppUser => {
+    return !!value && !!(value as IAppUser)
+}
 export const login = createAsyncThunk(
     'auth/login',
-    async (credentials: TUserLogin) => {
-        return AuthService.loginService(credentials)
-    }
+    async (credentials: IUserLogin) =>
+        api.post(`auth/sign-in`, credentials).then((res) => {
+            const userData = res.data
+            TokenService.setUser(userData)
+            // if (isUser()) return res.data
+            return userData
+        })
 )
+
 export const logout = createAsyncThunk('auth/logout', async () => {
     return AuthService.logoutService()
 })
@@ -45,7 +52,7 @@ export const authSlice = createSlice({
         },
         loginFail: (state) => {
             state.isAuth = false
-            state.user = null
+            state.user = {}
         },
         registerSuccess: (state) => {
             state.isAuth = false
@@ -66,14 +73,22 @@ export const authSlice = createSlice({
             state.loading = 'pending'
         })
         builder.addCase(login.fulfilled, (state, action) => {
-            state.user = action.payload
-            state.isAuth = true
-            state.loading = 'successful'
+            const userData = action.payload
+            if (isUser(userData)) {
+                state.user = userData
+                state.isAuth = true
+                state.loading = 'successful'
+            } else {
+                state.isAuth = false
+                state.loading = 'idle'
+                state.user = {}
+                state.error = 'Login failed'
+            }
         })
         builder.addCase(logout.fulfilled, (state) => {
             state.isAuth = false
             state.loading = 'idle'
-            state.user = null
+            state.user = {}
         })
     },
 })
@@ -85,4 +100,4 @@ export const {
     userRefreshToken,
 } = authSlice.actions
 
-export default authSlice
+export default authSlice.reducer as Reducer<typeof initialAuthState>
