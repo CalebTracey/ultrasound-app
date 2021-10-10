@@ -3,12 +3,10 @@ import React, { FC } from 'react'
 
 const Footer: FC = () => (
     <footer>
-        <div className="footer___text">
-            <small>
-                &copy; Copyright {new Date().getFullYear()}, MMC Division of
-                Emergency Ultrasound
-            </small>
-        </div>
+        <small>
+            &copy; Copyright {new Date().getFullYear()}, MMC Division of
+            Emergency Ultrasound
+        </small>
     </footer>
 )
 

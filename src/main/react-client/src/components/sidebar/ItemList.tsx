@@ -4,7 +4,6 @@
 /* eslint-disable no-underscore-dangle */
 import React, { FC } from 'react'
 import { useHistory } from 'react-router'
-// import history from '../../helpers/history'
 import { useAppDispatch, useAppSelector } from '../../redux/hooks'
 import { selectedItem, getLinkUrl } from '../../redux/slices/item'
 import { IListItem } from '../../schemas'
@@ -28,15 +27,13 @@ const ListItemGroup: FC<Props> = ({ parentId, listItems }) => {
             history.push(`${contentPath}/video/${menuItem.link}`)
         }
     }
-    const subMenuGroup = listItems ? (
+    const subMenuGroup =
+        listItems &&
         listItems.map((item) => (
             <Item menuItem={item} handleItemClick={handleItemClick}>
                 {item.name}
             </Item>
         ))
-    ) : (
-        <>Loading</>
-    )
     return <>{subMenuGroup}</>
 }
 

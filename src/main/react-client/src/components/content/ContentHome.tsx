@@ -7,12 +7,12 @@ const ContentHome: FC = () => {
             <Container>
                 <Media body>
                     <Media heading>
-                        <p className="display-6">Welcome!</p>
+                        <p className="content___header">Welcome!</p>
                         <hr className="my-2" />
                     </Media>
-                    <p className="lead">
+                    <div className="content___text">
                         Utilize the sidebar to browse Ultrasound clips
-                    </p>
+                    </div>
                 </Media>
             </Container>
         </Jumbotron>

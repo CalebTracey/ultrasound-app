@@ -3,7 +3,6 @@ import { unwrapResult } from '@reduxjs/toolkit'
 import { useAppSelector, useAppDispatch } from '../redux/hooks'
 import { IClassification } from '../schemas'
 import { getAllClassifications } from '../redux/slices/classification'
-import { newError } from '../redux/slices/message'
 
 interface Props {
     classifications: IClassification[] | Record<string, unknown>

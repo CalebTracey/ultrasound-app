@@ -45,7 +45,7 @@ const Edit: FC = () => {
                     <Media body>
                         <Media heading>
                             <div className="editHeader">
-                                <span className="display-4">
+                                <span className="content-header">
                                     {name && name.toUpperCase()}
                                 </span>
                                 <EditDataName

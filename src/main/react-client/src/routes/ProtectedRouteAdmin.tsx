@@ -13,44 +13,9 @@ const ProtectedRouteAdmin: FC<ProtectedRouteProps> = ({
     authenticationPath,
     ...routeProps
 }: ProtectedRouteProps) => {
-    console.log(`Admin authenticated: ${isAuthenticated}`)
     if (isAuthenticated) {
         return <Route {...routeProps} />
     }
     return <Redirect to={{ pathname: authenticationPath }} />
 }
 export default ProtectedRouteAdmin
-
-// const ProtectedRouteAdmin = ({ component: Component, ...rest }) => {
-//     console.log(
-//         `%c === Protected admin route === `,
-//         'font-size: 12px; color: black; background: lightGrey;'
-//     )
-//     const { isAuth, user } = useSelector((state) => state.auth)
-//     // console.log(Component)
-//     // console.log(user.roles)
-//     return (
-//         <Route
-//             {...rest}
-//             render={(props) => {
-//                 if (isAuth && user.roles.includes('ROLE_ADMIN')) {
-//                     return <Component {...props} />
-//                 }
-//                 return (
-//                     <Redirect
-//                         to={{
-//                             pathname: '/',
-//                             state: { from: props.history.location },
-//                         }}
-//                     />
-//                 )
-//             }}
-//         />
-//     )
-// }
-
-// // ProtectedRouteAdmin.propTypes = {
-// //     component: PropTypes.func.isRequired,
-// // }
-
-// export default withRouter(ProtectedRouteAdmin)

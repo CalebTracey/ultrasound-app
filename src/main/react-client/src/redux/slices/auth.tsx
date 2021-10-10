@@ -8,8 +8,7 @@ import {
 import axios from 'axios'
 import AuthService from '../../service/auth-service'
 import TokenService from '../../service/token-service'
-import { IAppUser, IUserLogin } from '../../schemas'
-import { api } from '../../service/api'
+import { IAppUser } from '../../schemas'
 
 type TLogin = { username: string; password: string }
 interface authSliceState {
@@ -20,7 +19,6 @@ interface authSliceState {
     contentPath: '/dashboard' | '/dashboard/admin'
 }
 const instance = axios.create({
-    // baseURL: REACT_APP_API_URL,
     baseURL: 'http://localhost:8080/api/',
     headers: {
         'Content-Type': 'application/json',
@@ -83,9 +81,6 @@ export const authSlice = createSlice({
         registerFail: (state) => {
             state.isAuth = false
         },
-        // userLogout: (state) => {
-        //     state = initialAuthState
-        // },
         userRefreshToken: (state, action: PayloadAction<string>) => {
             const token = action.payload
             state.user = { ...user, accessToken: token }

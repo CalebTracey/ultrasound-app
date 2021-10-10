@@ -1,6 +1,7 @@
 /* eslint-disable no-underscore-dangle */
-import React, { FC, MouseEvent, useEffect } from 'react'
+import React, { FC, MouseEvent } from 'react'
 import { DropdownItem } from 'reactstrap'
+import SyncLoader from 'react-spinners/SyncLoader'
 import useSubMenu from '../../hooks/useSubMenu'
 import { useAppDispatch, useAppSelector } from '../../redux/hooks'
 import { editingSubMenu } from '../../redux/slices/subMenu'
@@ -30,10 +31,6 @@ const SubMenuDropdownItem: FC<Props> = ({ id, title }) => {
             dispatch(editingSubMenu(true))
         }
     }
-    // useEffect(() => {
-    //     const controller = new AbortController()
-    //     return controller?.abort()
-    // }, [])
 
     return !isLoading && loadingClassification === 'successful' ? (
         <DropdownItem
@@ -43,7 +40,9 @@ const SubMenuDropdownItem: FC<Props> = ({ id, title }) => {
             {title}
         </DropdownItem>
     ) : (
-        <>Loading...</>
+        <div className="spinner">
+            <SyncLoader />
+        </div>
     )
 }
 

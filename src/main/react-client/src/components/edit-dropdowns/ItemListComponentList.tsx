@@ -4,9 +4,7 @@ import { IListItem } from '../../schemas'
 import ListItem from './ListItem'
 
 const ItemListComponentList: FC = () => {
-    const { itemList, parentId, size, loading } = useAppSelector(
-        (state) => state.item
-    )
+    const { itemList, size, loading } = useAppSelector((state) => state.item)
     const listNode =
         size !== 0 &&
         loading === 'successful' &&

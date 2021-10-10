@@ -7,9 +7,27 @@ $font-stack: "OpenSans","OpenSansSemiBold", "RobotoCondensed", "RobotoSlab", "Ro
 $primary-color:#f8f9fa; 
 $secondary-color:#e9ecef;
 $border-color:#dee2e6;
+$minor-color:#ADB5BD;
 $primary-font-color:#212529;
 $secondary-font-color:#6c757d;
 $header-font-color:#343A40;
+
+//      =========================
+//*     === TABLE OF CONTENTS ===
+//      =========================
+
+/*      1. Common Styles
+        2. Global Styles
+        3. Side Bar
+        4. Body
+        5. Content
+        6. Video Player
+        7. Components
+          - Form
+          - Search Bar
+          - Button
+          - Spinner
+*/
 
 //      =====================
 //*     === COMMON STYLES ===
@@ -23,8 +41,14 @@ $border: 1px solid $border-color;
 }
 
 %secondary-font {
-  font-family: "RobotoSlab";
+  font-family: "OpenSans";
   color: $secondary-font-color
+}
+
+%minor-font {
+  font-family: "RobotoCondensed";
+  color: $secondary-font-color
+  
 }
 %header-font {
   font-family: "RobotoSlabSemiBold";
@@ -56,6 +80,8 @@ header {
 }
 
 footer {
+  @extend %minor-font;
+    // color: $minor-color;
     border-top: $border;
     background-color: $primary-color;
     text-align: center;
@@ -64,12 +90,6 @@ footer {
     bottom: 0;
     right: 0;
     left: 0;
-
-    &___text {
-      margin-top: 0.5rem;
-      font-weight: 300;
-      font-size: small;
-    }
 }
 
 //      ===============
@@ -86,6 +106,7 @@ footer {
 
   &___content {
     @extend %primary-font;
+    color: $secondary-font-color;
     letter-spacing: 1px;
     display: flex;
     flex-direction: column;
@@ -102,6 +123,7 @@ footer {
   }
 
   &___footer {
+    @extend %minor-font;
     width: 100%;
     margin-top: 0.5rem;
     margin-bottom: 1rem;
@@ -141,13 +163,25 @@ footer {
   padding: 1rem;
 
   &___title {
+    @extend %header-font;
     text-transform: capitalize;
     text-align: center;
   }
 
+  &___header {
+    @extend %header-font;
+    letter-spacing: 1px;
+  }
+
+  &___text {
+    @extend %secondary-font;
+    letter-spacing: .5px;
+  }
 }
 
+//      ====================
 //*     === VIDEO PLAYER ===
+//      ====================
 
 .player {
   justify-content: center;
@@ -194,6 +228,7 @@ footer {
 //*     === BUTTONS ===
 
 .button-wrapper {
+  @extend %secondary-font;
   display: flex;
   flex-direction: row-reverse;
   padding: 1rem;

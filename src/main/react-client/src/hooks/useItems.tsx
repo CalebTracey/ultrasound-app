@@ -1,10 +1,8 @@
 /* eslint-disable no-underscore-dangle */
 import { useState, useCallback } from 'react'
-import { useHistory } from 'react-router'
 import { useAppDispatch, useAppSelector } from '../redux/hooks'
 import { IListItem } from '../schemas'
-import { getLinkUrl, selectedItemList } from '../redux/slices/item'
-import { newError } from '../redux/slices/message'
+import { selectedItemList } from '../redux/slices/item'
 // import history from '../helpers/history'
 
 interface Props {

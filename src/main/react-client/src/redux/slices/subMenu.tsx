@@ -87,7 +87,6 @@ export const subMenuSlice = createSlice({
         )
         builder.addDefaultCase((state) => {
             state.loading = 'idle'
-            // state.editing = false
         })
     },
 })

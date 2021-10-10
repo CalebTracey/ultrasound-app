@@ -52,7 +52,6 @@ const Home = () => {
                         </>
                     )}
                 </div>
-                {/* </div> */}
             </header>
             <div
                 className="content"
@@ -65,17 +64,15 @@ const Home = () => {
             >
                 <Jumbotron>
                     <Container>
-                        {/* {content} */}
-
                         <Media body>
                             <Media heading>
-                                <p className="display-6">
-                                    Welcome to Maine Medical Center&apos;s
-                                    Emergency Ultrasound Training Application
-                                </p>
+                                <div className="content___header">
+                                    Maine Medical Center Emergency Ultrasound
+                                    Training Application
+                                </div>
                                 <hr className="my-2" />
                             </Media>
-                            <p className="lead">
+                            <p className="content___text">
                                 Please register and login to continue
                             </p>
                         </Media>

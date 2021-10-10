@@ -25,11 +25,12 @@ const Content: FC = () => {
         <div className="content">
             <Jumbotron fluid style={{ maxHeight: '80vh', paddingTop: '2rem' }}>
                 <Container fluid>
-                    <div className="content___title">
-                        <Media style={{ fontSize: '2vw' }} heading>
+                    <Media style={{ fontSize: '2vw' }} heading>
+                        <div className="content___title">
                             {!editing && selected.title}
-                        </Media>
-                    </div>
+                        </div>
+                    </Media>
+
                     <Container fluid>
                         <ContentRoutes routePath={routePath} />
                     </Container>

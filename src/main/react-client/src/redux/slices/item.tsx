@@ -136,18 +136,14 @@ export const itemSlice = createSlice({
                     state.listMap[parentId] = list
                 }
                 state.loading = 'successful'
-                // state.editing = true
                 state.itemType = itemType
             }
         )
         builder.addDefaultCase((state) => {
-            // state.selected = {}
             state.itemList = []
             state.parentId = null
             state.editing = false
-            // state.url = null
             state.size = 0
-            state.loading = 'idle'
             state.itemType = 'classification'
         })
     },
