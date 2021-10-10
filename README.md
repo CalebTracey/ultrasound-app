@@ -1,10 +1,10 @@
-# ultrasound-app-fullstack
-![](ultrasound-app2.gif)
+# ultrasound-app
+<!-- ![](ultrasound-app2.gif) -->
 
 ## Overview
-This app was developed for a fellowship program through my local hospital. It provides an intuative and organized user interface for navagating 3000+ .mp4 files used for educational purposes. Files are parsed by name in the backed, triggered through a simple POST command
+This app was developed for a fellowship program through my local hospital. It provides an intuative and organized user interface for navagating 3000+ .mp4 files stored in an S3 bucket. The backend parses files by name and appends them to the database on the initial upload or when a file is added.
 
-Created with React JS + Spring Boot + MongoDB. The app utilizes Spring Security for JWT authentication and the enforcement of role-based routing and privelages.
+Created with React/TypeScript + Spring Boot + MongoDB. Authentication through Spring Security + JWT for role-based routing and privelages.
 
 [Frontend code](https://github.com/CalebTracey/ultrasound-app-fullstack/tree/main/src/main/react-client)
 <br />
@@ -15,7 +15,7 @@ If you would like to try out the app for yourself, follow the steps below.
 
 You will need to create a collection in mongodb called "roles" and add documents "ROLE_USER" and optionally "ROLE_ADMIN" as shown below.
 
-Uploading [this file](./roles) through Mongo Express should do the trick.
+Uploading [this file](./roles) through Mongo Express/Compass should do the trick.
 <img src=./document-example.png />
 <br />
 <br />
