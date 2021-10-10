@@ -5,7 +5,7 @@ import ItemListDropdown from './ItemListDropdown'
 import { useAppSelector } from '../../redux/hooks'
 
 const ItemListDropdownContainer: FC = () => {
-    const { size, editing } = useAppSelector((state) => state.item)
+    const { size } = useAppSelector((state) => state.item)
     const [itemOpen, setItemOpen] = useState(false)
     const itemToggle = () => setItemOpen((prevState) => !prevState)
 

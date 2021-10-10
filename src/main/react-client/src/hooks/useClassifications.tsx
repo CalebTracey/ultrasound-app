@@ -38,7 +38,11 @@ const useClassifications = (props: Props): [Props, () => void] => {
                 isLoading: false,
                 error: null,
             })
-        } else if (subMenuLoading !== 'pending' && entities.length === 0) {
+        } else if (
+            subMenuLoading !== 'pending' &&
+            entities !== undefined &&
+            entities.length === 0
+        ) {
             dispatch(getAllClassifications())
                 .then(unwrapResult)
                 .then((res: IClassification[]) => {

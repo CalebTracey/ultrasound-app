@@ -3,7 +3,7 @@ import { useState, useCallback } from 'react'
 import { useHistory } from 'react-router'
 import { useAppDispatch, useAppSelector } from '../redux/hooks'
 import { IListItem } from '../schemas'
-import { selectedItemList } from '../redux/slices/item'
+import { getLinkUrl, selectedItemList } from '../redux/slices/item'
 import { newError } from '../redux/slices/message'
 // import history from '../helpers/history'
 
@@ -32,6 +32,7 @@ const useItems = (props: Props): [Props, () => void] => {
     const classificationItems = classification.selected.listItems
     const subMenuItems = subMenu.itemList
     const dispatch = useAppDispatch()
+
     const isItemList = (value: unknown): value is IListItem[] => {
         return !!value && !!(value as IListItem[])
     }

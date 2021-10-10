@@ -29,13 +29,13 @@ const initialClassificationState: classificationSliceState = {
     loading: 'idle',
 }
 
-export const selectedClassification = createAsyncThunk(
-    'classifications/selected',
-    async (classification: IClassification) => {
-        const value: IClassification = classification
-        return value
-    }
-)
+// export const selectedClassification = createAsyncThunk(
+//     'classifications/selected',
+//     async (classification: IClassification) => {
+//         const value: IClassification = classification
+//         return value
+//     }
+// )
 
 export const getAllClassifications = createAsyncThunk<IClassification[], void>(
     'classifications/getAll',
@@ -58,6 +58,18 @@ export const classificationSlice = createSlice({
     name: 'classifications',
     initialState: initialClassificationState,
     reducers: {
+        selectedClassification: (
+            state,
+            action: PayloadAction<IClassification>
+        ) => {
+            const classification = action.payload
+            state.selected = classification
+            state.subMenuCount = Array.from(
+                Object.keys(classification.subMenus)
+            ).length
+            state.listItemsCount = classification.listItems.length
+            state.loading = 'successful'
+        },
         editingClassification: (state, action: PayloadAction<boolean>) => {
             state.editing = action.payload
         },
@@ -82,21 +94,21 @@ export const classificationSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
-        builder.addCase(selectedClassification.pending, (state) => {
-            state.loading = 'pending'
-        })
-        builder.addCase(
-            selectedClassification.fulfilled,
-            (state, action: PayloadAction<IClassification>) => {
-                const classification = action.payload
-                state.selected = classification
-                state.subMenuCount = Array.from(
-                    Object.keys(classification.subMenus)
-                ).length
-                state.listItemsCount = classification.listItems.length
-                state.loading = 'successful'
-            }
-        )
+        // builder.addCase(selectedClassification.pending, (state) => {
+        //     state.loading = 'pending'
+        // })
+        // builder.addCase(
+        //     selectedClassification.fulfilled,
+        //     (state, action: PayloadAction<IClassification>) => {
+        //         const classification = action.payload
+        //         state.selected = classification
+        //         state.subMenuCount = Array.from(
+        //             Object.keys(classification.subMenus)
+        //         ).length
+        //         state.listItemsCount = classification.listItems.length
+        //         state.loading = 'successful'
+        //     }
+        // )
         builder.addCase(getAllClassifications.pending, (state) => {
             state.loading = 'pending'
         })
@@ -110,6 +122,7 @@ export const classificationSlice = createSlice({
     },
 })
 export const {
+    selectedClassification,
     removeClassification,
     setClassifications,
     resetClassificationSelection,

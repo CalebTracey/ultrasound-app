@@ -23,6 +23,7 @@ interface itemSliceState {
     selected: IListItem | Record<string, never>
     listMap: TMapItem[] | Record<string, never>
     parentId: string | null
+    url: string | null
     editing: boolean
     size: number
     hasItems: boolean
@@ -33,6 +34,7 @@ const initialItemState: itemSliceState = {
     itemList: [],
     selected: {},
     listMap: {},
+    url: null,
     parentId: null,
     editing: false,
     size: 0,
@@ -74,20 +76,6 @@ export const itemSlice = createSlice({
         ) => {
             state.itemType = action.payload
         },
-        // selectedItemList: (
-        //     state,
-        //     action: PayloadAction<TSelectedListPayload>
-        // ) => {
-        //     const { parentId, list, itemType } = action.payload
-        //     state.itemList = list
-        //     state.size = list.length
-        //     if (state.listMap[parentId] === null) {
-        //         state.listMap[parentId] = list
-        //     }
-        //     state.loading = 'successful'
-        //     state.editing = true
-        //     state.itemType = itemType
-        // },
         resetItemSelection: (state) => {
             state.itemList = []
             state.selected = {}
@@ -125,10 +113,15 @@ export const itemSlice = createSlice({
         builder.addCase(getLinkUrl.pending, (state) => {
             state.loading = 'pending'
         })
-        builder.addCase(getLinkUrl.fulfilled, (state) => {
-            state.loading = 'successful'
-            state.editing = false
-        })
+        builder.addCase(
+            getLinkUrl.fulfilled,
+            (state, action: PayloadAction<string>) => {
+                const url = action.payload
+                state.url = url
+                state.loading = 'successful'
+                state.editing = false
+            }
+        )
         builder.addCase(selectedItemList.pending, (state) => {
             state.loading = 'pending'
         })
@@ -148,10 +141,11 @@ export const itemSlice = createSlice({
             }
         )
         builder.addDefaultCase((state) => {
-            state.selected = {}
+            // state.selected = {}
             state.itemList = []
             state.parentId = null
             state.editing = false
+            // state.url = null
             state.size = 0
             state.loading = 'idle'
             state.itemType = 'classification'

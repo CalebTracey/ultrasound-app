@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useEffect, useState, useCallback } from 'react'
 import ReactPlayer from 'react-player'
 import SyncLoader from 'react-spinners/SyncLoader'
 import { PayloadAction } from '@reduxjs/toolkit'
@@ -8,33 +8,36 @@ import { getLinkUrl } from '../../redux/slices/item'
 import { IListItem } from '../../schemas'
 
 const VideoPlayer: FC = () => {
-    const { selected, loading } = useAppSelector((state) => state.item)
+    const { selected, loading, url } = useAppSelector((state) => state.item)
     const dispatch = useAppDispatch()
     const [signedLink, setSignedLink] = useState('')
     const [isLoading, setIsLoading] = useState(false)
 
-    const selectedItem: IListItem | Record<string, never> = selected
+    // const selectedItem: IListItem | Record<string, never> = selected
 
+    // const getUrl = useCallback(() => {
+    //     setIsLoading(true)
+    //     dispatch(getLinkUrl(selected.link)).then((res: PayloadAction<any>) => {
+    //         setSignedLink(res.payload)
+    //         console.log(`SIGNED LINK ${res.payload}`)
+    //         setIsLoading(false)
+    //     })
+    // }, [dispatch, selected])
+    const isUrl = (value: unknown): value is string => {
+        return !!value && !!(value as string)
+    }
     useEffect(() => {
-        setIsLoading(true)
-        if (
-            selectedItem !== undefined ||
-            (selectedItem !== {} && loading !== 'pending')
-        ) {
-            dispatch(getLinkUrl(selectedItem.link)).then(
-                (res: PayloadAction<any>) => {
-                    setSignedLink(res.payload)
-                }
-            )
-            setIsLoading(false)
+        if (url && isUrl(url) && loading !== 'successful') {
+            // if (!isLoading && selected.link !== undefined) getUrl()
+            setSignedLink(url)
         }
-    }, [selected, dispatch, selectedItem, loading])
+    }, [selected, dispatch, loading, isLoading, url])
 
-    return !isLoading && !signedLink ? (
-        <div className="spinner">
-            <SyncLoader />
-        </div>
-    ) : (
+    return (
+        //     <div className="spinner">
+        //         <SyncLoader />
+        //     </div>
+        // ) : (
         <div className="player">
             <ReactPlayer
                 className="react-player"
