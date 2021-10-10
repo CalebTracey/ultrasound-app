@@ -3,6 +3,7 @@ import { unwrapResult } from '@reduxjs/toolkit'
 import { useAppDispatch, useAppSelector } from '../redux/hooks'
 import { ISubMenuObj } from '../schemas'
 import { selectedSubMenu, getOne } from '../redux/slices/subMenu'
+import { newError } from '../redux/slices/message'
 
 interface Props {
     id: string
@@ -13,6 +14,7 @@ interface Props {
 const useSubMenu = (props: Props): [Props, () => void] => {
     const { id, subMenuObj, isLoading, error } = props
     const itemListState = useAppSelector((state) => state.item.listMap)
+    const loadingState = useAppSelector((state) => state.subMenu.loading)
     const dispatch = useAppDispatch()
     const [response, setResponse] = useState({
         id,
@@ -26,17 +28,26 @@ const useSubMenu = (props: Props): [Props, () => void] => {
     }
 
     const getSubMenu = useCallback(() => {
+        const controller = new AbortController()
+
         setResponse((prevState) => ({ ...prevState, isLoading: true }))
         const subMenuCurrent: ISubMenuObj = itemListState[id]
         if (isSubMenuObj(subMenuCurrent)) {
-            dispatch(selectedSubMenu(subMenuCurrent)).then((res) => {
-                setResponse({
-                    id,
-                    subMenuObj: res,
-                    isLoading: false,
-                    error: null,
+            dispatch(selectedSubMenu(subMenuCurrent))
+                .then((res) => {
+                    if (loadingState === 'successful')
+                        setResponse({
+                            id,
+                            subMenuObj: res,
+                            isLoading: false,
+                            error: null,
+                        })
                 })
-            })
+                .catch((err) => {
+                    dispatch(newError(err))
+                    console.error(err)
+                    return Promise.reject(err)
+                })
         } else {
             dispatch(getOne(id))
                 .then(unwrapResult)
@@ -54,8 +65,14 @@ const useSubMenu = (props: Props): [Props, () => void] => {
                         })
                     }
                 })
+                .catch((err) => {
+                    dispatch(newError(err))
+                    console.error(err)
+                    return Promise.reject(err)
+                })
         }
-    }, [id, dispatch, itemListState])
+        return () => controller?.abort()
+    }, [id, dispatch, itemListState, loadingState])
 
     return [response, getSubMenu]
 }

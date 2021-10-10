@@ -1,0 +1,217 @@
+//*     === FONTS ===
+
+$font-stack: "OpenSans","OpenSansSemiBold", "RobotoCondensed", "RobotoSlab", "RobotoSlabSemiBold";
+
+//*     === COLORS === 
+
+$primary-color:#f8f9fa; 
+$secondary-color:#e9ecef;
+$border-color:#dee2e6;
+$primary-font-color:#212529;
+$secondary-font-color:#6c757d;
+$header-font-color:#343A40;
+
+//      =====================
+//*     === COMMON STYLES ===
+//      =====================
+
+$border: 1px solid $border-color;
+
+%primary-font {
+  font-family: "OpenSans";
+  color: $primary-font-color
+}
+
+%secondary-font {
+  font-family: "RobotoSlab";
+  color: $secondary-font-color
+}
+%header-font {
+  font-family: "RobotoSlabSemiBold";
+  color: $header-font-color;
+  letter-spacing: 1px;
+}
+
+
+//      =====================
+//*     === GLOBAL STYLES ===
+//      =====================
+
+header {
+  border-bottom: $border;
+  background-color: $primary-color;
+  text-align: center;
+  height: 5rem;
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+
+  &___date {
+    @extend %secondary-font;
+    position: fixed;
+    left: 2rem;
+    top: 1.75rem;
+  }
+}
+
+footer {
+    border-top: $border;
+    background-color: $primary-color;
+    text-align: center;
+    height: 3rem;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    left: 0;
+
+    &___text {
+      margin-top: 0.5rem;
+      font-weight: 300;
+      font-size: small;
+    }
+}
+
+//      ===============
+//*     === SIDEBAR ===
+//      ===============
+
+.sidebar {
+  display: flex;
+  left: 0;
+  width: 16rem;
+  top: 5rem;
+  position: fixed;
+  bottom: 3rem;
+
+  &___content {
+    @extend %primary-font;
+    letter-spacing: 1px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &___header {
+    @extend %header-font;
+    width: 100%;
+    margin-top: 0.5rem;
+    font-weight: 450;
+    display: flex;
+    justify-content: center;
+    font-size: larger;
+  }
+
+  &___footer {
+    width: 100%;
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+    font-weight: 300;
+    font-size: small;
+    display: flex;
+    justify-content: center;
+  }
+}
+
+//      ============
+//*     === BODY ===
+//      ============
+
+.body {
+  background: $secondary-color;
+  position: fixed;
+  left: 16rem;
+  right: 0;
+  bottom: 3rem;
+  top: 5rem;
+}
+
+//      ===============
+//*     === CONTENT ===
+//      ===============
+
+.content {
+  border: $border;
+  background-color: $primary-color;
+  border-radius: 5px;
+  position: fixed;
+  top: 6rem;
+  bottom: 4rem;
+  left: 16rem;
+  right: 1rem;
+  padding: 1rem;
+
+  &___title {
+    text-transform: capitalize;
+    text-align: center;
+  }
+
+}
+
+//*     === VIDEO PLAYER ===
+
+.player {
+  justify-content: center;
+  display: flex;
+  position: relative;
+  padding-top: 56.25%; /* Player ratio: 100 / (1280 / 720) */
+}
+
+.react-player {
+  position: absolute;
+  top: 0;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+//      ==================
+//*     === COMPONENTS ===
+//      ==================
+   
+//*     === FORM ===
+
+.form {
+  border: $border;
+  background-color: $secondary-color;
+  padding: 2rem;
+  border-radius: 10px;
+  position: fixed;
+  left: 40%;
+  right: 40%;
+  width: 20%;
+  min-width: 20rem;
+  top: 3rem;
+}
+
+//*     === SEARCH BAR ===
+
+.search-bar {
+  position: fixed;
+  left: 40%;
+  right: 40%;
+  width: 20%;
+}
+
+//*     === BUTTONS ===
+
+.button-wrapper {
+  display: flex;
+  flex-direction: row-reverse;
+  padding: 1rem;
+  align-items: center;
+  margin-top: 0.25rem;
+}
+
+.menu-button {
+  position: sticky;
+  border: medium none;
+  max-height: 40px;
+  min-height: 38.5px;
+}
+
+//*     === SPINNER ===
+
+.spinner {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+}

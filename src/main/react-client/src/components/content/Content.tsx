@@ -1,35 +1,44 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { Media, Jumbotron, Container } from 'reactstrap'
-import { Redirect } from 'react-router-dom'
+import SyncLoader from 'react-spinners/SyncLoader'
 import ContentRoutes from '../../routes/ContentRoutes'
 import { useAppSelector } from '../../redux/hooks'
+import { IAppUser } from '../../schemas'
 
 const Content: FC = () => {
     const { selected, editing } = useAppSelector((state) => state.item)
+    const { isAuth, user } = useAppSelector((state) => state.auth)
+    const [routePath, setRoutePath] = useState('/dashboard')
 
-    if (!selected || editing) {
-        ;<Redirect to="/dashboard" />
+    const isUser = (value: unknown): value is IAppUser => {
+        return !!value && !!(value as IAppUser)
     }
+    const isAdmin = isUser(user) && user.roles?.includes('ROLE_ADMIN')
 
-    return (
+    useEffect(() => {
+        if (isAdmin) {
+            setRoutePath('/dashboard/admin')
+        }
+    }, [isAdmin])
+
+    return isAuth ? (
         <div className="content">
-            <div className="content-wrapper">
-                <Jumbotron
-                    fluid
-                    style={{ maxHeight: '80vh', paddingTop: '2rem' }}
-                >
+            <Jumbotron fluid style={{ maxHeight: '80vh', paddingTop: '2rem' }}>
+                <Container fluid>
+                    <div className="content___title">
+                        <Media style={{ fontSize: '2vw' }} heading>
+                            {!editing && selected.title}
+                        </Media>
+                    </div>
                     <Container fluid>
-                        <div className="video-title-wrapper">
-                            <Media style={{ fontSize: '2vw' }} heading>
-                                {selected.title}
-                            </Media>
-                        </div>
-                        <Container fluid>
-                            <ContentRoutes />
-                        </Container>
+                        <ContentRoutes routePath={routePath} />
                     </Container>
-                </Jumbotron>
-            </div>
+                </Container>
+            </Jumbotron>
+        </div>
+    ) : (
+        <div className="spinner">
+            <SyncLoader />
         </div>
     )
 }

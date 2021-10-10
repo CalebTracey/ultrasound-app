@@ -3,6 +3,7 @@ import { unwrapResult } from '@reduxjs/toolkit'
 import { useAppSelector, useAppDispatch } from '../redux/hooks'
 import { IClassification } from '../schemas'
 import { getAllClassifications } from '../redux/slices/classification'
+import { newError } from '../redux/slices/message'
 
 interface Props {
     classifications: IClassification[] | Record<string, unknown>
@@ -28,7 +29,10 @@ const useClassifications = (props: Props): [Props, () => void] => {
     const getClassifications = useCallback(() => {
         setResponse((prevState) => ({ ...prevState, isLoading: true }))
         const classificationsCurrent: IClassification[] = entities
-        if (classificationsCurrent.length !== 0) {
+        if (
+            classificationsCurrent !== undefined &&
+            classificationsCurrent.length !== 0
+        ) {
             setResponse({
                 classifications: classificationsCurrent,
                 isLoading: false,
@@ -49,6 +53,11 @@ const useClassifications = (props: Props): [Props, () => void] => {
                         }
                     }
                 })
+            // .catch((err: Error) => {
+            //     console.error(err)
+            //     dispatch(newError(err.message))
+            //     // return Promise.reject(err)
+            // })
         }
     }, [dispatch, entities, subMenuLoading])
     return [response, getClassifications]

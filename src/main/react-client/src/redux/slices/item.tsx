@@ -7,8 +7,14 @@ import {
 } from '@reduxjs/toolkit'
 import UserService from '../../service/user-service'
 import { IListItem } from '../../schemas'
+import { api } from '../../service/api'
 
-type TSelectedListPayload = { parentId: string; list: IListItem[] }
+type TSelectedListPayload = {
+    parentId: string
+    list: IListItem[]
+    itemType: 'subMenu' | 'classification'
+}
+type TEditPayload = { id: string; type: string; item: IListItem }
 type TSelectedPayload = { parentId: string; item: IListItem }
 type TMapItem = { key: string; value: IListItem[] }
 
@@ -16,19 +22,23 @@ interface itemSliceState {
     itemList: IListItem[] | []
     selected: IListItem | Record<string, never>
     listMap: TMapItem[] | Record<string, never>
-    parentId: string | undefined
+    parentId: string | null
     editing: boolean
     size: number
+    hasItems: boolean
     loading: 'idle' | 'pending' | 'successful'
+    itemType: 'subMenu' | 'classification'
 }
 const initialItemState: itemSliceState = {
     itemList: [],
     selected: {},
     listMap: {},
-    parentId: undefined,
+    parentId: null,
     editing: false,
     size: 0,
+    hasItems: false,
     loading: 'idle',
+    itemType: 'classification',
 }
 
 export const getLinkUrl = createAsyncThunk(
@@ -39,39 +49,58 @@ export const getLinkUrl = createAsyncThunk(
     }
 )
 
-// export const selectedItemList = createAsyncThunk(
-//     'items/selectedItemList',
-//     async (payload: TSelectedListPayload) => {
-//         return payload
-//     }
-// )
+export const selectedItemList = createAsyncThunk(
+    'items/selectedItemList',
+    async (payload: TSelectedListPayload) => {
+        return payload
+    }
+)
+
+export const deleteItem = createAsyncThunk(
+    'items/delete',
+    async (payload: TEditPayload) => {
+        const { id, type, item } = payload
+        return api.post(`/delete/${type}/${id}`, item)
+    }
+)
 
 export const itemSlice = createSlice({
     name: 'items',
     initialState: initialItemState,
     reducers: {
-        selectedItemList: (
+        itemType: (
             state,
-            action: PayloadAction<TSelectedListPayload>
+            action: PayloadAction<'subMenu' | 'classification'>
         ) => {
-            const { parentId, list } = action.payload
-            state.itemList = list
-            state.size = list.length
-            if (state.listMap[parentId] === null) {
-                state.listMap[parentId] = list
-            }
-            state.loading = 'idle'
+            state.itemType = action.payload
         },
+        // selectedItemList: (
+        //     state,
+        //     action: PayloadAction<TSelectedListPayload>
+        // ) => {
+        //     const { parentId, list, itemType } = action.payload
+        //     state.itemList = list
+        //     state.size = list.length
+        //     if (state.listMap[parentId] === null) {
+        //         state.listMap[parentId] = list
+        //     }
+        //     state.loading = 'successful'
+        //     state.editing = true
+        //     state.itemType = itemType
+        // },
         resetItemSelection: (state) => {
-            state.selected = {}
             state.itemList = []
-            state.parentId = undefined
+            state.selected = {}
+            state.listMap = {}
+            state.parentId = null
             state.editing = false
             state.size = 0
+            state.hasItems = false
             state.loading = 'idle'
+            state.itemType = 'classification'
         },
-        editingItems: (state) => {
-            state.editing = true
+        editingItems: (state, action: PayloadAction<boolean>) => {
+            state.editing = action.payload
         },
         newListEntity: (state, action: PayloadAction<TMapItem>) => {
             const mapItem = action.payload
@@ -81,6 +110,7 @@ export const itemSlice = createSlice({
             state.loading = 'pending'
         },
         selectedItem: (state, action: PayloadAction<TSelectedPayload>) => {
+            console.log('selected')
             const { parentId, item } = action.payload
             state.selected = item
             state.parentId = parentId
@@ -92,36 +122,51 @@ export const itemSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
+        builder.addCase(getLinkUrl.pending, (state) => {
+            state.loading = 'pending'
+        })
+        builder.addCase(getLinkUrl.fulfilled, (state) => {
+            state.loading = 'successful'
+            state.editing = false
+        })
+        builder.addCase(selectedItemList.pending, (state) => {
+            state.loading = 'pending'
+        })
+        builder.addCase(
+            selectedItemList.fulfilled,
+            (state, action: PayloadAction<TSelectedListPayload>) => {
+                const { parentId, list, itemType } = action.payload
+                state.itemList = list
+                state.size = list.length
+                state.parentId = parentId
+                if (state.listMap[parentId] === null) {
+                    state.listMap[parentId] = list
+                }
+                state.loading = 'successful'
+                // state.editing = true
+                state.itemType = itemType
+            }
+        )
         builder.addDefaultCase((state) => {
+            state.selected = {}
+            state.itemList = []
+            state.parentId = null
+            state.editing = false
+            state.size = 0
             state.loading = 'idle'
+            state.itemType = 'classification'
         })
     },
-    // extraReducers: (builder) => {
-    //     builder.addCase(selectedItemList.pending, (state) => {
-    //         state.loading = 'pending'
-    //     })
-    //     builder.addCase(
-    //         selectedItemList.fulfilled,
-    //         (state, action: PayloadAction<TSelectedListPayload>) => {
-    //             const { parentId, list } = action.payload
-    //             state.itemList = list
-    //             state.size = list.length
-    //             if (state.listMap[parentId] === null) {
-    //                 state.listMap[parentId] = list
-    //             }
-    //             state.loading = 'idle'
-    //         }
-    //     )
-    // },
 })
 export const {
+    itemType,
     getItems,
     removeItem,
     selectedItem,
     newListEntity,
     editingItems,
+    // selectedItemList,
     resetItemSelection,
-    selectedItemList,
 } = itemSlice.actions
 
 export default itemSlice.reducer as Reducer<typeof initialItemState>

@@ -12,7 +12,7 @@ const useClearSelections = (): [boolean, () => void] => {
         dispatch(clearAll())
         dispatch(resetItemSelection())
         dispatch(resetSubMenuSelection())
-        dispatch(resetClassificationSelection())
+
         setResponse(true)
     }, [dispatch])
     return [cleared, clearSelections]

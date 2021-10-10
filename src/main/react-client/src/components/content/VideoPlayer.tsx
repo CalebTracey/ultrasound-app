@@ -8,7 +8,7 @@ import { getLinkUrl } from '../../redux/slices/item'
 import { IListItem } from '../../schemas'
 
 const VideoPlayer: FC = () => {
-    const { selected } = useAppSelector((state) => state.item)
+    const { selected, loading } = useAppSelector((state) => state.item)
     const dispatch = useAppDispatch()
     const [signedLink, setSignedLink] = useState('')
     const [isLoading, setIsLoading] = useState(false)
@@ -17,7 +17,10 @@ const VideoPlayer: FC = () => {
 
     useEffect(() => {
         setIsLoading(true)
-        if (selectedItem !== undefined || selectedItem !== {}) {
+        if (
+            selectedItem !== undefined ||
+            (selectedItem !== {} && loading !== 'pending')
+        ) {
             dispatch(getLinkUrl(selectedItem.link)).then(
                 (res: PayloadAction<any>) => {
                     setSignedLink(res.payload)
@@ -25,14 +28,14 @@ const VideoPlayer: FC = () => {
             )
             setIsLoading(false)
         }
-    }, [selected, dispatch, selectedItem])
+    }, [selected, dispatch, selectedItem, loading])
 
-    return isLoading && signedLink ? (
+    return !isLoading && !signedLink ? (
         <div className="spinner">
             <SyncLoader />
         </div>
     ) : (
-        <div className="player-wrapper">
+        <div className="player">
             <ReactPlayer
                 className="react-player"
                 url={signedLink}

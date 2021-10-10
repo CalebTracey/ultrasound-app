@@ -1,37 +1,23 @@
-import React, { FC, useState, useEffect } from 'react'
+/* eslint-disable no-underscore-dangle */
+import React, { FC, useState } from 'react'
 import { ButtonDropdown, DropdownToggle } from 'reactstrap'
 import ItemListDropdown from './ItemListDropdown'
 import { useAppSelector } from '../../redux/hooks'
-import { IListItem } from '../../schemas'
 
 const ItemListDropdownContainer: FC = () => {
-    const { itemList, size } = useAppSelector((state) => state.item)
-    const [subMenuOpen, setSubMenuOpen] = useState(false)
-    const [items, setItems] = useState<IListItem[] | []>([])
-    const { subMenu } = useAppSelector((state) => state)
-    const { classification } = useAppSelector((state) => state)
-    const subMenuToggle = () => setSubMenuOpen((prevState) => !prevState)
-
-    useEffect(() => {
-        if (subMenu.editing) {
-            setItems(subMenu.itemList)
-        }
-        if (classification.editing) {
-            setItems(classification.selected.listItems)
-        }
-    }, [classification, subMenu])
+    const { size, editing } = useAppSelector((state) => state.item)
+    const [itemOpen, setItemOpen] = useState(false)
+    const itemToggle = () => setItemOpen((prevState) => !prevState)
 
     return (
         <ButtonDropdown
             style={{ margin: '1rem' }}
             addonType="prepend"
-            disabled={!items}
-            isOpen={subMenuOpen}
-            toggle={subMenuToggle}
+            disabled={!size}
+            isOpen={itemOpen}
+            toggle={itemToggle}
         >
-            <DropdownToggle caret>
-                {items && `List Items: ${items.length}`}
-            </DropdownToggle>
+            <DropdownToggle caret>{`List Items: ${size}`}</DropdownToggle>
             <ItemListDropdown />
         </ButtonDropdown>
     )

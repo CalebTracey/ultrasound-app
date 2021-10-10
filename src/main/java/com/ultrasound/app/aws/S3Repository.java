@@ -119,7 +119,6 @@ public class S3Repository implements S3Service {
                 listItemName = cleanList.get(0);
                 currentListHasSubMenu = false;
             }
-
             ListItem listItem = new ListItem(listItemName, listItemVideoTitle.toString(), key);
             itemList.add(listItem);
             SubMenu subMenu = new SubMenu(subMenuName, itemList);

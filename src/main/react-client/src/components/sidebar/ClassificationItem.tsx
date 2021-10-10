@@ -11,13 +11,13 @@ import {
     editingClassification,
 } from '../../redux/slices/classification'
 import { resetItemSelection } from '../../redux/slices/item'
+import { editingSubMenu } from '../../redux/slices/subMenu'
 
 interface Props {
     classification: IClassification
 }
 const ClassificationItem: FC<Props> = ({ classification }) => {
     const { _id, name, hasSubMenu, listItems, subMenus } = classification
-    const subMenuLoading = useAppSelector((state) => state.subMenu.loading)
     const roles = useAppSelector((state) => state.auth.user?.roles)
     const dispatch = useAppDispatch()
     const ref = useRef(null)
@@ -35,13 +35,13 @@ const ClassificationItem: FC<Props> = ({ classification }) => {
     }, [classification, dispatch])
 
     const handleEditClick = useCallback(() => {
-        if (isClassification(classification) && subMenuLoading !== 'pending') {
+        if (isClassification(classification)) {
             dispatch(resetItemSelection())
-            dispatch(selectedClassification(classification)).then(() => {
-                dispatch(editingClassification(true))
-            })
+            dispatch(editingSubMenu(false))
+            dispatch(editingClassification(true))
+            dispatch(selectedClassification(classification))
         }
-    }, [classification, dispatch, subMenuLoading])
+    }, [classification, dispatch])
 
     return (
         <div style={{ display: 'flex' }}>
@@ -52,7 +52,7 @@ const ClassificationItem: FC<Props> = ({ classification }) => {
                     className="btn btn-outline-secondary menu-button"
                     onClick={handleEditClick}
                 >
-                    <Link to={`/dashboard/edit/${_id}`} />
+                    <Link to={`/dashboard/admin/edit/${_id}`} />
                     <small>
                         <FiEdit3 />
                     </small>

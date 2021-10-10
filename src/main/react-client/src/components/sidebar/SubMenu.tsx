@@ -6,6 +6,7 @@ import { SubMenu } from 'react-pro-sidebar'
 import useSubMenu from '../../hooks/useSubMenu'
 import ItemList from './ItemList'
 import { IListItem } from '../../schemas'
+import { useAppSelector } from '../../redux/hooks'
 
 interface Props {
     id: string
@@ -14,6 +15,7 @@ interface Props {
 
 const SubMenuComponent: FC<Props> = ({ id, title }) => {
     const [itemList, setItemList] = useState<IListItem[] | []>([])
+    const { loading } = useAppSelector((state) => state.subMenu)
     const [response, getSubMenu] = useSubMenu({
         id,
         subMenuObj: {},
@@ -30,10 +32,10 @@ const SubMenuComponent: FC<Props> = ({ id, title }) => {
     }
 
     useEffect(() => {
-        if (isItemList(subMenuObj.itemList)) {
+        if (loading !== 'pending' && isItemList(subMenuObj.itemList)) {
             setItemList(subMenuObj.itemList)
         }
-    }, [subMenuObj])
+    }, [subMenuObj, loading])
 
     return (
         <SubMenu

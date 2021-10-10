@@ -35,8 +35,10 @@ const userDetails = async (username: string): Promise<TUserDetails> => {
 const registerService = async (data: TNewUser): Promise<string> =>
     api.post<TNewUser, string>(`auth/sign-up`, data)
 
-const loginService = async (details: TUserLogin): Promise<TUserLoginResponse> =>
-    api
+const loginService = async (
+    details: TUserLogin
+): Promise<TUserLoginResponse> => {
+    const response = await api
         .post<TUserLogin, TUserLoginResponse>(`auth/sign-in`, details)
         .then((res) => {
             if (res) {
@@ -44,6 +46,9 @@ const loginService = async (details: TUserLogin): Promise<TUserLoginResponse> =>
             }
             return res
         })
+    console.log(response)
+    return response
+}
 
 const logoutService = (): void => {
     removeUser()

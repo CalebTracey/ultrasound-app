@@ -30,6 +30,4 @@ public class Classification {
         this.listItems = listItems;
         this.subMenus = subMenus;
     }
-
-
 }

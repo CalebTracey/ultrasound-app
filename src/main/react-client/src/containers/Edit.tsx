@@ -1,57 +1,52 @@
 /* eslint-disable no-underscore-dangle */
 import React, { useEffect, FC, useCallback } from 'react'
-import { withRouter, Redirect, RouteComponentProps } from 'react-router-dom'
-import { Media, Jumbotron, Container, Alert } from 'reactstrap'
+import { withRouter } from 'react-router-dom'
+import { Media, Jumbotron, Container, Alert, Button } from 'reactstrap'
 import { useAppSelector, useAppDispatch } from '../redux/hooks'
 import EditSubMenuContainer from '../components/edit/EditSubMenuContainer'
-import EditItemListContainer from '../components/edit/EditListItemContainer'
+import EditListItemContainer from '../components/edit/EditListItemContainer'
 import EditDataName from '../components/edit/EditDataName'
 import DeleteButton from '../components/buttons/DeleteButton'
 import useClearSelections from '../hooks/useClearSelections'
+import EventBus from '../common/EventBus'
 
-interface Props {
-    history: RouteComponentProps['history']
-}
+// interface Props {
+//     history: RouteComponentProps['history']
+// }
 
-const Edit: FC<Props> = ({ history }) => {
-    const roles = useAppSelector((state) => state.auth.user?.roles)
+const Edit: FC = () => {
     const { message } = useAppSelector((state) => state)
-    const { selected, subMenuCount } = useAppSelector(
+    const { selected, subMenuCount, loading, editing } = useAppSelector(
         (state) => state.classification
     )
-    const { subMenus, listItems } = useAppSelector(
-        (state) => state.classification.selected
-    )
-    const editingListItem = useAppSelector((state) => state.item.editing)
-    const [cleared, clearSelections] = useClearSelections()
-    const { _id, name, hasSubMenu } = selected
+    const subMenuEditing = useAppSelector((state) => state.subMenu.editing)
+    const { name, _id, hasSubMenu } = selected
+    const [, clearSelections] = useClearSelections()
     const dispatch = useAppDispatch()
 
     const handleCancel = useCallback(() => {
-        // clearSelections()
+        clearSelections()
     }, [clearSelections])
 
-    // const updateData = useCallback(() => {
-    //     dispatch(allActions.data.selectedEdit(editState))
-    // }, [dispatch, editState])
-
     useEffect(() => {
-        history.listen((location) => {
+        EventBus.on('cancel', () => {
             handleCancel()
         })
-    }, [dispatch, history, handleCancel])
+        return () => {
+            EventBus.remove('cancel', handleCancel)
+        }
+    }, [dispatch, handleCancel])
 
-    return roles && roles.includes('ROLE_ADMIN') && name !== undefined ? (
+    return (
         <Jumbotron>
             <div className="edit-content">
                 <Container>
                     {message.text && <Alert color="info">{message.text}</Alert>}
                     <Media body>
-                        <h4 className="lead">Editing:</h4>
                         <Media heading>
-                            <div style={{ display: 'flex' }}>
+                            <div className="editHeader">
                                 <span className="display-4">
-                                    {name.toUpperCase()}
+                                    {name && name.toUpperCase()}
                                 </span>
                                 <EditDataName
                                     id={_id}
@@ -67,29 +62,33 @@ const Edit: FC<Props> = ({ history }) => {
                             </div>
                             <hr className="my-2" />
                         </Media>
-                        <Container
-                            fluid
-                            style={{ display: 'flex', padding: '2rem' }}
-                        >
-                            {subMenus && (
-                                <EditSubMenuContainer
-                                    subMenuCount={subMenuCount}
-                                    hasSubMenu={hasSubMenu}
-                                />
-                            )}
-                            {listItems && <EditItemListContainer />}
-                        </Container>
+                        {loading === 'successful' && (
+                            <Container
+                                fluid
+                                style={{ display: 'flex', padding: '2rem' }}
+                            >
+                                <Button
+                                    outline
+                                    color="danger"
+                                    onClick={handleCancel}
+                                >
+                                    <span>Cancel</span>
+                                </Button>
+                                {hasSubMenu && (
+                                    <EditSubMenuContainer
+                                        subMenuCount={subMenuCount}
+                                        hasSubMenu={hasSubMenu}
+                                    />
+                                )}
+                                {editing && !subMenuEditing && (
+                                    <EditListItemContainer />
+                                )}
+                            </Container>
+                        )}
                     </Media>
                 </Container>
             </div>
         </Jumbotron>
-    ) : (
-        <Redirect
-            to={{
-                pathname: '/dashboard',
-                state: history.location,
-            }}
-        />
     )
 }
 

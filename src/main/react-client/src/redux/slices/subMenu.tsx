@@ -7,10 +7,9 @@ import {
     PayloadAction,
     Reducer,
 } from '@reduxjs/toolkit'
-import { selectedItemList } from './item'
+import { itemType } from './item'
 import { IListItem, ISubMenuObj } from '../../schemas'
 import { api } from '../../service/api'
-import { editingClassification } from './classification'
 
 interface subMenuSliceState {
     selected: ISubMenuObj | Record<string, never>
@@ -29,26 +28,11 @@ const initialSubMenuState: subMenuSliceState = {
     loading: 'idle',
 }
 
-const isSubMenuObj = (value: unknown): value is ISubMenuObj => {
-    return !!value && !!(value as ISubMenuObj)
-}
-
 export const selectedSubMenu = createAsyncThunk(
     'subMenu/selected',
     async (subMenu: ISubMenuObj, thunkApi) => {
         const value: ISubMenuObj = subMenu
-        const { _id, itemList, type } = value
-        if (value && isSubMenuObj(value) && type === 'TYPE_SUBMENU') {
-            if (itemList && itemList.length !== 0) {
-                const listItems: IListItem[] = itemList
-                thunkApi.dispatch(
-                    selectedItemList({
-                        parentId: _id,
-                        list: listItems,
-                    })
-                )
-            }
-        }
+        thunkApi.dispatch(itemType('subMenu'))
         return value
     }
 )
@@ -85,10 +69,6 @@ export const subMenuSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
-        builder.addCase(getOne.pending, (state) => {
-            state.loading = 'pending'
-            state.editing = false
-        })
         builder.addCase(selectedSubMenu.pending, (state) => {
             state.loading = 'pending'
         })
@@ -107,7 +87,7 @@ export const subMenuSlice = createSlice({
         )
         builder.addDefaultCase((state) => {
             state.loading = 'idle'
-            state.editing = false
+            // state.editing = false
         })
     },
 })

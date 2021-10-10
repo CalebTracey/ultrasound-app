@@ -1,11 +1,22 @@
+/* eslint-disable no-unused-expressions */
 /* eslint-disable no-param-reassign */
 /* eslint-disable class-methods-use-this */
 import React from 'react'
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
-import history from '../helpers/history'
+import axios, {
+    AxiosInstance,
+    AxiosRequestConfig,
+    AxiosResponse,
+    AxiosError,
+} from 'axios'
+// import history from '../helpers/history'
+
+import { useHistory } from 'react-router'
 import EventBus from '../common/EventBus'
 import TokenService from './token-service'
-import { newError } from '../redux/slices/message'
+import { newError, messageSlice } from '../redux/slices/message'
+import { SerializedError } from '../schemas'
+// import { useAppDispatch } from '../redux/hooks'
+// import message from '../redux/slices/message'
 
 enum StatusCode {
     Unauthorized = 401,
@@ -25,18 +36,19 @@ const injectToken = (config: AxiosRequestConfig): AxiosRequestConfig => {
     try {
         const token = getLocalAccessToken()
         console.log(token)
-        if (token != null) {
+        if (token !== null || token !== undefined) {
             config.headers.Authorization = `Bearer ${token}`
         }
         return config
-    } catch (error) {
+    } catch (error: any) {
         throw new Error('Error!')
-        // console.error(error)
     }
 }
 
 class Http {
     private instance: AxiosInstance | null = null
+
+    // history = useHistory()
 
     private get http(): AxiosInstance {
         return this.instance != null ? this.instance : this.initHttp()
@@ -55,13 +67,16 @@ class Http {
 
         http.interceptors.response.use(
             (response) => response,
-            (error) => {
-                const { response, message } = error
-                console.log(`ERROR ${response}`)
-                return this.handleError(response)
+            (error: Error | AxiosError) => {
+                if (axios.isAxiosError(error)) {
+                    this.handleError(error)
+                    // const {} = error
+                    // Access to config, request, and response
+                } else {
+                    throw new Error(error.message)
+                }
             }
         )
-
         this.instance = http
         return http
     }
@@ -104,32 +119,31 @@ class Http {
 
     // Handle global app errors
     // We can handle generic app errors depending on the status code
-    private handleError(error: { status: any; message: string }) {
-        const { status, message } = error
-        switch (status) {
+    private handleError(error: AxiosError) {
+        console.log(error)
+
+        switch (error.response?.status) {
             case StatusCode.InternalServerError:
-                // Handle InternalServerError
+                // history.push('/home')
+                // EventBus.dispatch('logout')
                 break
-            // no default
 
             case StatusCode.Forbidden:
-                // Handle Forbidden
+                // history.push('/home')
+                // EventBus.dispatch('logout')
                 break
-            // no default
 
             case StatusCode.Unauthorized:
-                newError(message)
-                history.push('/home')
-                EventBus.dispatch('logout')
+                console.error(error)
+                // history.push('/home')
+                // EventBus.dispatch('logout')
                 break
-            // no default
 
-            case StatusCode.TooManyRequests:
-                // Handle TooManyRequests
-                break
+            // case StatusCode.TooManyRequests:
+            // Handle TooManyRequests
+            // break
             // no default
         }
-
         return Promise.reject(error)
     }
 }

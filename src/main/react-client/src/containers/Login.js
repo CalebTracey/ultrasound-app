@@ -1,11 +1,9 @@
 /* eslint-disable react/prop-types */
 import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { Redirect } from 'react-router-dom'
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as Yup from 'yup'
-import history from '../helpers/history'
 import LoginForm from '../components/login/LoginForm'
 import HomeButton from '../components/buttons/HomeButton'
 import RegisterButton from '../components/register/RegisterButton'
@@ -16,12 +14,10 @@ import { useAppDispatch } from '../redux/hooks'
 const Login = () => {
     const [isLoading, setIsLoading] = useState(false)
     const message = useSelector((state) => state.message.text)
-    const { isAuth, user, loading } = useSelector((state) => state.auth)
     const dispatch = useAppDispatch()
 
     const validationSchema = Yup.object().shape({
         username: Yup.string().required('Username is required'),
-
         password: Yup.string().required('Password is required'),
     })
     const {
@@ -33,11 +29,11 @@ const Login = () => {
         resolver: yupResolver(validationSchema),
     })
 
-    const onSubmit = async (data) => {
+    const onSubmit = (data) => {
         setIsLoading(true)
-        if (Array.from(errors).length === 0) {
+        try {
             dispatch(login(data)).then((res) => {
-                console.log(`Login page  ${res}`)
+                console.log(`Login page  ${JSON.stringify(res)}`)
             })
             // console.log(res.data);
             // if (res.data.roles) {
@@ -48,8 +44,9 @@ const Login = () => {
             //     dispatch(err)
             //     setIsLoading(false)
             // })
-        } else {
-            history.push('/home')
+        } catch (error) {
+            // history.push('/home')
+            dispatch(newError(error))
             setIsLoading(false)
         }
     }

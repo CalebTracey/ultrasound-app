@@ -6,16 +6,15 @@ import React, { FC } from 'react'
 
 interface ProtectedRouteProps extends RouteProps {
     isAuthenticated: boolean
-    isAdmin: boolean
     authenticationPath: string
 }
 const ProtectedRouteAdmin: FC<ProtectedRouteProps> = ({
     isAuthenticated,
-    isAdmin,
     authenticationPath,
     ...routeProps
 }: ProtectedRouteProps) => {
-    if (isAuthenticated && isAdmin) {
+    console.log(`Admin authenticated: ${isAuthenticated}`)
+    if (isAuthenticated) {
         return <Route {...routeProps} />
     }
     return <Redirect to={{ pathname: authenticationPath }} />

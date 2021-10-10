@@ -1,44 +1,41 @@
 /* eslint-disable no-underscore-dangle */
-import React, { FC, MouseEvent } from 'react'
+import React, { FC, MouseEvent, useEffect } from 'react'
 import { DropdownItem } from 'reactstrap'
 import useSubMenu from '../../hooks/useSubMenu'
-import { useAppDispatch } from '../../redux/hooks'
+import { useAppDispatch, useAppSelector } from '../../redux/hooks'
 import { editingSubMenu } from '../../redux/slices/subMenu'
-import { IListItem, ISubMenuObj } from '../../schemas'
-import { selectedItemList } from '../../redux/slices/item'
 
 interface Props {
     id: string
     title: string
 }
 const SubMenuDropdownItem: FC<Props> = ({ id, title }) => {
+    const loadingClassification = useAppSelector(
+        (state) => state.classification.loading
+    )
+    const loadingSubMenu = useAppSelector((state) => state.subMenu.loading)
     const [response, getSubMenu] = useSubMenu({
         id,
         subMenuObj: {},
         isLoading: false,
         error: null,
     })
-    const { isLoading, subMenuObj } = response
+    const { isLoading } = response
     const dispatch = useAppDispatch()
-
-    const isItemList = (value: unknown): value is IListItem[] => {
-        return !!value && !!(value as ISubMenuObj).itemList
-    }
-    const isString = (value: unknown): value is string => {
-        return !!value && !!(value as ISubMenuObj)._id
-    }
 
     const handleEditSubMenu = (e: MouseEvent) => {
         e.preventDefault()
-        getSubMenu()
-        const { _id, itemList } = subMenuObj
-        if (!isLoading && isItemList(itemList) && isString(_id)) {
-            dispatch(selectedItemList({ parentId: _id, list: itemList }))
+        if (!isLoading && loadingSubMenu !== 'pending') {
+            getSubMenu()
             dispatch(editingSubMenu(true))
         }
     }
+    // useEffect(() => {
+    //     const controller = new AbortController()
+    //     return controller?.abort()
+    // }, [])
 
-    return !isLoading ? (
+    return !isLoading && loadingClassification === 'successful' ? (
         <DropdownItem
             style={{ textTransform: 'uppercase' }}
             onClick={handleEditSubMenu}
@@ -46,7 +43,7 @@ const SubMenuDropdownItem: FC<Props> = ({ id, title }) => {
             {title}
         </DropdownItem>
     ) : (
-        <>Loading</>
+        <>Loading...</>
     )
 }
 

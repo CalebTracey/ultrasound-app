@@ -4,7 +4,6 @@ import { Alert } from 'reactstrap'
 import { useAppSelector } from '../redux/hooks'
 import Sidebar from './Sidebar'
 import Body from '../components/layout/Body'
-// import { getAllClassifications } from '../redux/slices/classification'
 import EventBus from '../common/EventBus'
 
 const Dashboard = () => {
@@ -18,17 +17,17 @@ const Dashboard = () => {
     }, [isAuth])
 
     return isAuth ? (
-        <>
+        <div style={{ boxSizing: 'border-box', minHeight: '100vh' }}>
             {text && !error ? (
                 <Alert color="info">{text}</Alert>
             ) : (
                 <Alert color="danger">{text}</Alert>
             )}
-            <div className="app">
-                <Sidebar />
-                <Body />
-            </div>
-        </>
+            {/* <div style={{ boxSizing: 'border-box', minHeight: '100vh' }}> */}
+            <Sidebar />
+            <Body />
+            {/* </div> */}
+        </div>
     ) : (
         <>Dashboard Loading...</>
     )

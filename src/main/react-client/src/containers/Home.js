@@ -26,6 +26,7 @@ const Home = () => {
                         error.message ||
                         error.toString()
                     setContent(cont.error)
+                    console.log(cont.error)
                 }
             )
         }
@@ -34,27 +35,25 @@ const Home = () => {
 
     return (
         <>
-            <div className="header" style={{ left: '0', right: '0' }}>
-                <div>
-                    {/* <h1 className="text-center">Home</h1> */}
-                    <div className="button-wrapper">
-                        {isAuth ? (
-                            <>
-                                <div className="header-date">{content}</div>
-                                <LogoutButton />
-                                <DashboardButton />
-                            </>
-                        ) : (
-                            <>
-                                <div className="header-date">{content}</div>
+            <header>
+                <div className="button-wrapper">
+                    {isAuth ? (
+                        <>
+                            <div className="header-date">{content}</div>
+                            <LogoutButton />
+                            <DashboardButton />
+                        </>
+                    ) : (
+                        <>
+                            <div className="header-date">{content}</div>
 
-                                <LoginButton />
-                                <RegisterButton />
-                            </>
-                        )}
-                    </div>
+                            <LoginButton />
+                            <RegisterButton />
+                        </>
+                    )}
                 </div>
-            </div>
+                {/* </div> */}
+            </header>
             <div
                 className="content"
                 style={{
@@ -83,7 +82,7 @@ const Home = () => {
                     </Container>
                 </Jumbotron>
             </div>
-            <div className="footer" style={{ left: '0', right: '0' }} />
+            <footer />
         </>
     )
 }

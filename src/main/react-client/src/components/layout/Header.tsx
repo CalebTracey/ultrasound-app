@@ -7,14 +7,14 @@ import { useAppSelector } from '../../redux/hooks'
 const Header: FC = () => {
     const { user } = useAppSelector((state) => state.auth)
     return (
-        <div className="header">
+        <header>
             <div className="button-wrapper">
                 {/* <div className="header-date">{content}</div> */}
                 <Logout />
                 <UserInfoHeader user={user} />
                 {/* <SearchBar /> */}
             </div>
-        </div>
+        </header>
     )
 }
 

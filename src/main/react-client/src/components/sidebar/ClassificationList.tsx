@@ -4,8 +4,10 @@ import React, { FC, useEffect } from 'react'
 import { IClassification } from '../../schemas'
 import ClassificationItem from './ClassificationItem'
 import useClassifications from '../../hooks/useClassifications'
+import { useAppSelector } from '../../redux/hooks'
 
 const ClassificationList: FC = () => {
+    const { user, loading } = useAppSelector((state) => state.auth)
     const [response, getClassifications] = useClassifications({
         classifications: [],
         isLoading: false,
@@ -18,11 +20,13 @@ const ClassificationList: FC = () => {
     }
 
     useEffect(() => {
-        getClassifications()
-    }, [getClassifications])
+        if (loading === 'successful' && user.accessToken) getClassifications()
+    }, [getClassifications, loading, user])
 
     const classificationListNode =
-        !isLoading && classifications && isClassifications(classifications) ? (
+        !isLoading &&
+        classifications !== undefined &&
+        isClassifications(classifications) ? (
             classifications.map((classification: IClassification) => {
                 return <ClassificationItem classification={classification} />
             })

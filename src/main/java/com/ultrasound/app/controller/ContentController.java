@@ -78,7 +78,7 @@ public class ContentController {
                                              @PathVariable String subMenuId,
                                              @RequestBody Name name) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/api/edit/submenu/name/{id}").toUriString());
+                .path("/api/edit/submenu/name/{id}/{subMenuId}").toUriString());
         Classification classification = classificationService.getById(classificationId);
         SubMenu subMenu = subMenuService.getById(subMenuId);
         return ResponseEntity.created(uri).body(subMenuService

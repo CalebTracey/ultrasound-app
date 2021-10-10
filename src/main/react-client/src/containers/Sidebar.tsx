@@ -13,25 +13,29 @@ import '../components/custom.scss'
 const Sidebar: FC = () => {
     return (
         <div className="sidebar">
-            <div className="sidebar-content">
-                <ProSidebar width="16rem">
+            <ProSidebar width="16rem">
+                <div className="sidebar___header">
                     <SidebarHeader>
-                        <p className="sidebar-header">Classifications</p>
+                        <p className="sidebar___header___text">
+                            Classifications
+                        </p>
                     </SidebarHeader>
+                </div>
+                <div className="sidebar___content">
                     <SidebarContent>
                         <Menu iconShape="square">
                             <ClassificationList />
                         </Menu>
                     </SidebarContent>
+                </div>
+                <div className="sidebar___footer">
                     <SidebarFooter>
-                        <div className="sidebar-footer">
-                            <footer>
-                                <small>v0.5 {new Date().getFullYear()}</small>
-                            </footer>
-                        </div>
+                        {/* <footer> */}
+                        <small>v0.5 {new Date().getFullYear()}</small>
+                        {/* </footer> */}
                     </SidebarFooter>
-                </ProSidebar>
-            </div>
+                </div>
+            </ProSidebar>
         </div>
     )
 }

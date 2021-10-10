@@ -6,9 +6,11 @@ import {
     PayloadAction,
     Reducer,
 } from '@reduxjs/toolkit'
-import { selectedItemList } from './item'
+import { AxiosError } from 'axios'
+// import history from '../../helpers/history'
 import { IClassification } from '../../schemas'
 import { api } from '../../service/api'
+import { newError } from './message'
 
 interface classificationSliceState {
     entities: IClassification[] | []
@@ -27,50 +29,30 @@ const initialClassificationState: classificationSliceState = {
     loading: 'idle',
 }
 
-const isClassification = (value: unknown): value is IClassification => {
-    return !!value && !!(value as IClassification)
-}
-
 export const selectedClassification = createAsyncThunk(
     'classifications/selected',
-    async (classification: IClassification, thunkApi) => {
+    async (classification: IClassification) => {
         const value: IClassification = classification
-        const { _id, listItems, type } = value
-        if (
-            value &&
-            isClassification(value) &&
-            type === 'TYPE_CLASSIFICATION'
-        ) {
-            if (listItems && listItems.length !== 0) {
-                thunkApi.dispatch(
-                    selectedItemList({
-                        parentId: _id,
-                        list: listItems,
-                    })
-                )
-            }
-        }
         return value
     }
 )
 
-export const getAllClassifications = createAsyncThunk(
+export const getAllClassifications = createAsyncThunk<IClassification[], void>(
     'classifications/getAll',
     async () =>
-        api.get('classifications').then((res) => {
-            return res.data
-        })
+        api
+            .get('classifications')
+            .then((res) => {
+                return Promise.resolve(res.data)
+            })
+            .catch((err: AxiosError) => {
+                if (err.isAxiosError) {
+                    newError(err.message)
+                    // history.push('/home')
+                }
+                Promise.reject(err)
+            })
 )
-
-// export const editClassification = createAsyncThunk(
-//     'classifications/editing',
-//     async (classification: IClassification, thunkApi) => {
-//         const retVal = await thunkApi.dispatch(
-//             selectedClassification(classification)
-//         )
-//         return retVal.payload
-//     }
-// )
 
 export const classificationSlice = createSlice({
     name: 'classifications',
@@ -112,7 +94,7 @@ export const classificationSlice = createSlice({
                     Object.keys(classification.subMenus)
                 ).length
                 state.listItemsCount = classification.listItems.length
-                state.loading = 'idle'
+                state.loading = 'successful'
             }
         )
         builder.addCase(getAllClassifications.pending, (state) => {
@@ -125,13 +107,6 @@ export const classificationSlice = createSlice({
                 state.loading = 'idle'
             }
         )
-        // builder.addCase(editClassification.fulfilled, (state) => {
-        //     state.editing = true
-        // })
-        builder.addDefaultCase((state) => {
-            state.loading = 'idle'
-            state.editing = false
-        })
     },
 })
 export const {

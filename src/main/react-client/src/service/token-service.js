@@ -5,7 +5,7 @@ const getLocalRefreshToken = () => {
 
 const getLocalAccessToken = () => {
     const user = JSON.parse(localStorage.getItem('user'))
-    console.log(`Get Token ${user}`)
+    console.log(`Get Token ${JSON.stringify(user.accessToken)}`)
     return user?.accessToken
 }
 
@@ -24,7 +24,6 @@ const setUser = (user) => {
 const removeUser = () => {
     localStorage.removeItem('user')
 }
-
 const TokenService = {
     getLocalRefreshToken,
     getLocalAccessToken,

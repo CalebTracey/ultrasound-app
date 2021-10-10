@@ -5,35 +5,55 @@ import {
     PayloadAction,
     Reducer,
 } from '@reduxjs/toolkit'
+import axios from 'axios'
 import AuthService from '../../service/auth-service'
 import TokenService from '../../service/token-service'
 import { IAppUser, IUserLogin } from '../../schemas'
 import { api } from '../../service/api'
 
+type TLogin = { username: string; password: string }
 interface authSliceState {
     isAuth: boolean
     user: IAppUser | Record<string, null>
     loading: 'idle' | 'pending' | 'successful'
     error: string | null
+    contentPath: '/dashboard' | '/dashboard/admin'
 }
-
+const instance = axios.create({
+    // baseURL: REACT_APP_API_URL,
+    baseURL: 'http://localhost:8080/api/',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+})
 const data: string | null = localStorage.getItem('user')
 const user = data ? JSON.parse(data) : null
 const initialAuthState: authSliceState = user
-    ? { isAuth: true, user, loading: 'successful', error: null }
-    : { isAuth: false, user: {}, loading: 'idle', error: null }
+    ? {
+          isAuth: true,
+          user,
+          loading: 'successful',
+          error: null,
+          contentPath: '/dashboard',
+      }
+    : {
+          isAuth: false,
+          user: {},
+          loading: 'idle',
+          error: null,
+          contentPath: '/dashboard',
+      }
 
 const isUser = (value: unknown): value is IAppUser => {
     return !!value && !!(value as IAppUser)
 }
 export const login = createAsyncThunk(
     'auth/login',
-    async (credentials: IUserLogin) =>
-        api.post(`auth/sign-in`, credentials).then((res) => {
+    async (credentials: TLogin) =>
+        instance.post(`auth/sign-in`, credentials).then((res) => {
             const userData = res.data
             TokenService.setUser(userData)
-            // if (isUser()) return res.data
-            return userData
+            return Promise.resolve(userData)
         })
 )
 
@@ -49,6 +69,9 @@ export const authSlice = createSlice({
             const userDetails = action.payload
             state.user = userDetails
             state.isAuth = true
+            if (userDetails.roles.includes('ROLE_ADMIN')) {
+                state.contentPath = '/dashboard/admin'
+            }
         },
         loginFail: (state) => {
             state.isAuth = false
@@ -78,6 +101,9 @@ export const authSlice = createSlice({
                 state.user = userData
                 state.isAuth = true
                 state.loading = 'successful'
+                if (userData.roles.includes('ROLE_ADMIN')) {
+                    state.contentPath = '/dashboard/admin'
+                }
             } else {
                 state.isAuth = false
                 state.loading = 'idle'
@@ -96,6 +122,7 @@ export const {
     loginFail,
     registerSuccess,
     registerFail,
+    loginSuccess,
     // userLogout,
     userRefreshToken,
 } = authSlice.actions
