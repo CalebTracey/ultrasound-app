@@ -8,10 +8,7 @@ import {
 import axios from 'axios'
 import AuthService from '../../service/auth-service'
 import TokenService from '../../service/token-service'
-import { IAppUser, IUserLogin } from '../../schemas'
-// import { newError } from './message'
-// import { api } from '../../service/api'
-// import { isTSConstructSignatureDeclaration } from '@babel/types'
+import { IAppUser } from '../../schemas'
 
 type TLogin = { username: string; password: string }
 interface authSliceState {

@@ -42,10 +42,7 @@ const App: FC = () => {
 
     useEffect(() => {
         if (isAuth && isUser(user) && loading === 'successful') {
-            // dispatch(loginSuccess(user))
             history.push(contentPath)
-        } else {
-            // history.push('/home')
         }
     })
 
