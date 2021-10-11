@@ -6,13 +6,13 @@ import * as Yup from 'yup'
 import RegisterForm from '../components/register/RegisterForm'
 import LoginButton from '../components/login/LoginButton'
 import HomeButton from '../components/buttons/HomeButton'
-import auth from '../redux/slices/auth'
-
-const { userRegister } = auth
+import { userRegister } from '../redux/slices/auth'
 
 const Register = () => {
     const [successful, setSuccessful] = useState(false)
-    const { message } = useSelector((state) => state.message)
+    const message = useSelector((state) => {
+        return state.auth.error || ''
+    })
     const dispatch = useDispatch()
 
     const validationSchema = Yup.object().shape({

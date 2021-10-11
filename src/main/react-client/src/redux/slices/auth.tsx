@@ -9,7 +9,9 @@ import axios from 'axios'
 import AuthService from '../../service/auth-service'
 import TokenService from '../../service/token-service'
 import { IAppUser, IUserLogin } from '../../schemas'
-import { api } from '../../service/api'
+// import { newError } from './message'
+// import { api } from '../../service/api'
+// import { isTSConstructSignatureDeclaration } from '@babel/types'
 
 type TLogin = { username: string; password: string }
 interface authSliceState {
@@ -19,6 +21,7 @@ interface authSliceState {
     error: string | null
     contentPath: '/dashboard' | '/dashboard/admin'
 }
+
 const instance = axios.create({
     // baseURL: REACT_APP_API_URL,
     baseURL: 'http://localhost:8080/api/',
@@ -26,8 +29,10 @@ const instance = axios.create({
         'Content-Type': 'application/json',
     },
 })
+
 const data: string | null = localStorage.getItem('user')
 const user = data ? JSON.parse(data) : null
+
 const initialAuthState: authSliceState = user
     ? {
           isAuth: true,
@@ -49,35 +54,34 @@ const isUser = (value: unknown): value is IAppUser => {
 }
 export const login = createAsyncThunk(
     'auth/login',
-    async (credentials: TLogin) =>
-        instance.post(`auth/sign-in`, credentials).then((res) => {
-            const userData = res.data
-            TokenService.setUser(userData)
-            return Promise.resolve(userData)
-        })
+    async (credentials: TLogin) => {
+        const res = await instance.post(`auth/sign-in`, credentials)
+        return res.data
+    }
 )
 
 export const logout = createAsyncThunk('auth/logout', async () => {
     return AuthService.logoutService()
 })
 
+export const userRegister = createAsyncThunk(
+    'auth/register',
+    async (credentials: TLogin) =>
+        instance.post(`auth/sign-up`, credentials).then((res) => {
+            const userData = res.data
+            TokenService.setUser(userData)
+            return Promise.resolve(userData)
+        })
+)
+
 export const authSlice = createSlice({
     name: 'auth',
     initialState: initialAuthState,
     reducers: {
-        loginSuccess: (state, action: PayloadAction<IAppUser>) => {
+        registerSuccess: (state, action: PayloadAction<IAppUser>) => {
             const userDetails = action.payload
             state.user = userDetails
             state.isAuth = true
-            if (userDetails.roles.includes('ROLE_ADMIN')) {
-                state.contentPath = '/dashboard/admin'
-            }
-        },
-        loginFail: (state) => {
-            state.isAuth = false
-            state.user = {}
-        },
-        registerSuccess: (state) => {
             state.isAuth = false
         },
         registerFail: (state) => {
@@ -98,6 +102,7 @@ export const authSlice = createSlice({
         builder.addCase(login.fulfilled, (state, action) => {
             const userData = action.payload
             if (isUser(userData)) {
+                TokenService.setUser(userData)
                 state.user = userData
                 state.isAuth = true
                 state.loading = 'successful'
@@ -111,6 +116,34 @@ export const authSlice = createSlice({
                 state.error = 'Login failed'
             }
         })
+        builder.addCase(login.rejected, (state) => {
+            state.isAuth = false
+            state.user = {}
+            state.loading = 'idle'
+            state.error = 'Login failed - try again'
+        })
+        builder.addCase(userRegister.fulfilled, (state, action) => {
+            const userData = action.payload
+            if (isUser(userData)) {
+                state.user = userData
+                state.isAuth = true
+                state.loading = 'successful'
+                if (userData.roles.includes('ROLE_ADMIN')) {
+                    state.contentPath = '/dashboard/admin'
+                }
+            } else {
+                state.isAuth = false
+                state.loading = 'idle'
+                state.user = {}
+                state.error = 'Registration failed'
+            }
+        })
+        builder.addCase(userRegister.rejected, (state, action) => {
+            state.isAuth = false
+            state.loading = 'idle'
+            state.user = {}
+            state.error = 'Registration failed - username or email in use'
+        })
         builder.addCase(logout.fulfilled, (state) => {
             state.isAuth = false
             state.loading = 'idle'
@@ -119,10 +152,10 @@ export const authSlice = createSlice({
     },
 })
 export const {
-    loginFail,
+    // loginFail,
     registerSuccess,
     registerFail,
-    loginSuccess,
+    // loginSuccess,
     // userLogout,
     userRefreshToken,
 } = authSlice.actions

@@ -5,7 +5,7 @@ import { useAppSelector, useAppDispatch } from './redux/hooks'
 import EventBus from './common/EventBus'
 import Routes from './routes/Routes'
 import './styles.scss'
-import { logout, loginSuccess } from './redux/slices/auth'
+import { logout } from './redux/slices/auth'
 import { clearAll } from './redux/slices/message'
 import { IAppUser } from './schemas'
 
@@ -42,10 +42,10 @@ const App: FC = () => {
 
     useEffect(() => {
         if (isAuth && isUser(user) && loading === 'successful') {
-            dispatch(loginSuccess(user))
+            // dispatch(loginSuccess(user))
             history.push(contentPath)
         } else {
-            history.push('/home')
+            // history.push('/home')
         }
     })
 

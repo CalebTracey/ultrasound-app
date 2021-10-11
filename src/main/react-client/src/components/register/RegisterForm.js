@@ -18,7 +18,8 @@ const RegisterForm = ({
         <div id="signup" className="register-form">
             <form id="signup" onSubmit={handleSubmit(onSubmit)}>
                 <div className="form-group">
-                    <label htmlFor="fullName" text="Full Name">
+                    <label htmlFor="fullName">
+                        Full Name
                         <input
                             defaultValue=""
                             name="fullName"
@@ -28,14 +29,15 @@ const RegisterForm = ({
                                 errors.fullName ? 'is-invalid' : ''
                             }`}
                         />
+                        <div className="invalid-feedback">
+                            {errors.fullName?.message}
+                        </div>
                     </label>
-                    <div className="invalid-feedback">
-                        {errors.fullName?.message}
-                    </div>
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="username" text="Username">
+                    <label htmlFor="username">
+                        Username
                         <input
                             defaultValue=""
                             name="username"
@@ -45,14 +47,15 @@ const RegisterForm = ({
                                 errors.username ? 'is-invalid' : ''
                             }`}
                         />
+                        <div className="invalid-feedback">
+                            {errors.username?.message}
+                        </div>
                     </label>
-                    <div className="invalid-feedback">
-                        {errors.username?.message}
-                    </div>
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="username" text="Email">
+                    <label htmlFor="email">
+                        Email
                         <input
                             defaultValue=""
                             name="email"
@@ -62,14 +65,15 @@ const RegisterForm = ({
                                 errors.email ? 'is-invalid' : ''
                             }`}
                         />
+                        <div className="invalid-feedback">
+                            {errors.email?.message}
+                        </div>
                     </label>
-                    <div className="invalid-feedback">
-                        {errors.email?.message}
-                    </div>
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="username" text="Password">
+                    <label htmlFor="password">
+                        Password
                         <input
                             defaultValue=""
                             name="password"
@@ -79,14 +83,15 @@ const RegisterForm = ({
                                 errors.password ? 'is-invalid' : ''
                             }`}
                         />
+                        <div className="invalid-feedback">
+                            {errors.password?.message}
+                        </div>
                     </label>
-                    <div className="invalid-feedback">
-                        {errors.password?.message}
-                    </div>
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="username" text="Confirm Password">
+                    <label htmlFor="confirmPassword">
+                        Confirm Password
                         <input
                             defaultValue=""
                             name="confirmPassword"
@@ -96,10 +101,10 @@ const RegisterForm = ({
                                 errors.confirmPassword ? 'is-invalid' : ''
                             }`}
                         />
+                        <div className="invalid-feedback">
+                            {errors.confirmPassword?.message}
+                        </div>
                     </label>
-                    <div className="invalid-feedback">
-                        {errors.confirmPassword?.message}
-                    </div>
                 </div>
 
                 <div className="form-group form-check">
