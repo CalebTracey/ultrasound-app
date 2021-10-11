@@ -106,6 +106,7 @@ export const authSlice = createSlice({
                 state.user = userData
                 state.isAuth = true
                 state.loading = 'successful'
+                state.error = ''
                 if (userData.roles.includes('ROLE_ADMIN')) {
                     state.contentPath = '/dashboard/admin'
                 }
@@ -128,6 +129,7 @@ export const authSlice = createSlice({
                 state.user = userData
                 state.isAuth = true
                 state.loading = 'successful'
+                state.error = ''
                 if (userData.roles.includes('ROLE_ADMIN')) {
                     state.contentPath = '/dashboard/admin'
                 }
@@ -147,6 +149,7 @@ export const authSlice = createSlice({
         builder.addCase(logout.fulfilled, (state) => {
             state.isAuth = false
             state.loading = 'idle'
+            state.error = ''
             state.user = {}
         })
     },
