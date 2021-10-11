@@ -97,6 +97,11 @@ public class ClassificationServiceImpl implements ClassificationService {
     }
 
     @Override
+    public void deleteTableEntities() {
+        classificationRepo.deleteAll();
+    }
+
+    @Override
     public String delete(String id) {
         AtomicInteger count = new AtomicInteger(0);
         Classification classification = getById(id);
@@ -125,5 +130,7 @@ public class ClassificationServiceImpl implements ClassificationService {
             throw new RuntimeException(e);
         }
     }
+
+
 
 }

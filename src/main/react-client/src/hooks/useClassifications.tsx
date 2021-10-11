@@ -3,6 +3,7 @@ import { unwrapResult } from '@reduxjs/toolkit'
 import { useAppSelector, useAppDispatch } from '../redux/hooks'
 import { IClassification } from '../schemas'
 import { getAllClassifications } from '../redux/slices/classification'
+import { newError } from '../redux/slices/message'
 
 interface Props {
     classifications: IClassification[] | Record<string, unknown>
@@ -14,6 +15,7 @@ const useClassifications = (props: Props): [Props, () => void] => {
     const subMenuLoading = useAppSelector((state) => state.subMenu.loading)
     const { entities } = useAppSelector((state) => state.classification)
     const dispatch = useAppDispatch()
+    const [attempted, setAttempted] = useState(false)
     const [response, setResponse] = useState({
         classifications,
         isLoading,
@@ -40,8 +42,10 @@ const useClassifications = (props: Props): [Props, () => void] => {
         } else if (
             subMenuLoading !== 'pending' &&
             entities !== undefined &&
-            entities.length === 0
+            entities.length === 0 &&
+            !attempted
         ) {
+            setAttempted(true)
             dispatch(getAllClassifications())
                 .then(unwrapResult)
                 .then((res: IClassification[]) => {
@@ -56,13 +60,13 @@ const useClassifications = (props: Props): [Props, () => void] => {
                         }
                     }
                 })
-            // .catch((err: Error) => {
-            //     console.error(err)
-            //     dispatch(newError(err.message))
-            //     // return Promise.reject(err)
-            // })
+                .catch((err: Error) => {
+                    console.error(err)
+                    dispatch(newError(err.message))
+                    // return Promise.reject(err)
+                })
         }
-    }, [dispatch, entities, subMenuLoading])
+    }, [dispatch, entities, subMenuLoading, attempted])
     return [response, getClassifications]
 }
 

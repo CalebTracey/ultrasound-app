@@ -31,6 +31,10 @@ const Edit: FC = (): JSX.Element | null => {
         error: null,
     })
 
+    const isClassification = (value: unknown): value is IClassification => {
+        return !!value && !!(value as IClassification)
+    }
+
     const handleCancel = useCallback(() => {
         setIsDataLoading(true)
         clearSelections()
@@ -39,10 +43,6 @@ const Edit: FC = (): JSX.Element | null => {
         getItems()
         setIsDataLoading(false)
     }, [clearSelections, getItems, dispatch])
-
-    const isClassification = (value: unknown): value is IClassification => {
-        return !!value && !!(value as IClassification)
-    }
 
     useEffect(() => {
         const controller = new AbortController()
@@ -55,7 +55,6 @@ const Edit: FC = (): JSX.Element | null => {
             if (item.size !== 0) {
                 resetItemSelection()
             }
-            console.log('CLASS ITEMS')
             getItems()
         }
         setIsDataLoading(false)
@@ -69,6 +68,7 @@ const Edit: FC = (): JSX.Element | null => {
     return isClassification(selected) && !isDataLoading ? (
         <Jumbotron>
             {message.text && <Alert color="info">{message.text}</Alert>}
+
             <EditHeader
                 classification={selected}
                 subMenuCount={subMenuCount}

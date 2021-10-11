@@ -133,6 +133,15 @@ public class ContentController {
         SubMenu subMenu = subMenuService.getById(subMenuId);
         return ResponseEntity.created(uri).body(itemService.deleteItem(subMenu, item.getLink(), item.getName()));
     }
+
+    @DeleteMapping("/tables/clear")
+    public ResponseEntity<?> deleteTables() {
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/tables/clear").toUriString());
+        subMenuService.deleteTableEntities();
+        classificationService.deleteTableEntities();
+        return ResponseEntity.created(uri).body("Database table entities deleted");
+    }
 }
 
 @Getter

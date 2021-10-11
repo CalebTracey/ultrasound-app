@@ -96,6 +96,16 @@ export const deleteItem = createAsyncThunk(
         })
     }
 )
+
+export const importData = createAsyncThunk('edit/import', async (_, thunkApi) =>
+    api.delete('/tables/clear').then(() => {
+        thunkApi.dispatch(newMessage('Data import success'))
+        api.post('/S3/update/').then(() => {
+            thunkApi.dispatch(getAllClassifications())
+        })
+    })
+)
+
 const editSlice = createSlice({
     name: 'edit',
     initialState: initialSliceState,

@@ -88,7 +88,6 @@ export const itemSlice = createSlice({
             state.loading = 'pending'
         },
         selectedItem: (state, action: PayloadAction<TSelectedPayload>) => {
-            console.log('selected')
             const { parentId, item } = action.payload
             state.selected = item
             state.parentId = parentId
