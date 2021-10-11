@@ -10,9 +10,9 @@ const ContentHome: FC = () => {
                         <p className="content___header">Welcome!</p>
                         <hr className="my-2" />
                     </Media>
-                    <div className="content___text">
-                        Utilize the sidebar to browse Ultrasound clips
-                    </div>
+                    <span className="content___text">
+                        Use the sidebar to browse Ultrasound scans
+                    </span>
                 </Media>
             </Container>
         </Jumbotron>

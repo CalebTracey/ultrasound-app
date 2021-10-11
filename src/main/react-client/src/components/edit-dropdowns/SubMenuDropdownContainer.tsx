@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import React, { useState, FC } from 'react'
 import { ButtonDropdown, DropdownToggle } from 'reactstrap'
+import { useAppSelector } from '../../redux/hooks'
 import SubMenuDropdown from './SubMenuDropdown'
 
 interface Props {
@@ -8,7 +9,7 @@ interface Props {
 }
 const SubMenuDropdownContainer: FC<Props> = ({ subMenuCount }) => {
     const [subMenuOpen, setSubMenuOpen] = useState(false)
-
+    const { subMenu } = useAppSelector((state) => state)
     const subMenuToggle = () => setSubMenuOpen((prevState) => !prevState)
 
     return (
@@ -19,7 +20,15 @@ const SubMenuDropdownContainer: FC<Props> = ({ subMenuCount }) => {
             toggle={subMenuToggle}
         >
             <DropdownToggle caret>
-                {`Sub Menus: ${subMenuCount}`}
+                {!subMenu.editing ? (
+                    <span className="edit___drop-down-item">
+                        {`Sub Menus: ${subMenuCount}`}
+                    </span>
+                ) : (
+                    <span className="edit___drop-down-item">
+                        {subMenu.selected.name}
+                    </span>
+                )}
             </DropdownToggle>
             <SubMenuDropdown />
         </ButtonDropdown>

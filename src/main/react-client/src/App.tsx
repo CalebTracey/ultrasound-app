@@ -5,7 +5,7 @@ import EventBus from './common/EventBus'
 import Routes from './routes/Routes'
 import './styles.scss'
 import { logout, loginSuccess } from './redux/slices/auth'
-import { clearAll } from './redux/slices/message'
+import { clearMessage } from './redux/slices/message'
 import { IAppUser } from './schemas'
 
 const App: FC = () => {
@@ -14,6 +14,7 @@ const App: FC = () => {
     )
     const dispatch = useAppDispatch()
     const history = useHistory()
+    const location = useLocation()
     const isUser = (value: unknown): value is IAppUser => {
         return !!value && !!(value as IAppUser)
     }
@@ -22,10 +23,8 @@ const App: FC = () => {
     }, [dispatch])
 
     useEffect(() => {
-        history.listen((location) => {
-            clearAll()
-        })
-    }, [dispatch, history])
+        dispatch(clearMessage())
+    }, [location.pathname, dispatch])
 
     useEffect(() => {
         EventBus.on('logout', () => {
@@ -44,7 +43,7 @@ const App: FC = () => {
         } else {
             history.push('/home')
         }
-    })
+    }, [dispatch, history, isAuth, loading, contentPath, user])
 
     return <Routes />
 }

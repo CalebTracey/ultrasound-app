@@ -14,25 +14,25 @@ const SubMenuDropdownItem: FC<Props> = ({ id, title }) => {
     const loadingClassification = useAppSelector(
         (state) => state.classification.loading
     )
-    const loadingSubMenu = useAppSelector((state) => state.subMenu.loading)
+    const { subMenu } = useAppSelector((state) => state)
     const [response, getSubMenu] = useSubMenu({
         id,
         subMenuObj: {},
         isLoading: false,
         error: null,
     })
-    const { isLoading } = response
     const dispatch = useAppDispatch()
+
+    const handleGetSubMenu = async () => getSubMenu()
 
     const handleEditSubMenu = (e: MouseEvent) => {
         e.preventDefault()
-        if (!isLoading && loadingSubMenu !== 'pending') {
-            getSubMenu()
+        if (!response.isLoading && subMenu.loading !== 'pending') {
             dispatch(editingSubMenu(true))
+            handleGetSubMenu()
         }
     }
-
-    return !isLoading && loadingClassification === 'successful' ? (
+    return !response.isLoading && loadingClassification === 'successful' ? (
         <DropdownItem
             style={{ textTransform: 'uppercase' }}
             onClick={handleEditSubMenu}

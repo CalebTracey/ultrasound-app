@@ -3,21 +3,16 @@ package com.ultrasound.app.controller;
 import com.ultrasound.app.aws.S3Repository;
 import com.ultrasound.app.model.data.Classification;
 import com.ultrasound.app.model.data.SubMenu;
-import com.ultrasound.app.security.service.UserDetailsServiceImpl;
 import com.ultrasound.app.service.*;
-import lombok.Data;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.*;
 
 @Slf4j
 @CrossOrigin(origins = "*", maxAge = 3600)

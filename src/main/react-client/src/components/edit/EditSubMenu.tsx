@@ -15,7 +15,6 @@ const EditSubMenu: FC = () => {
     return (
         <div>
             <span style={{ textTransform: 'uppercase' }}>{name}</span>
-
             <DeleteButton
                 id={`${classificationId}/${_id}`}
                 type="submenu"

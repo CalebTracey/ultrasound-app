@@ -119,6 +119,8 @@ public class ClassificationServiceImpl implements ClassificationService {
         Map<String, String> subMenus = classification.getSubMenus();
         try {
             subMenus.remove(subName, subMenuId);
+            classification.setSubMenus(subMenus);
+            save(classification);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

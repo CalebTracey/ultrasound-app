@@ -14,6 +14,7 @@ interface Props {
 const useSubMenu = (props: Props): [Props, () => void] => {
     const { id, subMenuObj, isLoading, error } = props
     const itemListState = useAppSelector((state) => state.item.listMap)
+    const loadingItem = useAppSelector((state) => state.item.loading)
     const loadingState = useAppSelector((state) => state.subMenu.loading)
     const dispatch = useAppDispatch()
     const [response, setResponse] = useState({
@@ -32,7 +33,7 @@ const useSubMenu = (props: Props): [Props, () => void] => {
 
         setResponse((prevState) => ({ ...prevState, isLoading: true }))
         const subMenuCurrent: ISubMenuObj = itemListState[id]
-        if (isSubMenuObj(subMenuCurrent)) {
+        if (isSubMenuObj(subMenuCurrent) && loadingItem === 'idle') {
             dispatch(selectedSubMenu(subMenuCurrent))
                 .then((res) => {
                     if (loadingState === 'successful')
@@ -43,10 +44,9 @@ const useSubMenu = (props: Props): [Props, () => void] => {
                             error: null,
                         })
                 })
-                .catch((err) => {
-                    dispatch(newError(err))
-                    console.error(err)
-                    return Promise.reject(err)
+                .catch((err: Error) => {
+                    dispatch(newError(err.message))
+                    return Promise.reject(err.message)
                 })
         } else {
             dispatch(getOne(id))
@@ -65,14 +65,13 @@ const useSubMenu = (props: Props): [Props, () => void] => {
                         })
                     }
                 })
-                .catch((err) => {
-                    dispatch(newError(err))
-                    console.error(err)
-                    return Promise.reject(err)
+                .catch((err: Error) => {
+                    dispatch(newError(err.message))
+                    return Promise.reject(err.message)
                 })
         }
         return () => controller?.abort()
-    }, [id, dispatch, itemListState, loadingState])
+    }, [id, dispatch, itemListState, loadingState, loadingItem])
 
     return [response, getSubMenu]
 }

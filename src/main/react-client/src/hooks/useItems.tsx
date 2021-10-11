@@ -3,7 +3,6 @@ import { useState, useCallback } from 'react'
 import { useAppDispatch, useAppSelector } from '../redux/hooks'
 import { IListItem } from '../schemas'
 import { selectedItemList } from '../redux/slices/item'
-// import history from '../helpers/history'
 
 interface Props {
     parentId: string
@@ -14,10 +13,7 @@ interface Props {
 
 const useItems = (props: Props): [Props, () => void] => {
     const { list, parentId, isLoading, error } = props
-    //  SubMenu State
     const { subMenu } = useAppSelector((state) => state)
-    const { loading } = useAppSelector((state) => state.item)
-    // Classification State
     const { classification } = useAppSelector((state) => state)
     const [response, setResponse] = useState({
         parentId,
@@ -56,11 +52,12 @@ const useItems = (props: Props): [Props, () => void] => {
                 // })
             )
         }
-        setResponse((prevState) => ({ ...prevState, isLoading: false }))
+        setResponse((prevState) => ({ ...prevState, isLoading: true }))
+
         if (
+            subMenu.loading === 'successful' &&
             isSubMenuEditing &&
-            isItemList(subMenuItems) &&
-            subMenu.loading !== 'successful'
+            isItemList(subMenuItems)
         ) {
             dispatchSelection(
                 subMenu.selected._id,
@@ -78,9 +75,11 @@ const useItems = (props: Props): [Props, () => void] => {
             //     dispatch(newError(err))
             // })
         } else if (
+            // subMenu.loading !== 'pending' &&
             isClassificationEditing &&
+            !isSubMenuEditing &&
             isItemList(classificationItems) &&
-            loading !== 'successful'
+            classification.loading === 'successful'
         ) {
             dispatchSelection(
                 classification.selected._id,
@@ -99,6 +98,7 @@ const useItems = (props: Props): [Props, () => void] => {
             //     return Promise.reject(err)
             // })
         }
+
         return () => controller?.abort()
     }, [
         classification,
@@ -108,7 +108,6 @@ const useItems = (props: Props): [Props, () => void] => {
         classificationItems,
         subMenuItems,
         dispatch,
-        loading,
     ])
     return [response, getItems]
 }

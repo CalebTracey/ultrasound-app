@@ -12,22 +12,26 @@ $primary-font-color:#212529;
 $secondary-font-color:#6c757d;
 $header-font-color:#343A40;
 
+
 //      =========================
 //*     === TABLE OF CONTENTS ===
 //      =========================
 
 /*      1. Common Styles
-        2. Global Styles
-        3. Side Bar
-        4. Body
-        5. Content
-        6. Video Player
-        7. Components
+        2. Common Text
+        3. Global Styles
+        4. Side Bar
+        5. Body
+        6. Content
+        7. Edit Page
+        8. Video Player
+        9. Components
           - Form
           - Search Bar
           - Button
           - Spinner
-*/
+*/ 
+
 
 //      =====================
 //*     === COMMON STYLES ===
@@ -56,6 +60,51 @@ $border: 1px solid $border-color;
   letter-spacing: 1px;
 }
 
+//      ===================
+//*     === COMMON TEXT ===
+//      ===================
+
+.span-text {
+  @extend %primary-font;
+  display: block;
+
+  &___light {
+    @extend %secondary-font;
+    letter-spacing: .5px;
+  }
+ 
+  &___bold {
+    @extend %primary-font;
+    font-weight:  bold;
+    letter-spacing: 1px;
+  }
+
+  &___italic {
+    font-style: italic;
+  }
+}
+
+.span-header {
+  @extend %header-font;
+  display: block;
+
+  &___capital {
+    @extend %header-font;
+    text-transform: capitalize;
+  }
+
+  &___light {
+    color: $secondary-font-color;
+  }
+
+  &___bold {
+    font-weight:  bold;
+  }
+
+  &___italic {
+    font-style: italic;
+  }
+}
 
 //      =====================
 //*     === GLOBAL STYLES ===
@@ -81,7 +130,6 @@ header {
 
 footer {
   @extend %minor-font;
-    // color: $minor-color;
     border-top: $border;
     background-color: $primary-color;
     text-align: center;
@@ -179,9 +227,83 @@ footer {
   }
 }
 
+//      =================
+//*     === EDIT PAGE ===
+//      =================
+
+.edit {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+
+  &___header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 4rem 0 4rem;
+
+    &___text {
+      @extend %header-font;
+      letter-spacing: 1px;
+    }
+
+    &___control {
+      padding: .75rem;
+      flex-direction: row;
+    }
+
+    &___buttons {
+      padding: 1rem
+    }
+  }
+
+  &___drop-downs {
+    display: flex;
+    position: relative;
+    margin-left: 0;
+    margin-right: auto;
+  }
+
+  &___drop-down-item {
+    letter-spacing: .5px;
+    text-transform: capitalize;
+  }
+
+  &___content {
+    margin-top: 5rem;
+  }
+
+  &___form {
+    display: flex;
+    position: relative;
+    margin-left: 0;
+    margin-right: auto;
+  }
+}
+
 //      ====================
 //*     === VIDEO PLAYER ===
 //      ====================
+
+.video-page {
+  position: relative;
+
+  &___header {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  &___title {
+    padding-left: 1rem;
+    margin-right: 1rem;
+    padding-bottom: .5rem;
+    @extend %header-font;
+    text-transform: capitalize;
+    text-align: center;
+  }
+}
 
 .player {
   justify-content: center;
@@ -195,6 +317,7 @@ footer {
   top: 0;
   margin-left: auto;
   margin-right: auto;
+  padding-bottom: 4.5rem;
 }
 
 //      ==================

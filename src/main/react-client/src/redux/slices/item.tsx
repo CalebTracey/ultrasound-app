@@ -7,14 +7,12 @@ import {
 } from '@reduxjs/toolkit'
 import UserService from '../../service/user-service'
 import { IListItem } from '../../schemas'
-import { api } from '../../service/api'
 
 type TSelectedListPayload = {
     parentId: string
     list: IListItem[]
     itemType: 'subMenu' | 'classification'
 }
-type TEditPayload = { id: string; type: string; item: IListItem }
 type TSelectedPayload = { parentId: string; item: IListItem }
 type TMapItem = { key: string; value: IListItem[] }
 
@@ -55,14 +53,6 @@ export const selectedItemList = createAsyncThunk(
     'items/selectedItemList',
     async (payload: TSelectedListPayload) => {
         return payload
-    }
-)
-
-export const deleteItem = createAsyncThunk(
-    'items/delete',
-    async (payload: TEditPayload) => {
-        const { id, type, item } = payload
-        return api.post(`/delete/${type}/${id}`, item)
     }
 )
 
@@ -140,10 +130,7 @@ export const itemSlice = createSlice({
             }
         )
         builder.addDefaultCase((state) => {
-            state.itemList = []
-            state.parentId = null
-            state.editing = false
-            state.size = 0
+            state.loading = 'idle'
             state.itemType = 'classification'
         })
     },
@@ -155,7 +142,6 @@ export const {
     selectedItem,
     newListEntity,
     editingItems,
-    // selectedItemList,
     resetItemSelection,
 } = itemSlice.actions
 
