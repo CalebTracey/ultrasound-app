@@ -13,7 +13,7 @@ import { useAppDispatch } from '../redux/hooks'
 
 const Login = () => {
     const [isLoading, setIsLoading] = useState(false)
-    const message = useSelector((state) => state.message.text)
+    const message = useSelector((state) => state.auth.error)
     const dispatch = useAppDispatch()
 
     const validationSchema = Yup.object().shape({
@@ -34,6 +34,7 @@ const Login = () => {
         try {
             dispatch(login(data)).then((res) => {
                 console.log(`Login page  ${JSON.stringify(res)}`)
+                setIsLoading(false)
             })
         } catch (error) {
             dispatch(newError(error))
