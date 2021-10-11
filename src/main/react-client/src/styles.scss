@@ -91,6 +91,11 @@ $border: 1px solid $border-color;
   &___capital {
     @extend %header-font;
     text-transform: capitalize;
+    &___light {
+      color: $secondary-font-color;
+      @extend %header-font;
+      text-transform: capitalize;
+    }
   }
 
   &___light {
@@ -271,7 +276,9 @@ footer {
   }
 
   &___content {
-    margin-top: 5rem;
+    padding-top: 2rem;
+    display: flex;
+    flex-direction: row;
   }
 
   &___form {
@@ -279,6 +286,9 @@ footer {
     position: relative;
     margin-left: 0;
     margin-right: auto;
+  }
+  &___item {
+    margin: 1rem;
   }
 }
 

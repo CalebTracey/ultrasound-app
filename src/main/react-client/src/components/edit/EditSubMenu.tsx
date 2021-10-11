@@ -13,18 +13,23 @@ const EditSubMenu: FC = () => {
     const { _id, name } = selected
 
     return (
-        <div>
-            <span style={{ textTransform: 'uppercase' }}>{name}</span>
-            <DeleteButton
-                id={`${classificationId}/${_id}`}
-                type="submenu"
-                title="Delete"
-            />
-            <EditDataName
-                id={`${classificationId}/${_id}`}
-                type="submenu"
-                currentName={name}
-            />
+        <div className="edit___content">
+            <div className="edit___item">
+                <span className="span-header___capital___light">
+                    Sub-Classification:{' '}
+                </span>
+                <span className="span-header___capital">{name}</span>
+                <DeleteButton
+                    id={`${classificationId}/${_id}`}
+                    type="submenu"
+                    title="Delete"
+                />
+                <EditDataName
+                    id={`${classificationId}/${_id}`}
+                    type="submenu"
+                    currentName={name}
+                />
+            </div>
             <EditListItemContainer />
         </div>
     )

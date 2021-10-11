@@ -9,17 +9,16 @@ const EditSubMenuContainer: FC = () => {
     const { subMenu, item } = useAppSelector((state) => state)
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <EditSubMenu />
-            {item.size &&
-                item.itemType === 'subMenu' &&
-                subMenu.loading !== 'successful' && (
-                    <>
-                        {subMenu.editing && <ItemListDropdownContainer />}
-                        {item.editing && <EditListItem />}
-                    </>
-                )}
-        </div>
+        <EditSubMenu />
+        // {/* {item.editing && <EditListItem />} */}
+        // {/* {item.size &&
+        //     item.itemType === 'subMenu' &&
+        //     subMenu.loading !== 'successful' && (
+        //         <div className="edit___content">
+        //             {subMenu.editing && <ItemListDropdownContainer />}
+        //         </div>
+        //         // {item.editing && <EditListItem />}
+        //     )} */}
     )
 }
 

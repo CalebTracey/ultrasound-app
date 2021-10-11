@@ -9,7 +9,7 @@ import useClearSelections from '../hooks/useClearSelections'
 import { IClassification } from '../schemas'
 import useItems from '../hooks/useItems'
 import { resetItemSelection } from '../redux/slices/item'
-import { editingSubMenu } from '../redux/slices/subMenu'
+import { editingSubMenu, resetSubMenuSelection } from '../redux/slices/subMenu'
 import { editingClassification } from '../redux/slices/classification'
 import EditContentPane from '../components/edit/EditContentPane'
 import { clearMessage } from '../redux/slices/message'
@@ -37,12 +37,14 @@ const Edit: FC = (): JSX.Element | null => {
 
     const handleCancel = useCallback(() => {
         setIsDataLoading(true)
-        clearSelections()
+        dispatch(resetItemSelection())
+        dispatch(resetSubMenuSelection())
         dispatch(editingClassification(true))
         dispatch(editingSubMenu(false))
         getItems()
+        dispatch(resetItemSelection())
         setIsDataLoading(false)
-    }, [clearSelections, getItems, dispatch])
+    }, [getItems, dispatch])
 
     useEffect(() => {
         const controller = new AbortController()

@@ -107,5 +107,10 @@ public class SubMenuServiceImpl implements SubMenuService{
         subMenuRepo.deleteAll();
     }
 
+    @Override
+    public Boolean isItemPresent(String link) {
+        return null;
+    }
+
 
 }

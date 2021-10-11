@@ -30,8 +30,11 @@ const EditItemList: FC = () => {
     }
 
     return (
-        <div>
-            <span style={{ textTransform: 'uppercase' }}>{selected.name}</span>
+        <div className="edit___item">
+            <span className="span-header___capital___light">
+                Selected scan:{' '}
+            </span>
+            <span className="span-header___capital">{selected.name}</span>
             <Button
                 style={{ marginLeft: '1rem' }}
                 className="danger-btn-edit"

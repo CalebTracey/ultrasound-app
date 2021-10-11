@@ -12,16 +12,11 @@ const EditContentPane: FC<Props> = ({ hasSubMenu, editing }) => {
     const { subMenu, item } = useAppSelector((state) => state)
     return (
         <Container fluid style={{ display: 'flex', padding: '2rem' }}>
-            <div className="edit___content">
-                {hasSubMenu &&
-                    subMenu.editing &&
-                    subMenu.loading === 'successful' && (
-                        <EditSubMenuContainer />
-                    )}
-                {editing && !subMenu.editing && item.editing && (
-                    <EditItemList />
-                )}
-            </div>
+            {hasSubMenu &&
+                subMenu.editing &&
+                subMenu.loading === 'successful' && <EditSubMenuContainer />}
+
+            {editing && !subMenu.editing && item.editing && <EditItemList />}
         </Container>
     )
 }

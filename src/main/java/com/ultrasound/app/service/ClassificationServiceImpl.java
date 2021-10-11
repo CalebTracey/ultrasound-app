@@ -102,6 +102,11 @@ public class ClassificationServiceImpl implements ClassificationService {
     }
 
     @Override
+    public Boolean isItemPresent(String link) {
+        return null;
+    }
+
+    @Override
     public String delete(String id) {
         AtomicInteger count = new AtomicInteger(0);
         Classification classification = getById(id);

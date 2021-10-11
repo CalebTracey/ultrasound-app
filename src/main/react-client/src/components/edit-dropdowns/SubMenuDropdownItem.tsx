@@ -5,6 +5,7 @@ import SyncLoader from 'react-spinners/SyncLoader'
 import useSubMenu from '../../hooks/useSubMenu'
 import { useAppDispatch, useAppSelector } from '../../redux/hooks'
 import { editingSubMenu } from '../../redux/slices/subMenu'
+import { resetItemSelection } from '../../redux/slices/item'
 
 interface Props {
     id: string
@@ -29,6 +30,7 @@ const SubMenuDropdownItem: FC<Props> = ({ id, title }) => {
         e.preventDefault()
         if (!response.isLoading && subMenu.loading !== 'pending') {
             dispatch(editingSubMenu(true))
+            dispatch(resetItemSelection())
             handleGetSubMenu()
         }
     }
