@@ -102,5 +102,15 @@ public class SubMenuServiceImpl implements SubMenuService{
         return "Saved " + currentName + " as " + name + " in " + subName;
     }
 
+    @Override
+    public void deleteTableEntities() {
+        subMenuRepo.deleteAll();
+    }
+
+    @Override
+    public Boolean isItemPresent(String link) {
+        return null;
+    }
+
 
 }

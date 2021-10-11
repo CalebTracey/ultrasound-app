@@ -1,24 +1,24 @@
 import React, { FC } from 'react'
 // import { Label } from 'reactstrap'
 import { useAppSelector } from '../../redux/hooks'
-import SubMenuDropdownContainer from '../edit-dropdowns/SubMenuDropdownContainer'
 import EditSubMenu from './EditSubMenu'
+import ItemListDropdownContainer from '../edit-dropdowns/ItemListDropdownContainer'
+import EditListItem from './EditListItem'
 
-interface Props {
-    subMenuCount: number
-    hasSubMenu: boolean
-}
-const EditSubMenuContainer: FC<Props> = ({ subMenuCount, hasSubMenu }) => {
-    const { editing, loading } = useAppSelector((state) => state.subMenu)
+const EditSubMenuContainer: FC = () => {
+    const { subMenu, item } = useAppSelector((state) => state)
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {hasSubMenu && (
-                <SubMenuDropdownContainer subMenuCount={subMenuCount} />
-            )}
-            {/* <EditItemListContainer /> */}
-            {editing && loading === 'idle' && <EditSubMenu />}
-        </div>
+        <EditSubMenu />
+        // {/* {item.editing && <EditListItem />} */}
+        // {/* {item.size &&
+        //     item.itemType === 'subMenu' &&
+        //     subMenu.loading !== 'successful' && (
+        //         <div className="edit___content">
+        //             {subMenu.editing && <ItemListDropdownContainer />}
+        //         </div>
+        //         // {item.editing && <EditListItem />}
+        //     )} */}
     )
 }
 

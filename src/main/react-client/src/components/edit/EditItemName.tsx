@@ -3,41 +3,34 @@ import React, { FC, useState } from 'react'
 import { Button } from 'reactstrap'
 import EditDataNameForm from './EditDataNameForm'
 import { useAppDispatch } from '../../redux/hooks'
+import { editItemName } from '../../redux/slices/edit'
+import { IListItem } from '../../schemas'
 
 interface Props {
-    name: string
+    id: string
+    item: IListItem
+    type: string
 }
-const EditItemName: FC<Props> = ({ name }) => {
-    const [active, setActive] = useState(false)
+const EditItemName: FC<Props> = ({ id, item, type }) => {
     const [textValue, setTextValue] = useState<string>('')
-    // const dispatch = useAppDispatch()
+    const dispatch = useAppDispatch()
+
     const onSubmit = () => {
-        // dispatch(
-        //     allActions.edit.itemName({ id, link, textValue, type, currentName })
-        // )
-        // console.log('edit')
+        dispatch(editItemName({ id, textValue, item, type }))
     }
 
-    return active ? (
-        <div style={{ display: 'flex' }}>
+    return (
+        <>
             <EditDataNameForm
-                currentName={name}
+                currentName={item.name}
                 textValue={textValue}
                 setInputText={setTextValue}
             />
-            <Button color="primary" size="sm" onClick={onSubmit}>
+
+            <Button color="primary" onClick={onSubmit}>
                 Save
             </Button>
-        </div>
-    ) : (
-        <Button
-            outline
-            size="sm"
-            color="primary"
-            onClick={() => setActive(true)}
-        >
-            <span>Edit Name</span>
-        </Button>
+        </>
     )
 }
 

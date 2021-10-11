@@ -36,17 +36,7 @@ const Login = () => {
                 console.log(`Login page  ${JSON.stringify(res)}`)
                 setIsLoading(false)
             })
-            // console.log(res.data);
-            // if (res.data.roles) {
-            // history.push('/dashboard')
-            // }
-            // })
-            // .catch((err) => {
-            //     dispatch(err)
-            //     setIsLoading(false)
-            // })
         } catch (error) {
-            // history.push('/home')
             dispatch(newError(error))
             setIsLoading(false)
         }

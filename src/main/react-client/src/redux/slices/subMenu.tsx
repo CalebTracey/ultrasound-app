@@ -80,15 +80,15 @@ export const subMenuSlice = createSlice({
                 state.itemList = subMenu.itemList
                 state.loading = 'successful'
                 state.itemCount = subMenu.itemList.length
+                state.editing = true
                 if (state.subMenuList[subMenu._id] === undefined) {
                     state.subMenuList[subMenu._id] = subMenu
                 }
             }
         )
-        builder.addDefaultCase((state) => {
-            state.loading = 'idle'
-            // state.editing = false
-        })
+        // builder.addDefaultCase((state) => {
+        //     state.loading = 'idle'
+        // })
     },
 })
 export const { removeListItem, resetSubMenuSelection, editingSubMenu } =

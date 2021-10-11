@@ -1,5 +1,3 @@
-import { AxiosResponse } from 'axios'
-import { FC } from 'react'
 import { api } from './api'
 import TokenService from './token-service'
 

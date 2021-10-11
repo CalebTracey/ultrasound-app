@@ -1,5 +1,5 @@
 import React, { FC, ChangeEvent } from 'react'
-import { Form, FormGroup, Label, Input } from 'reactstrap'
+import { FormGroup, Label, Input } from 'reactstrap'
 
 interface Props {
     currentName: string
@@ -14,7 +14,8 @@ const EditDataNameForm: FC<Props> = (props: Props) => {
         setInputText(e.target.value)
     }
     return (
-        <Form>
+        // <Form>
+        <div className="edit___form">
             <FormGroup>
                 <Label for="dataForm">Edit Name</Label>
                 <Input
@@ -26,7 +27,7 @@ const EditDataNameForm: FC<Props> = (props: Props) => {
                     onChange={onChangeHandler}
                 />
             </FormGroup>
-        </Form>
+        </div>
     )
 }
 

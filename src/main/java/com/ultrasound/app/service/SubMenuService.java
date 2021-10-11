@@ -14,4 +14,7 @@ public interface SubMenuService {
     String deleteByIdClassification(String classificationId, String subMenuId);
     String editName(Classification classification, SubMenu subMenu, String id, String name);
     String editItemName(String id, String currentName, String name, String link);
+    void deleteTableEntities();
+    Boolean isItemPresent(String link);
+
 }

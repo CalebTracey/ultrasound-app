@@ -26,13 +26,10 @@ const ClassificationList: FC = () => {
     const classificationListNode =
         !isLoading &&
         classifications !== undefined &&
-        isClassifications(classifications) ? (
-            classifications.map((classification: IClassification) => {
-                return <ClassificationItem classification={classification} />
-            })
-        ) : (
-            <>Loading...</>
-        )
+        isClassifications(classifications) &&
+        classifications.map((classification: IClassification) => {
+            return <ClassificationItem classification={classification} />
+        })
 
     return <>{classificationListNode}</>
 }

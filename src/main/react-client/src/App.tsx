@@ -1,12 +1,16 @@
 import React, { FC, useEffect, useCallback } from 'react'
-import { RouteComponentProps, useHistory } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 import { useAppSelector, useAppDispatch } from './redux/hooks'
-// import history from './helpers/history'
 import EventBus from './common/EventBus'
 import Routes from './routes/Routes'
 import './styles.scss'
+// <<<<<<< main
 import { logout } from './redux/slices/auth'
-import { clearAll } from './redux/slices/message'
+// import { clearAll } from './redux/slices/message'
+// =======
+// import { logout, loginSuccess } from './redux/slices/auth'
+import { clearMessage } from './redux/slices/message'
+// >>>>>>> main
 import { IAppUser } from './schemas'
 
 const App: FC = () => {
@@ -15,20 +19,17 @@ const App: FC = () => {
     )
     const dispatch = useAppDispatch()
     const history = useHistory()
+    const location = useLocation()
     const isUser = (value: unknown): value is IAppUser => {
         return !!value && !!(value as IAppUser)
     }
-    const isAdmin = isUser(user) && user.roles?.includes('ROLE_ADMIN')
-
     const logOut = useCallback(() => {
         dispatch(logout())
     }, [dispatch])
 
     useEffect(() => {
-        history.listen((location) => {
-            clearAll()
-        })
-    }, [dispatch, history])
+        dispatch(clearMessage())
+    }, [location.pathname, dispatch])
 
     useEffect(() => {
         EventBus.on('logout', () => {
@@ -44,12 +45,8 @@ const App: FC = () => {
         if (isAuth && isUser(user) && loading === 'successful') {
             history.push(contentPath)
         }
-    })
+    }, [dispatch, history, isAuth, loading, contentPath, user])
 
-    return (
-        // <div style={{ boxSizing: 'border-box', minHeight: '100vh' }}>
-        <Routes />
-        // </div>
-    )
+    return <Routes />
 }
 export default App

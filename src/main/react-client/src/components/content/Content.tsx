@@ -1,12 +1,11 @@
 import React, { FC, useEffect, useState } from 'react'
-import { Media, Jumbotron, Container } from 'reactstrap'
+import { Jumbotron, Container } from 'reactstrap'
 import SyncLoader from 'react-spinners/SyncLoader'
 import ContentRoutes from '../../routes/ContentRoutes'
 import { useAppSelector } from '../../redux/hooks'
 import { IAppUser } from '../../schemas'
 
 const Content: FC = () => {
-    const { selected, editing } = useAppSelector((state) => state.item)
     const { isAuth, user } = useAppSelector((state) => state.auth)
     const [routePath, setRoutePath] = useState('/dashboard')
 
@@ -25,14 +24,7 @@ const Content: FC = () => {
         <div className="content">
             <Jumbotron fluid style={{ maxHeight: '80vh', paddingTop: '2rem' }}>
                 <Container fluid>
-                    <div className="content___title">
-                        <Media style={{ fontSize: '2vw' }} heading>
-                            {!editing && selected.title}
-                        </Media>
-                    </div>
-                    <Container fluid>
-                        <ContentRoutes routePath={routePath} />
-                    </Container>
+                    <ContentRoutes routePath={routePath} />
                 </Container>
             </Jumbotron>
         </div>
