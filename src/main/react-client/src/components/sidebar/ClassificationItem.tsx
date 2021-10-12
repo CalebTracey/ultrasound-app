@@ -37,14 +37,14 @@ const ClassificationItem: FC<Props> = ({ classification }) => {
     }, [classification, dispatch])
 
     const handleEditClick = useCallback(() => {
-        history.push(`${contentPath}/home`)
         if (isClassification(classification)) {
             // dispatch(resetItemSelection())
             dispatch(editingSubMenu(false))
             dispatch(editingClassification(true))
             dispatch(selectedClassification(classification))
         }
-    }, [classification, dispatch, history, contentPath])
+        // history.push(`${contentPath}/home`)
+    }, [classification, dispatch])
 
     return (
         <div style={{ display: 'flex' }}>

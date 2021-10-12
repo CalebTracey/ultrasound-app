@@ -70,7 +70,6 @@ const Edit: FC = (): JSX.Element | null => {
     return isClassification(selected) && !isDataLoading ? (
         <Jumbotron>
             {message.text && <Alert color="info">{message.text}</Alert>}
-
             <EditHeader
                 classification={selected}
                 subMenuCount={subMenuCount}

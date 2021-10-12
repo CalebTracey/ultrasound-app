@@ -16,7 +16,7 @@ interface authSliceState {
     user: IAppUser | Record<string, null>
     loading: 'idle' | 'pending' | 'successful'
     error: string | null
-    contentPath: '/dashboard' | '/dashboard/admin'
+    contentPath: '/dashboard' | '/dashboard/admin' | null
 }
 
 const instance = axios.create({
@@ -35,14 +35,14 @@ const initialAuthState: authSliceState = user
           user,
           loading: 'successful',
           error: null,
-          contentPath: '/dashboard',
+          contentPath: null,
       }
     : {
           isAuth: false,
           user: {},
           loading: 'idle',
           error: null,
-          contentPath: '/dashboard',
+          contentPath: null,
       }
 
 const isUser = (value: unknown): value is IAppUser => {
@@ -74,6 +74,18 @@ export const authSlice = createSlice({
     name: 'auth',
     initialState: initialAuthState,
     reducers: {
+        defineContentPath: (state, action: PayloadAction<IAppUser>) => {
+            const userData = action.payload
+            if (isUser(userData)) {
+                if (userData.roles.includes('ROLE_ADMIN')) {
+                    state.contentPath = '/dashboard/admin'
+                } else {
+                    state.contentPath = '/dashboard'
+                }
+            } else {
+                state.isAuth = false
+            }
+        },
         registerSuccess: (state, action: PayloadAction<IAppUser>) => {
             const userDetails = action.payload
             state.user = userDetails
@@ -153,6 +165,7 @@ export const {
     registerFail,
     // loginSuccess,
     // userLogout,
+    defineContentPath,
     userRefreshToken,
 } = authSlice.actions
 

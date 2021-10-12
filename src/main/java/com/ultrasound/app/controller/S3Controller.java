@@ -21,7 +21,6 @@ public class S3Controller {
     @Autowired
     private ClassificationServiceImpl classificationService;
 
-
     @GetMapping("/link/{link}")
     public ResponseEntity<?> getPreSignedUrl(@PathVariable String link) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -33,7 +32,7 @@ public class S3Controller {
     public ResponseEntity<?> updateBucket() {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/api/S3/update/").toUriString());
-       return ResponseEntity.created(uri).body(s3Service.updateS3Bucket());
+       return ResponseEntity.created(uri).body(s3Service.initializeMongoDatabase());
     }
 
 }

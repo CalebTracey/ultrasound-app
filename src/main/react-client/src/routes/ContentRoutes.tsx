@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import React, { FC, lazy, Suspense } from 'react'
-import { Route, Router, Switch, Redirect, useHistory } from 'react-router-dom'
+import { Route, Switch, Redirect } from 'react-router-dom'
 import SyncLoader from 'react-spinners/SyncLoader'
 // import history from '../helpers/history'
 import { useAppSelector } from '../redux/hooks'
@@ -21,9 +21,9 @@ interface Props {
 }
 
 const ContentRoutes: FC<Props> = ({ routePath }) => {
-    // const { roles } = useAppSelector((state) => state.auth.user)
+    const { roles } = useAppSelector((state) => state.auth.user)
 
-    // const isAdmin = roles && roles !== null && roles.includes('ROLE_ADMIN')
+    const isAdmin = roles !== null && roles.includes('ROLE_ADMIN')
     return (
         <Suspense
             fallback={
@@ -42,13 +42,13 @@ const ContentRoutes: FC<Props> = ({ routePath }) => {
                     path={`${routePath}/classification/:id`}
                     component={Classification}
                 />
-                {/* <ProtectedRouteAdmin
+                <ProtectedRouteAdmin
                     isAuthenticated={isAdmin}
                     path={`${routePath}/edit/:id`}
                     authenticationPath={`${routePath}`}
                     component={Edit}
-                /> */}
-                <Route path="/dashboard/admin/edit/:id" component={Edit} />
+                />
+                {/* <Route path="/dashboard/admin/edit/:id" component={Edit} /> */}
                 {/* <ProtectedRoute
                         isAuthenticated={isAuth}
                         path=`${routePath}`

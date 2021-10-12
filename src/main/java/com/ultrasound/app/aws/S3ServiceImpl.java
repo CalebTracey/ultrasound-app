@@ -39,27 +39,31 @@ public class S3ServiceImpl implements S3Service {
         this.s3Client = s3Client;
     }
 
-    @Override
-    public String updateS3Bucket() {
+
+    private List<S3ObjectSummary> s3FileNames() {
+        ObjectListing objectListing = listObjectsV2();
+        return objectListing.getObjectSummaries().stream()
+                .filter(sums -> sums.getKey().contains(".mp4")).collect(Collectors.toList());
+    }
+
+    /**
+     * Parse filenames from S3 and upload to Mongo database.
+     * TODO: Create new sub menu when duplicated name detected.
+     * FIXME: The Create sub menu method not being called.
+     *
+     * @return Update information
+     */
+    private String createAndSaveMongoData(List<String> s3FileNames) {
         AtomicInteger classificationCount = new AtomicInteger();
         AtomicInteger subMenuCount = new AtomicInteger();
         AtomicInteger scanCount = new AtomicInteger();
 
-        ObjectListing objectListing = listObjectsV2();
-
-        List<S3ObjectSummary> summaries = objectListing.getObjectSummaries().stream()
-                .filter(sums -> sums.getKey().contains(".mp4")).collect(Collectors.toList());
-        List<String> fileMapKeys = summaries.stream().map(S3ObjectSummary::getKey)     // keys = title of file
-                .collect(Collectors.toList());
-
-        Map<String, FileStructureDataContainer> fileStructureDataMap = createFileStructureMap(fileMapKeys);
+        log.info("Total files from S3: {}\n", s3FileNames.size());
+        Map<String, FileStructureDataContainer> fileStructureDataMap = createFileStructureMap(s3FileNames);
 
         fileStructureDataMap.keySet().forEach(key -> {
-
             FileStructureDataContainer currentData = fileStructureDataMap.get(key);
-
             Map<String, String> newClassificationSubMenuMap = new TreeMap<>();
-
             Boolean hasSubMenus = currentData.getHasSubMenu();
             boolean hasClassificationScans = currentData.getClassificationScans().size() != 0;
 
@@ -68,9 +72,9 @@ public class S3ServiceImpl implements S3Service {
             newClassification.setHasSubMenu(hasSubMenus);
 
             if (hasSubMenus) {
-                currentData.getSubMenus().forEach(subMenu -> {
+                ListIterator<FileStructureSubMenu> subMenuListIterator = currentData.getSubMenus().listIterator();
+                subMenuListIterator.forEachRemaining(subMenu -> {
                     SubMenu newSubMenuObj = new SubMenu();
-
                     newSubMenuObj.setName(subMenu.getName());
                     newSubMenuObj.setItemList(subMenu.getItemList());
 
@@ -85,7 +89,6 @@ public class S3ServiceImpl implements S3Service {
                 newClassification.setListItems(currentData.getClassificationScans());
                 scanCount.addAndGet(currentData.getClassificationScans().size());
             }
-
             classificationService.save(newClassification);
             classificationCount.getAndIncrement();
         });
@@ -98,48 +101,52 @@ public class S3ServiceImpl implements S3Service {
     /**
      * Takes the list of file names from the S3 Bucket and generates a mapping of unique values that
      * will be used to populate the Mongo database.
-     *
      * @param fileMapKeys list of file names.
      * @return A map with a key set of Classification names and values of FileStructureDataContainer
      * objects that represent the MongoDB data model.
      */
     private Map<String, FileStructureDataContainer> createFileStructureMap(List<String> fileMapKeys) {
         Map<String, FileStructureDataContainer> fileStructureReturnMap = new TreeMap<>();
-
         fileMapKeys.forEach(key -> {
             SingleFileStructure newFileStructure = normalizeFileStructure(key);
             String mapKey = newFileStructure.getClassification();
-
             if (fileStructureReturnMap.containsKey(mapKey)) {
                 FileStructureDataContainer fileData = fileStructureReturnMap.get(mapKey);
-
                 // if the classification and the new file object both have sub menus
                 if (fileData.getHasSubMenu() && newFileStructure.getHasSubMenu()) {
-                    // TODO Need to create new list objects ?
                     FileStructureSubMenu newSubMenu = newFileStructure.getSubMenu();
                     List<FileStructureSubMenu> subMenus = fileData.getSubMenus();
+//                    List<String> subMenusNameList = subMenus.stream()
+//
+//                            .map(FileStructureSubMenu::getName).collect(Collectors.toList());
+//                    Predicate<String> duplicateNamePresent = String -> String.equals(newSubMenu.getName());
 
                     // check for matching sub menu names. If found, combine the scans into a single
                     // sub menu object and append the names of scans that are duplicates with an index value.
                     subMenus.forEach(subMenu -> {
                         int index = subMenus.indexOf(subMenu);
+                        ListItem newSubMenuItem = newSubMenu.getItemList().get(0);
+                        // if current sub menu name equals the new sub menu name
                         if (subMenu.getName().equals(newSubMenu.getName())) {
-                            Predicate<ListItem> nameMatch = ListItem -> ListItem.getName().equals(newSubMenu.getName());
-                            List<ListItem> duplicateNames = subMenu.getItemList().stream().filter(nameMatch).collect(Collectors.toList());
+                            Predicate<ListItem> itemNameMatch =
+                                    ListItem -> ListItem.getName().equals(newSubMenuItem.getName());
 
-                            if (duplicateNames.isEmpty()) {
-                                subMenu.setItemList(newSubMenu.getItemList());
-                            } else if (duplicateNames.size() > 2){
-                                combineFileStructureListItems(
-                                        subMenu.getItemList(), newSubMenu.getItemList());
-                                FileStructureSubMenu createdSubMenu = createSubMenu(subMenu.getItemList(), newSubMenu.getName());
-
-                                fileData.getSubMenus().add(createdSubMenu);
-
-                            } else{
-//                                List<ListItem> combinedSubMenuScans =
-                                    combineFileStructureListItems(subMenu.getItemList(), newSubMenu.getItemList());
-//                                subMenus.get(index).setItemList(combinedSubMenuScans);
+                            List<ListItem> duplicateItemNames =
+                                    subMenu.getItemList().stream().filter(itemNameMatch).collect(Collectors.toList());
+                            // no duplicate SM item names
+                            if (duplicateItemNames.isEmpty()) {
+                                subMenu.getItemList().add(newSubMenuItem);
+                                subMenus.set(index, subMenu);
+                                fileData.setSubMenus(subMenus);
+                            } else {
+                                //TODO confirm SM scan list is being updated
+                                List<ListItem> combinedScanList = combineFileStructureListItems(
+                                        subMenu.getItemList(), newSubMenuItem);
+//                                FileStructureSubMenu createdSubMenu =
+//                                        createSubMenu(subMenu.getItemList(), newSubMenu.getName());
+                                subMenu.setItemList(combinedScanList);
+                                fileData.getSubMenus().add(index, subMenu);
+//                                fileData.getSubMenus().add(createdSubMenu);
                             }
                         }
                     });
@@ -154,21 +161,25 @@ public class S3ServiceImpl implements S3Service {
                 }
                 // if new file has scan object, add to existing list
                 if (newFileStructure.getHasScan()) {
+                    if (fileData.getClassificationScans().size() >= 1) {
+                        List<ListItem> combinedClassificationScans =
+                            combineFileStructureListItems(fileData.getClassificationScans(), newFileStructure.getScan());
+                        fileData.setClassificationScans(combinedClassificationScans);
+                    } else if (fileData.getClassificationScans().size() == 1) {
+                        if (fileData.getClassificationScans().get(0).getName()
+                                .equals(newFileStructure.getScan().getName())) {
 
-                    List<ListItem> newScanList = new ArrayList<>();
-                    newScanList.add(newFileStructure.getScan());
-                    if (fileData.getClassificationScans().isEmpty()) {
-                        fileData.setClassificationScans(newScanList);
+                        }
                     } else {
-//                        List<ListItem> combinedClassificationScans =
-                                combineFileStructureListItems(fileData.getClassificationScans(), newScanList);
-//                        fileData.setClassificationScans(combinedClassificationScans);
+                        List<ListItem> newScanList = new ArrayList<>();
+                        newScanList.add(newFileStructure.getScan());
+                        fileData.setClassificationScans(newScanList);
                     }
                 }
                 fileStructureReturnMap.replace(mapKey, fileData);
+
                 // if the classification is NOT already present in the map, initialize a new one with
                 // the new file data.
-                //TODO: initialize new fileStructureData object
             } else {
                 FileStructureDataContainer newDataContainer = new FileStructureDataContainer();
                 newDataContainer.setClassification(newFileStructure.getClassification());
@@ -192,64 +203,72 @@ public class S3ServiceImpl implements S3Service {
                 fileStructureReturnMap.put(newDataContainer.getClassification(), newDataContainer);
             }
         });
-
         return fileStructureReturnMap;
     }
 
     /**
      * Utility method used for combining SubMenu objects and Classification level ListItems.
      * The names for duplicate values are appended with an increasing index.
+     *
      * @param currentScans The existing list of scan objects.
-     * @param newScans     The new list of scan objects.
+     * @param newScanItem The new scan item being integrated.
      * @return The combined list.
      */
-    private void combineFileStructureListItems(List<ListItem> currentScans, List<ListItem> newScans) {
-//        Iterator<ListItem> itemIterator = currentScans.listIterator();
+    private List<ListItem> combineFileStructureListItems(List<ListItem> currentScans, ListItem newScanItem) {
         List<ListItem> returnList = new ArrayList<>(currentScans);
-        List<String> currentScanNames = new ArrayList<>();
-        currentScans.forEach(scan -> currentScanNames.add(scan.getName()));
+        String newScanItemName = newScanItem.getName();
+        ListIterator<ListItem> listIterator = returnList.listIterator();
+        if (returnList.size() > 1) {
+            listIterator.forEachRemaining(scan -> {
+                String currentScanName = scan.getName();
+                Predicate<ListItem> nameMatch = ListItem -> ListItem.getName().equals(currentScanName);
 
-        ListIterator<ListItem> listIterator = newScans.listIterator();
-
-        listIterator.forEachRemaining(newScan -> {
-            Predicate<ListItem> nameMatch = ListItem -> ListItem.getName().equals(newScan.getName());
-            List<ListItem> duplicateNames = currentScans.stream().filter(nameMatch).collect(Collectors.toList());
-
-            if (duplicateNames.size() > 2) {
-
-            }
-            if (currentScanNames.contains(newScan.getName())) {
-                int nameIndex = currentScanNames.indexOf(newScan.getName());
-                String scanSuffix= (currentScanNames.get(nameIndex).replaceAll("[^0-9]", ""));
+                if (currentScanName.equals(newScanItemName)) {
+//                    int duplicateIndex = currentScanNames.indexOf(scan.getName());
+                    String scanSuffix = (currentScanName.replaceAll("[^\\d]", ""));
 
                     if (scanSuffix.length() != 0) {
-                        int scanDigits = Integer.parseInt(scanSuffix) + 1;
-                        String newName = newScan.getName() + " " + scanDigits;
-                        newScan.setName(newName);
+                        log.info("Scan Suffix: {} Length: {}", scanSuffix, scanSuffix.length());
+                        int scanDigits = Integer.parseInt(scanSuffix);
+                        String newName = scan.getName() + " " + (scanDigits + 1);
+                        newScanItem.setName(newName);
                     } else {
-                        String newName = newScan.getName() + " " + 1;
-                        newScan.setName(newName);
+                        String newName = scan.getName() + " " + 2;
+                        scan.setName(scan.getName() + " " + 1);
+                        newScanItem.setName(newName);
                     }
+                }
+                returnList.add(newScanItem);
+            });
+        } else {
+            ListItem singletonCurrentScan = currentScans.get(0);
+            if (singletonCurrentScan.getName().equals(newScanItemName)) {
+                String scanSuffix = (singletonCurrentScan.getName().replaceAll("[^\\d]", ""));
+                if (scanSuffix.length() != 0) {
+                    log.info("Scan Suffix: {} Length: {}", scanSuffix, scanSuffix.length());
+                    int scanDigits = Integer.parseInt(scanSuffix);
+                    String newName = singletonCurrentScan.getName() + " " + (scanDigits + 1);
+                    newScanItem.setName(newName);
+                } else {
+                    String newName = singletonCurrentScan.getName() + " " + 2;
+                    singletonCurrentScan.setName(singletonCurrentScan.getName() + " " + 1);
+                    newScanItem.setName(newName);
+                }
             }
-            currentScans.add(newScan);
-//            });
-//            }
-        });
-//        return returnList;
+            returnList.add(newScanItem);
+        }
+        return returnList;
     }
 
-    private FileStructureSubMenu createSubMenu(List<ListItem> newItems, String name) {
+    private FileStructureSubMenu createSubMenu(List<ListItem> newItems, String name, String classification) {
         FileStructureSubMenu subMenu = new FileStructureSubMenu();
         subMenu.setName(name);
         subMenu.setItemList(newItems);
+        subMenu.setClassification(classification);
 
         return subMenu;
-
-
-
-
-
     }
+
     /**
      * Utility method that takes a single file name as an input and creates a new
      * SingleFileStructure object.
@@ -272,38 +291,44 @@ public class S3ServiceImpl implements S3Service {
         String classificationName = ArrayUtils.get(splitFile, 0);
         Predicate<String> noMp4 = String -> !String.contains("mp4");
         Predicate<String> noNumber = String -> !NumberUtils.isCreatable(String) && String.length() > 2;
+        Predicate<String> noNumberLong = String -> !NumberUtils.isCreatable(String);
 
-        List<String> filteredSubParts = Arrays.stream(splitFileSubParts).filter(noMp4).collect(Collectors.toList());
+        List<String> filteredSubParts = Arrays.stream(splitFileSubParts)
+                .filter(noMp4.and(noNumber)).collect(Collectors.toList());
+
+        List<String> titleParts = Arrays.stream(splitFile)
+                .filter(noMp4.and(noNumberLong)).collect(Collectors.toList());
         int subPartsLength = filteredSubParts.size();
 
-        List<String> scanNameParts = filteredSubParts.subList(subPartsLength / 2,
-                subPartsLength).stream().filter(noNumber).collect(Collectors.toList());
         fileStructure.setClassification(classificationName);
 
-        String scanName = StringUtils.join(scanNameParts, " ");
-        listItem.setTitle(StringUtils.join(filteredSubParts, " "));
+        listItem.setTitle(StringUtils.join(titleParts, " "));
         listItem.setLink(file);
 
         if (subPartsLength >= 4) {
             int halfLength = subPartsLength / 2;
-            List<String> subMenuNameParts = filteredSubParts.subList(0, halfLength);
+            List<String> subMenuNameParts = filteredSubParts.subList(0, 2);
+            List<String> scanNameParts = filteredSubParts.subList(2,
+                    subPartsLength).stream().filter(noNumber).collect(Collectors.toList());
+
+            String scanName = StringUtils.join(scanNameParts, " ");
             String subMenuName = StringUtils.join(subMenuNameParts, " ");
-            if (!NumberUtils.isCreatable(scanName)) {
-                listItem.setName(scanName + " scan");
-            } else {
-                listItem.setName(classificationName);
-            }
 
             listItem.setType(EType.TYPE_SUB_MENU);
-
+            listItem.setName(scanName);
             subMenu.setName(subMenuName);
             subMenuItems.add(listItem);
             subMenu.setItemList(subMenuItems);
+            subMenu.setClassification(classificationName);
             fileStructure.setSubMenu(subMenu);
             fileStructure.setHasSubMenu(true);
             fileStructure.setHasScan(false);
 
-        } else {
+        } else if (filteredSubParts.size() > 1) {
+            List<String> scanNameParts = filteredSubParts.subList(1,
+                    subPartsLength).stream().filter(noNumber).collect(Collectors.toList());
+            String scanName = StringUtils.join(scanNameParts, " ");
+
             if (scanNameParts.size() >= 2 && !NumberUtils.isCreatable(scanName)) {
                 listItem.setName(scanName);
             } else if (!filteredSubParts.isEmpty() && !NumberUtils.isCreatable(filteredSubParts.get(0))) {
@@ -311,6 +336,12 @@ public class S3ServiceImpl implements S3Service {
             } else {
                 listItem.setName(classificationName + " scan");
             }
+            listItem.setType(EType.TYPE_CLASSIFICATION);
+            fileStructure.setScan(listItem);
+            fileStructure.setHasSubMenu(false);
+            fileStructure.setHasScan(true);
+        } else {
+            listItem.setName(classificationName + " scan");
             listItem.setType(EType.TYPE_CLASSIFICATION);
             fileStructure.setScan(listItem);
             fileStructure.setHasSubMenu(false);
@@ -328,85 +359,16 @@ public class S3ServiceImpl implements S3Service {
     }
 
     @Override
-    public ObjectListing listObjectsV2() {
-        return s3Client.listObjects(BUCKET_NAME);
+    public String initializeMongoDatabase() {
+        List<String> s3FileNames = s3FileNames().stream().map(S3ObjectSummary::getKey)     // keys = title of file
+                .collect(Collectors.toList());
+
+        return createAndSaveMongoData(s3FileNames);
     }
 
-    public static void main(String[] args) {
-        AmazonS3Client s3Client = S3Config.amazonS3Client();
-        S3ServiceImpl s3ServiceTest = new S3ServiceImpl(s3Client);
-
-//        String testFile = "ECHO-Heart in Zone 8-A4CMild TR-CMG-2890404-4_crop.mp4";
-//        /*
-//                   === PRIVATE METHOD TESTS ===
-//         */
-//        // SINGLE FILE TEST
-//        SingleFileStructure fileStructureTest = s3ServiceTest.normalizeFileStructure(testFile);
-//        ListItem subMenuTestItem = fileStructureTest.getSubMenu().getItemList().get(0);
-//        log.info("=== SINGLE FILE TEST ===");
-//        log.info("Classification: {}", fileStructureTest.getClassification());
-//        log.info("== SUB MENU");
-//        log.info("Has Sub Menu: {}", fileStructureTest.getHasSubMenu());
-//        if (fileStructureTest.getHasSubMenu()) {
-//            log.info("Sub Menu name: {}", fileStructureTest.getSubMenu().getName());
-//            log.info("Sub Menu classification: {}", fileStructureTest.getSubMenu().getClassification());
-//            log.info("Sub Menu item: {}", subMenuTestItem);
-//        }
-//        log.info("== SCAN ITEM");
-//        log.info("Has Scan item: {}", fileStructureTest.getHasScan());
-//        if (fileStructureTest.getHasScan()) {
-//            log.info("-- Scan item name: {}", fileStructureTest.getScan().getName());
-//            log.info("-- Scan item name: {}", fileStructureTest.getScan().getTitle());
-//            log.info("-- Scan item name: {}", fileStructureTest.getScan().getLink());
-//        }
-
-        String[] testArray = new String[]{
-                "DVT - Subclavian_Axillary DVT - 5783980 - 1_crop.mp4",
-                "LUNG - consolidation 2 - 2890404_crop.mp4",
-                "ECHO - Heart in Zone 8 - A4CMild TR- CMG - 2890404-4_crop.mp4",
-                "ECHO - Heart in Zone 8 - A4CMod MR- CMG - 2890404-3_crop.mp4",
-                "ECHO - Heart in Zone 8 - PSSA - CMG - 2890404-2_crop.mp4",
-                "DVT - Subclavian_Axillary DVT - Neg Augmentation - 5783980 - 1_crop.mp4"
-        };
-
-        List<String> testList = new ArrayList<>(Arrays.asList(testArray));
-
-        // MULTI FILE TEST -- RETURNS MAP
-        Map<String, FileStructureDataContainer> testFileStructureDataContainerMap = s3ServiceTest.createFileStructureMap(testList);
-        testFileStructureDataContainerMap.keySet().forEach(key -> {
-            FileStructureDataContainer testFileStructureDataContainer = testFileStructureDataContainerMap.get(key);
-            List<FileStructureSubMenu> testFileSubMenus = testFileStructureDataContainer.getSubMenus();
-            List<ListItem> testClassificationListItems = testFileStructureDataContainer.getClassificationScans();
-
-            log.info("=== MULTI FILE TEST ===\n");
-            log.info("Classification: {}\n", key);
-            log.info("=== SUB MENUS ===\n");
-            log.info("Has Sub Menus : {}", testFileStructureDataContainer.getHasSubMenu());
-            if (testFileStructureDataContainer.getHasSubMenu()) {
-                log.info("Sub Menu Count: {}", testFileSubMenus.size());
-                testFileSubMenus.forEach(subMenu -> {
-                    List<ListItem> subMenuItems = subMenu.getItemList();
-                    log.info("Name: {}", subMenu.getName());
-                    log.info("Item Count: {}", subMenuItems.size());
-                    log.info("Classification: {}", subMenu.getClassification());
-                    subMenuItems.forEach(item -> {
-                        log.info("Name: {}", item.getName());
-                        log.info("title: {}", item.getTitle());
-                        log.info("link: {}", item.getLink());
-                        log.info("type: {}", item.getType());
-                    });
-                });
-            }
-            log.info("\n");
-            log.info("=== CLASSIFICATION SCANS ===");
-            log.info("Classification Scan Count: {}\n", testClassificationListItems.size());
-            testClassificationListItems.forEach(item -> {
-                log.info("Name: {}", item.getName());
-                log.info("title: {}", item.getTitle());
-                log.info("link: {}", item.getLink());
-                log.info("type: {}", item.getType());
-            });
-        });
+    @Override
+    public ObjectListing listObjectsV2() {
+        return s3Client.listObjects(BUCKET_NAME);
     }
 
     @Data
@@ -428,7 +390,6 @@ public class S3ServiceImpl implements S3Service {
             this.hasSubMenu = hasSubMenu;
             this.hasScan = hasScan;
         }
-
     }
 
     @Data
@@ -458,6 +419,85 @@ public class S3ServiceImpl implements S3Service {
         private String classification;
         private String name;
         private List<ListItem> itemList;
+    }
+
+    public static void main(String[] args) {
+        AmazonS3Client s3Client = S3Config.amazonS3Client();
+        S3ServiceImpl s3ServiceTest = new S3ServiceImpl(s3Client);
+        String testFile ="Echo - MV vegetation - 5751988 - 1_crop.mp4";
+//        String testFile = "ECHO-Heart in Zone 8-A4CMild TR-CMG-2890404-4_crop.mp4";
+        /*
+                   === PRIVATE METHOD TESTS ===
+         */
+        // SINGLE FILE TEST
+        SingleFileStructure fileStructureTest = s3ServiceTest.normalizeFileStructure(testFile);
+//        ListItem subMenuTestItem = fileStructureTest.getSubMenu().getItemList().get(0);
+        log.info("=== SINGLE FILE TEST ===");
+        log.info("Classification: {}", fileStructureTest.getClassification());
+        log.info("== SUB MENU");
+        log.info("Has Sub Menu: {}", fileStructureTest.getHasSubMenu());
+        if (fileStructureTest.getHasSubMenu()) {
+            ListItem subMenuTestItem = fileStructureTest.getSubMenu().getItemList().get(0);
+
+            log.info("Sub Menu name: {}", fileStructureTest.getSubMenu().getName());
+            log.info("Sub Menu classification: {}", fileStructureTest.getSubMenu().getClassification());
+            log.info("Sub Menu item: {}", subMenuTestItem);
+        }
+        log.info("== SCAN ITEM");
+        log.info("Has Scan item: {}", fileStructureTest.getHasScan());
+        if (fileStructureTest.getHasScan()) {
+            log.info("-- Scan item name: {}", fileStructureTest.getScan().getName());
+            log.info("-- Scan item title: {}", fileStructureTest.getScan().getTitle());
+            log.info("-- Scan item link: {}", fileStructureTest.getScan().getLink());
+        }
+//
+//        String[] testArray = new String[]{
+//                "DVT - Subclavian_Axillary DVT - 5783980 - 1_crop.mp4",
+//                "LUNG - consolidation 2 - 2890404_crop.mp4",
+//                "ECHO - Heart in Zone 8 - A4CMild TR- CMG - 2890404-4_crop.mp4",
+//                "ECHO - Heart in Zone 8 - A4CMod MR- CMG - 2890404-3_crop.mp4",
+//                "ECHO - Heart in Zone 8 - PSSA - CMG - 2890404-2_crop.mp4",
+//                "DVT - Subclavian_Axillary DVT - Neg Augmentation - 5783980 - 1_crop.mp4"
+//        };
+//
+//        List<String> testList = new ArrayList<>(Arrays.asList(testArray));
+//
+//        // MULTI FILE TEST -- RETURNS MAP
+//        Map<String, FileStructureDataContainer> testFileStructureDataContainerMap = s3ServiceTest.createFileStructureMap(testList);
+//        testFileStructureDataContainerMap.keySet().forEach(key -> {
+//            FileStructureDataContainer testFileStructureDataContainer = testFileStructureDataContainerMap.get(key);
+//            List<FileStructureSubMenu> testFileSubMenus = testFileStructureDataContainer.getSubMenus();
+//            List<ListItem> testClassificationListItems = testFileStructureDataContainer.getClassificationScans();
+//
+//            log.info("=== MULTI FILE TEST ===\n");
+//            log.info("Classification: {}\n", key);
+//            log.info("=== SUB MENUS ===\n");
+//            log.info("Has Sub Menus : {}", testFileStructureDataContainer.getHasSubMenu());
+//            if (testFileStructureDataContainer.getHasSubMenu()) {
+//                log.info("Sub Menu Count: {}", testFileSubMenus.size());
+//                testFileSubMenus.forEach(subMenu -> {
+//                    List<ListItem> subMenuItems = subMenu.getItemList();
+//                    log.info("Name: {}", subMenu.getName());
+//                    log.info("Item Count: {}", subMenuItems.size());
+//                    log.info("Classification: {}", subMenu.getClassification());
+//                    subMenuItems.forEach(item -> {
+//                        log.info("Name: {}", item.getName());
+//                        log.info("title: {}", item.getTitle());
+//                        log.info("link: {}", item.getLink());
+//                        log.info("type: {}", item.getType());
+//                    });
+//                });
+//            }
+//            log.info("\n");
+//            log.info("=== CLASSIFICATION SCANS ===");
+//            log.info("Classification Scan Count: {}\n", testClassificationListItems.size());
+//            testClassificationListItems.forEach(item -> {
+//                log.info("Name: {}", item.getName());
+//                log.info("title: {}", item.getTitle());
+//                log.info("link: {}", item.getLink());
+//                log.info("type: {}", item.getType());
+//            });
+//        });
     }
 }
 

@@ -31,7 +31,6 @@ public class ContentController {
     @Autowired
     private S3ServiceImpl s3Repository;
 
-
     @GetMapping("/all")
     public String allAccess() {
         return "Total Members: " + (long) userService.all().size();
