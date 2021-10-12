@@ -16,7 +16,7 @@ const VideoPlayer: FC = () => {
     const isItemList = (value: unknown): value is IListItem => {
         return !!value && !!(value as IListItem)
     }
-    return isUrl(url) && loading === 'successful' ? (
+    return isUrl(url) ? (
         <div className="video-page">
             <div className="video-page___header">
                 {isItemList(selected) && <DetailsPopover item={selected} />}

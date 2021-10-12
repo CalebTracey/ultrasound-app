@@ -9,18 +9,25 @@ import Edit from '../containers/Edit'
 // import ContentHome from '../components/content/ContentHome'
 // import Classification from '../containers/Classification'
 // import ProtectedRouteAdmin from './ProtectedRouteAdmin'
-
+import { IAppUser } from '../schemas'
 // const Edit = lazy(() => import('../containers/Edit'))
 const VideoPlayer = lazy(() => import('../components/content/VideoPlayer'))
 const Classification = lazy(() => import('../containers/Classification'))
 const ContentHome = lazy(() => import('../components/content/ContentHome'))
-// const ProtectedRouteAdmin = lazy(() => import('./ProtectedRouteAdmin'))
+const ProtectedRouteAdmin = lazy(() => import('./ProtectedRouteAdmin'))
 
 interface Props {
     routePath: string
 }
 
 const ContentRoutes: FC<Props> = ({ routePath }) => {
+    const { isAuth, user } = useAppSelector((state) => state.auth)
+
+    const isUser = (value: unknown): value is IAppUser => {
+        return !!value && !!(value as IAppUser)
+    }
+    const isAdmin = isUser(user) && user.roles?.includes('ROLE_ADMIN')
+
     return (
         <Suspense
             fallback={
@@ -39,13 +46,13 @@ const ContentRoutes: FC<Props> = ({ routePath }) => {
                     path={`${routePath}/classification/:id`}
                     component={Classification}
                 />
-                {/* <ProtectedRouteAdmin
+                <ProtectedRouteAdmin
                     isAuthenticated={isAdmin}
                     path={`${routePath}/edit/:id`}
                     authenticationPath={`${routePath}`}
                     component={Edit}
-                /> */}
-                <Route path="/dashboard/admin/edit/:id" component={Edit} />
+                />
+                {/* <Route path="/dashboard/admin/edit/:id" component={Edit} /> */}
                 {/* <ProtectedRoute
                         isAuthenticated={isAuth}
                         path=`${routePath}`
