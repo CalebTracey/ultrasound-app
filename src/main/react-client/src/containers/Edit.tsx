@@ -5,7 +5,7 @@ import { useLocation, withRouter } from 'react-router-dom'
 import { Media, Jumbotron, Alert, Button } from 'reactstrap'
 import { useAppSelector, useAppDispatch } from '../redux/hooks'
 import EditHeader from '../components/edit/EditHeader'
-import useClearSelections from '../hooks/useClearSelections'
+// import useClearSelections from '../hooks/useClearSelections'
 import { IClassification } from '../schemas'
 import useItems from '../hooks/useItems'
 import { resetItemSelection } from '../redux/slices/item'
@@ -22,7 +22,7 @@ const Edit: FC = (): JSX.Element | null => {
     )
     const location = useLocation()
     const [isDataLoading, setIsDataLoading] = useState(false)
-    const [, clearSelections] = useClearSelections()
+    // const [, clearSelections] = useClearSelections()
     const dispatch = useAppDispatch()
     const [response, getItems] = useItems({
         parentId: '',

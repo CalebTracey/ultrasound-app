@@ -1,6 +1,6 @@
 package com.ultrasound.app.controller;
 
-import com.ultrasound.app.aws.S3Repository;
+import com.ultrasound.app.aws.S3ServiceImpl;
 import com.ultrasound.app.model.data.Classification;
 import com.ultrasound.app.model.data.SubMenu;
 import com.ultrasound.app.service.*;
@@ -29,7 +29,7 @@ public class ContentController {
     @Autowired
     private AppUserService userService;
     @Autowired
-    private S3Repository s3Repository;
+    private S3ServiceImpl s3Repository;
 
 
     @GetMapping("/all")

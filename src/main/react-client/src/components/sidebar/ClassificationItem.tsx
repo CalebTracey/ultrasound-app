@@ -1,7 +1,7 @@
 import { SubMenu } from 'react-pro-sidebar'
 import React, { FC, useCallback, useRef } from 'react'
 import { FiEdit3 } from 'react-icons/fi'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import { IClassification } from '../../schemas'
 import SubMenuList from './SubMenuList'
 import ListItemGroup from './ItemList'
@@ -19,7 +19,9 @@ interface Props {
 const ClassificationItem: FC<Props> = ({ classification }) => {
     const { _id, name, hasSubMenu, listItems, subMenus } = classification
     const roles = useAppSelector((state) => state.auth.user?.roles)
+    const { contentPath } = useAppSelector((state) => state.auth)
     const dispatch = useAppDispatch()
+    const history = useHistory()
     const ref = useRef(null)
 
     const isClassification = (value: unknown): value is IClassification => {
@@ -35,13 +37,14 @@ const ClassificationItem: FC<Props> = ({ classification }) => {
     }, [classification, dispatch])
 
     const handleEditClick = useCallback(() => {
+        history.push(`${contentPath}/home`)
         if (isClassification(classification)) {
             // dispatch(resetItemSelection())
             dispatch(editingSubMenu(false))
             dispatch(editingClassification(true))
             dispatch(selectedClassification(classification))
         }
-    }, [classification, dispatch])
+    }, [classification, dispatch, history, contentPath])
 
     return (
         <div style={{ display: 'flex' }}>

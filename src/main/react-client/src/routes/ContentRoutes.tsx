@@ -14,13 +14,16 @@ import Edit from '../containers/Edit'
 const VideoPlayer = lazy(() => import('../components/content/VideoPlayer'))
 const Classification = lazy(() => import('../containers/Classification'))
 const ContentHome = lazy(() => import('../components/content/ContentHome'))
-// const ProtectedRouteAdmin = lazy(() => import('./ProtectedRouteAdmin'))
+const ProtectedRouteAdmin = lazy(() => import('./ProtectedRouteAdmin'))
 
 interface Props {
     routePath: string
 }
 
 const ContentRoutes: FC<Props> = ({ routePath }) => {
+    // const { roles } = useAppSelector((state) => state.auth.user)
+
+    // const isAdmin = roles && roles !== null && roles.includes('ROLE_ADMIN')
     return (
         <Suspense
             fallback={
