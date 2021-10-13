@@ -47,8 +47,7 @@ public class S3ServiceImpl implements S3Service {
 
     /**
      * Parse filenames from S3 and upload to Mongo database.
-     * TODO: Create new sub menu when duplicated name detected.
-     * FIXME: The Create sub menu method not being called.
+     * FIXME: Missing submenu objects.
      *
      * @return Update information
      */
@@ -100,6 +99,7 @@ public class S3ServiceImpl implements S3Service {
     /**
      * Takes the list of file names from the S3 Bucket and generates a mapping of unique values that
      * will be used to populate the Mongo database.
+     * TODO: Code cleanup/ create util methods for duplicated code.
      *
      * @param fileMapKeys list of file names.
      * @return A map with a key set of Classification names and values of FileStructureDataContainer
@@ -110,6 +110,7 @@ public class S3ServiceImpl implements S3Service {
         fileMapKeys.forEach(key -> {
             SingleFileStructure newFileStructure = normalizeFileStructure(key);
             String mapKey = newFileStructure.getClassification();
+            // if the classification object has already been created
             if (fileStructureReturnMap.containsKey(mapKey)) {
                 FileStructureDataContainer fileData = fileStructureReturnMap.get(mapKey);
                 // if the classification and the new file object both have sub menus
@@ -214,10 +215,13 @@ public class S3ServiceImpl implements S3Service {
     }
 
     /**
+     *  Combines a classification's existing list of submenus with a new file object. Checks for duplicate
+     *  submenu and list item values and merges/ renames as needed
+     *  FIXME: Missing sub menu objects
      *
-     * @param currentSubMenus
-     * @param newSubMenu
-     * @return
+     * @param currentSubMenus list of present sub menus within a classification
+     * @param newSubMenu new sub menu object that needs merging
+     * @return list of submenus with no duplicates
      */
     private List<FileStructureSubMenu> generateCombinedSubMenus(
             List<FileStructureSubMenu> currentSubMenus, FileStructureSubMenu newSubMenu) {
@@ -312,8 +316,10 @@ public class S3ServiceImpl implements S3Service {
     }
 
     /**
+     *  creates a new FileStructureSubMenu object. Used when a duplicated submenus items are merged
+     *  TODO: Confirm this method is necessary
      *
-     * @param newItems
+     * @param newItems 
      * @param name
      * @param classification
      * @return
@@ -330,7 +336,6 @@ public class S3ServiceImpl implements S3Service {
     /**
      * Utility method that takes a single file name as an input and creates a new
      * SingleFileStructure object.
-     * //TODO Remove the useless bits from the Scan item title.
      *
      * @param file The original file name. Also the key for file in S3 Bucket.
      * @return A new SingleFileStructure object.
