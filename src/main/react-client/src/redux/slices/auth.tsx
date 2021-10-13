@@ -48,6 +48,7 @@ const initialAuthState: authSliceState = user
 const isUser = (value: unknown): value is IAppUser => {
     return !!value && !!(value as IAppUser)
 }
+
 export const login = createAsyncThunk(
     'auth/login',
     async (credentials: TLogin) => {

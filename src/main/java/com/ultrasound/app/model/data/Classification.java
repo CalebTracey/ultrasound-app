@@ -18,7 +18,6 @@ public class Classification {
     private String _id;
 
     private String name;
-
     private Boolean hasSubMenu;
     private List<ListItem> listItems;
     private Map<String, String> subMenus;
