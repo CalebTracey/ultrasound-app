@@ -102,8 +102,13 @@ public class ClassificationServiceImpl implements ClassificationService {
     }
 
     @Override
-    public Boolean isItemPresent(String link) {
-        return null;
+    public Boolean isItemPresent(String id, String link) {
+        Classification classification = classificationRepo.findById(id).orElseThrow(
+                () -> new ClassificationNotFoundException(id));
+        List<ListItem> itemList = classification.getListItems();
+        Predicate<ListItem> linkMatch = ListItem -> ListItem.getLink().equals(link);
+
+        return itemList.stream().anyMatch(linkMatch);
     }
 
     @Override

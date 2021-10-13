@@ -1,5 +1,6 @@
 package com.ultrasound.app.service;
 
+import com.ultrasound.app.exceptions.ClassificationNotFoundException;
 import com.ultrasound.app.exceptions.SubMenuNotFoundException;
 import com.ultrasound.app.model.data.Classification;
 import com.ultrasound.app.model.data.ListItem;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 @Slf4j
 @Service
@@ -108,8 +110,13 @@ public class SubMenuServiceImpl implements SubMenuService{
     }
 
     @Override
-    public Boolean isItemPresent(String link) {
-        return null;
+    public Boolean isItemPresent(String id, String link) {
+        SubMenu subMenu = subMenuRepo.findById(id).orElseThrow(
+                () -> new ClassificationNotFoundException(id));
+        List<ListItem> itemList = subMenu.getItemList();
+        Predicate<ListItem> linkMatch = ListItem -> ListItem.getLink().equals(link);
+
+        return itemList.stream().anyMatch(linkMatch);
     }
 
 

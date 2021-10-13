@@ -35,12 +35,14 @@ export const getAllClassifications = createAsyncThunk<IClassification[], void>(
         api
             .get('classifications')
             .then((res) => {
-                return Promise.resolve(res.data)
+                if (res.data !== undefined) {
+                    return Promise.resolve(res.data)
+                }
+                return Promise.reject(res)
             })
             .catch((err: AxiosError) => {
                 if (err.isAxiosError) {
                     newError(err.message)
-                    // history.push('/home')
                 }
                 Promise.reject(err)
             })

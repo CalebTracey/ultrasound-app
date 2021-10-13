@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import React, { FC, lazy, Suspense } from 'react'
-import { Route, Router, Switch, Redirect, useHistory } from 'react-router-dom'
+import { Route, Switch, Redirect } from 'react-router-dom'
 import SyncLoader from 'react-spinners/SyncLoader'
 // import history from '../helpers/history'
 import { useAppSelector } from '../redux/hooks'
@@ -9,7 +9,7 @@ import Edit from '../containers/Edit'
 // import ContentHome from '../components/content/ContentHome'
 // import Classification from '../containers/Classification'
 // import ProtectedRouteAdmin from './ProtectedRouteAdmin'
-import { IAppUser } from '../schemas'
+
 // const Edit = lazy(() => import('../containers/Edit'))
 const VideoPlayer = lazy(() => import('../components/content/VideoPlayer'))
 const Classification = lazy(() => import('../containers/Classification'))
@@ -21,13 +21,9 @@ interface Props {
 }
 
 const ContentRoutes: FC<Props> = ({ routePath }) => {
-    const { isAuth, user } = useAppSelector((state) => state.auth)
+    const { roles } = useAppSelector((state) => state.auth.user)
 
-    const isUser = (value: unknown): value is IAppUser => {
-        return !!value && !!(value as IAppUser)
-    }
-    const isAdmin = isUser(user) && user.roles?.includes('ROLE_ADMIN')
-
+    const isAdmin = roles !== null && roles.includes('ROLE_ADMIN')
     return (
         <Suspense
             fallback={

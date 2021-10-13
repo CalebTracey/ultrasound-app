@@ -23,10 +23,8 @@ const Dashboard = () => {
             ) : (
                 <Alert color="danger">{text}</Alert>
             )}
-            {/* <div style={{ boxSizing: 'border-box', minHeight: '100vh' }}> */}
             <Sidebar />
             <Body />
-            {/* </div> */}
         </div>
     ) : (
         <>Dashboard Loading...</>
