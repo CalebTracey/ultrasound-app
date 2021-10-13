@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   frontend:
-    image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/frontend-deploy
+#    image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/frontend-deploy
     build:
       context: src/main/react-client/
     container_name: frontend
@@ -9,9 +9,10 @@ services:
       - 80:80
 
   backend:
+#    image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/backend-deploy
     build:
       context: ./
+      dockerfile: Dockerfile
     container_name: backend
-    image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/backend-deploy
     ports:
       - 8080:8080
