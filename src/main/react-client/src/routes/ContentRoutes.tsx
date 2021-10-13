@@ -2,7 +2,6 @@
 import React, { FC, lazy, Suspense } from 'react'
 import { Route, Switch, Redirect } from 'react-router-dom'
 import SyncLoader from 'react-spinners/SyncLoader'
-// import history from '../helpers/history'
 import { useAppSelector } from '../redux/hooks'
 import Edit from '../containers/Edit'
 // import VideoPlayer from '../components/content/VideoPlayer'
