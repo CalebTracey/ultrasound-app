@@ -46,7 +46,7 @@
 # *.iml
 # *.ipr
 
-target
+#target
 src/main/resources/application.properties
 # CMake
 cmake-build-*/
