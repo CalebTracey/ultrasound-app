@@ -2,7 +2,7 @@
 <!-- ![](ultrasound-app2.gif) -->
 
 ## Overview
-This app was developed for a fellowship program through my local hospital. It provides an intuative and organized user interface for navagating 3000+ .mp4 files stored in an S3 bucket. The backend parses files by name and appends them to the database on the initial upload or when a file is added.
+This app was developed for a fellowship program through my local hospital. It provides a way to easily navagate 3000+ .mp4 files. It also allows editing and restructuring of data once the database is initalized. Files are parsed by name and the resulting data is modeled in MongoDB.
 
 Created with React/TypeScript + Spring Boot + MongoDB. Authentication through Spring Security + JWT for role-based routing and privelages.
 
@@ -11,9 +11,9 @@ Created with React/TypeScript + Spring Boot + MongoDB. Authentication through Sp
 [Backend code](https://github.com/CalebTracey/ultrasound-app-fullstack/tree/main/src/main/java/com/ultrasound/app)
 
 ## Usage
-If you would like to try out the app for yourself, follow the steps below. 
+Currently, you'll need to create and populate an S3 Bucket with .mp4 files and connect it to the backend through the AWS CLI.
 
-You will need to create a collection in mongodb called "roles" and add documents "ROLE_USER" and optionally "ROLE_ADMIN" as shown below.
+Next, create a collection in mongodb called "roles" and add documents "ROLE_USER" and optionally "ROLE_ADMIN" as shown below.
 
 Uploading [this file](./roles) through Mongo Express/Compass should do the trick.
 <img src=./document-example.png />
