@@ -77,7 +77,7 @@ export const authSlice = createSlice({
     reducers: {
         defineContentPath: (state, action: PayloadAction<IAppUser>) => {
             const userData = action.payload
-            if (isUser(userData)) {
+            if (isUser(userData) && userData.roles !== undefined) {
                 if (userData.roles.includes('ROLE_ADMIN')) {
                     state.contentPath = '/dashboard/admin'
                 } else {

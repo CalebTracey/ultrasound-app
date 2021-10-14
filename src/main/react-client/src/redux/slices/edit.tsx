@@ -6,6 +6,7 @@ import { api } from '../../service/api'
 import {
     getAllClassifications,
     resetClassificationSelection,
+    // eslint-disable-next-line import/named
 } from './classification'
 import { resetItemSelection } from './item'
 import { newMessage } from './message'
