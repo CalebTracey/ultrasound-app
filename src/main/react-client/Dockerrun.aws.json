@@ -1,0 +1,18 @@
+{
+  "AWSEBDockerrunVersion": 2,
+  "containerDefinitions": [
+    {
+      "name": "backend",
+      "image": "{$AWS_ACCOUNT_ID}.dkr.ecr.{$AWS_DEFAULT_REGION}.amazonaws.com/backend-deploy",
+      "hostname": "backend",
+      "essential": true,
+      "memory": 512,
+      "portMappings": [
+        {
+          "hostPort": 3000,
+          "containerPort": 3000
+        }
+      ]
+    }
+  ]
+}

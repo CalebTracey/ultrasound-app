@@ -4,31 +4,31 @@
 
 version: "3.8"
 services:
-#  frontend:
-##    image: frontend
-##    image: 218046717840.dkr.ecr.us-east-1.amazonaws.com/frontend-deploy
-#    container_name: frontend
-##    hostname:
-##    build: ./frontend
-#    build:
-#      context: src/main/react-client/
-#      dockerfile: Dockerfile
-#    ports:
-#      - 80:80
-##    depends_on:
-##      - backend
-##    networks:
-##      - ultrasound-network
-
-  ultrasound-server:
-#    image: backend
-#    image: 218046717840.dkr.ecr.us-east-1.amazonaws.com/backend-deploy
-    container_name: backend
+  ultrasound-client:
+#    image: frontend
+#    image: 218046717840.dkr.ecr.us-east-1.amazonaws.com/frontend-deploy
+    container_name: frontend
+#    hostname:
+#    build: ./frontend
     build:
       context: ./
       dockerfile: Dockerfile
     ports:
-      - 8080:8080
+      - 80:80
+#    depends_on:
+#      - backend
+#    networks:
+#      - ultrasound-network
+
+#  backend:
+##    image: backend
+##    image: 218046717840.dkr.ecr.us-east-1.amazonaws.com/backend-deploy
+#    container_name: backend
+#    build:
+#      context: ./
+#      dockerfile: Dockerfile
+#    ports:
+#      - 8080:8080
 
 #version: "3.8"
 #services:
