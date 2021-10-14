@@ -23,7 +23,7 @@ services:
   ultrasound-server:
 #    image: backend
 #    image: 218046717840.dkr.ecr.us-east-1.amazonaws.com/backend-deploy
-    container_name: backend
+    container_name: ultrasound-server-cntr
     build:
       context: ./
       dockerfile: Dockerfile

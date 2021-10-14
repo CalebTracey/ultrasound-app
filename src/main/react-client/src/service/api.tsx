@@ -52,7 +52,7 @@ class Http {
 
     initHttp() {
         const http = axios.create({
-            baseURL: 'http://localhost:8080/api/',
+            baseURL: 'http://ultrasound.us-east-1.elasticbeanstalk.com/api/',
             headers,
             withCredentials: true,
         })
