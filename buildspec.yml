@@ -1,24 +1,38 @@
 version: 0.2
+
 phases:
-  install:
-    runtime-versions:
-      docker: 18
-  pre_build:
-    commands:
-      - echo Logging in to Amazon ECR...
-      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
   build:
     commands:
-      - echo Build started on `date`
-      - echo Building the Docker image...
-#      - docker-compose --file=docker-compose-prod.yaml build
-      - docker-compose --file=docker-compose.yaml build
-
-  post_build:
-    commands:
-      - echo Build completed on `date`
-      - echo Pushing the Docker image...
-      - docker-compose --file=docker-compose.yaml push
+      - mvn clean
+      - mvn install
 artifacts:
   files:
-    - 'Dockerrun.aws.json'
+    - 'Dockerfile'
+    - 'target/app-0.0.1-SNAPSHOT.jar'
+
+
+
+#version: 0.2
+#phases:
+#  install:
+#    runtime-versions:
+#      docker: 18
+#  pre_build:
+#    commands:
+#      - echo Logging in to Amazon ECR...
+#      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+#  build:
+#    commands:
+#      - echo Build started on `date`
+#      - echo Building the Docker image...
+##      - docker-compose --file=docker-compose-prod.yaml build
+#      - docker-compose --file=docker-compose.yaml build
+#
+#  post_build:
+#    commands:
+#      - echo Build completed on `date`
+#      - echo Pushing the Docker image...
+#      - docker-compose --file=docker-compose.yaml push
+#artifacts:
+#  files:
+#    - 'Dockerrun.aws.json'
