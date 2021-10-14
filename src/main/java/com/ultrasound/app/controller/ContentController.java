@@ -31,6 +31,12 @@ public class ContentController {
     @Autowired
     private S3ServiceImpl s3Repository;
 
+    @GetMapping("/")
+    @ResponseBody
+    public String sayHello() {
+        return "hello";
+    }
+
     @GetMapping("/all")
     public String allAccess() {
         return "Total Members: " + (long) userService.all().size();

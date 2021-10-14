@@ -1,9 +1,11 @@
 
-FROM openjdk:11.0.4-jre
-#VOLUME /tmp
-#ADD target/app-0.0.1-SNAPSHOT.jar app-0.0.1-SNAPSHOT.jar
-COPY ./target/*.jar /app.jar
-#ENV JAVA_OPTS=""
-EXPOSE 8080
-#ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app.jar" ]
-ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
+FROM openjdk:11-jdk-alpine
+VOLUME /tmp
+ADD target/example-1.0.0-SNAPSHOT.jar app.jar
+EXPOSE 5000
+ENV JAVA_OPTS=""
+ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app.jar" ]
+#FROM openjdk:11.0.4-jre
+#COPY ./target/*.jar /app.jar
+#EXPOSE 8080
+#ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
