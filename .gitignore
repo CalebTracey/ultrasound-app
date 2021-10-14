@@ -60,6 +60,9 @@ cmake-build-*/
 # IntelliJ
 out/
 
+# react-client
+src/main/react-client/
+
 # mpeltonen/sbt-idea plugin
 .idea_modules/
 
