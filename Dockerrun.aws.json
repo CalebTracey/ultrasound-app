@@ -1,0 +1,47 @@
+{
+  "AWSEBDockerrunVersion":2,
+  "containerDefinitions":[
+    {
+      "name":"ultrasound-backend",
+      "image":"218046717840.dkr.ecr.us-east-1.amazonaws.com/ultrasound-backend-repo",
+      "essential":true,
+      "memory":1024,
+      "portMappings":[
+        {
+          "hostPort":8080,
+          "containerPort":8080
+        }
+      ]
+    },
+    {
+      "name":"nginx",
+      "image":"nginx:latest",
+      "essential":true,
+      "memory": 128,
+      "portMappings":[
+        {
+          "hostPort":80,
+          "containerPort":80
+        }
+      ],
+      "mountPoints":[
+        {
+          "containerPath":"/etc/nginx/conf.d",
+          "sourceVolume":"nginx-data"
+        }
+      ],
+      "links":[
+        "ultrasound-backend"
+      ]
+    }
+  ],
+  "family": "",
+  "volumes":[
+    {
+      "name": "nginx-data",
+      "host": {
+        "sourcePath": "/var/app/current/nginx/conf.d"
+      }
+    }
+  ]
+}
