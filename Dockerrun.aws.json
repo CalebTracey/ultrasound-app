@@ -3,13 +3,13 @@
   "containerDefinitions":[
     {
       "name":"ultrasound-backend",
-      "image":"218046717840.dkr.ecr.us-east-1.amazonaws.com/ultrasound-backend-repo",
+      "image":"api:latest",
       "essential":true,
       "memory":1024,
       "portMappings":[
         {
-          "hostPort":8080,
-          "containerPort":8080
+          "hostPort":5000,
+          "containerPort":5000
         }
       ]
     },
