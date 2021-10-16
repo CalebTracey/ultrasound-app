@@ -81,6 +81,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
         configuration.setAllowedOrigins(Arrays.asList(
+                "http://ultrasound-frontend.s3-website-us-east-1.amazonaws.com:3000/**",
                 "http://ultrasound-frontend.s3-website-us-east-1.amazonaws.com/**",
                 "http://localhost:3000/**",
                 "http://localhost:8080/**"
