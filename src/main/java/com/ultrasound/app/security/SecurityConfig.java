@@ -66,7 +66,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.cors().configurationSource(corsConfigurationSource()).and().csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .authorizeRequests().antMatchers("/api/all", "/api/time", "/api/auth/sign-up", "/api/auth/sign-in").permitAll().and()
+                .authorizeRequests().antMatchers("/", "/api/all", "/api/time", "/api/auth/sign-up", "/api/auth/sign-in").permitAll().and()
                 .authorizeRequests().antMatchers("/api/classifications", "/api/classification/**", "/api/submenu/**", "/api/user/**", "/api/S3/link/**")
                 .hasAuthority(ERole.ROLE_USER.toString()).and()
                 .authorizeRequests().antMatchers("/**").hasAuthority(ERole.ROLE_ADMIN.toString())
@@ -81,11 +81,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
         configuration.setAllowedOrigins(Arrays.asList(
-                "http://ultrasound.us-east-1.elasticbeanstalk.com/*",
+                "http://ultrasound-frontend.s3-website-us-east-1.amazonaws.com/**",
                 "http://localhost:3000/**",
-                "http://localhost:8080/*",
-                "http://localhost/*",
-                "http://frontend/*"));
+                "http://localhost:8080/**"
+        ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "response-type", "x-access-token"));
         configuration.setExposedHeaders(Arrays.asList("authorization", "accessToken", "refreshToken"));
