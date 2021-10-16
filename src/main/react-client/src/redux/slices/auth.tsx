@@ -20,7 +20,7 @@ interface authSliceState {
 }
 
 const instance = axios.create({
-    baseURL: 'http://localhost:8080/api/',
+    baseURL: 'http://ultrasound.us-east-1.elasticbeanstalk.com/api/',
     headers: {
         'Content-Type': 'application/json',
     },

@@ -20,15 +20,15 @@ services:
 ##    networks:
 ##      - ultrasound-network
 
-  ultrasound-server:
+  server:
 #    image: backend
 #    image: 218046717840.dkr.ecr.us-east-1.amazonaws.com/backend-deploy
-    container_name: ultrasound-server-cntr
+    container_name: ultrasound-server
     build:
       context: ./
       dockerfile: Dockerfile
     ports:
-      - 8080:8080
+      - 5000:5000
 
 #version: "3.8"
 #services:
