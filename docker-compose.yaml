@@ -1,15 +1,15 @@
 version: '3'
 
 services:
-  nginx:
-    container_name: nginx
-    image: nginx:alpine
-    ports:
-      - 80:80
-    volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d
-    depends_on:
-      - api
+#  nginx:
+#    container_name: nginx
+#    image: nginx:alpine
+#    ports:
+#      - 80:80
+#    volumes:
+#      - ./nginx/conf.d:/etc/nginx/conf.d
+#    depends_on:
+#      - api
 
   api:
     container_name: api

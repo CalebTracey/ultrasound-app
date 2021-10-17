@@ -12,36 +12,6 @@
           "containerPort":8080
         }
       ]
-    },
-    {
-      "name":"nginx",
-      "image":"nginx:alpine",
-      "essential":true,
-      "memory": 128,
-      "portMappings":[
-        {
-          "hostPort":80,
-          "containerPort":80
-        }
-      ],
-      "mountPoints":[
-        {
-          "containerPath":"/etc/nginx/conf.d",
-          "sourceVolume":"nginx-data"
-        }
-      ],
-      "links":[
-        "api"
-      ]
-    }
-  ],
-  "family": "",
-  "volumes":[
-    {
-      "name": "nginx-data",
-      "host": {
-        "sourcePath": "/var/app/current/nginx/conf.d"
-      }
     }
   ]
 }
