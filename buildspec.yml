@@ -3,12 +3,11 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      java: corretto8
+      java: corretto11
   build:
     commands:
-      - mvn clean
-      - mvn install
+      - mvn clean install
 artifacts:
   files:
-    - Dockerfile
     - target/app-0.0.1-SNAPSHOT.jar
+  discard-paths: yes
