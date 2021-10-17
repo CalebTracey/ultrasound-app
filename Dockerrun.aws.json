@@ -3,7 +3,7 @@
   "containerDefinitions":[
     {
       "name":"api",
-      "image":"api:latest",
+      "image":"api:maven",
       "essential":true,
       "memory":1024,
       "portMappings":[
@@ -15,7 +15,7 @@
     },
     {
       "name":"nginx",
-      "image":"nginx:latest",
+      "image":"nginx:alpine",
       "essential":true,
       "memory": 128,
       "portMappings":[
