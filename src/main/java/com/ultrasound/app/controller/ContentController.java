@@ -31,19 +31,13 @@ public class ContentController {
     @Autowired
     private S3ServiceImpl s3Repository;
 
-    @GetMapping("/")
-    @ResponseBody
-    public String sayHello() {
-        return "hello";
-    }
-
     @GetMapping("/all")
     public String allAccess() {
         return "Total Members: " + (long) userService.all().size();
     }
 
-    @GetMapping("/time")
-    public String localTime() {
+    @GetMapping("/date")
+    public String localDate() {
         LocalDate localDate = LocalDate.now();
         return localDate.getMonthOfYear() + " / " + localDate.getDayOfMonth() + " / " + localDate.getYear();
     }

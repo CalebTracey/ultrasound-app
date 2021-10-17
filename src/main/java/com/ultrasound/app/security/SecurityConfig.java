@@ -29,7 +29,7 @@ import java.util.Arrays;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(
-        securedEnabled = true,
+//        securedEnabled = true,
 //        // jsr250Enabled = true,
         prePostEnabled = true)
 @RequiredArgsConstructor
@@ -66,7 +66,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.cors().configurationSource(corsConfigurationSource()).and().csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .authorizeRequests().antMatchers("/", "/api/all", "/api/time", "/api/auth/sign-up", "/api/auth/sign-in").permitAll().and()
+                .authorizeRequests().antMatchers("/", "/api/date", "/api/auth/sign-up", "/api/auth/sign-in").permitAll().and()
                 .authorizeRequests().antMatchers("/api/classifications", "/api/classification/**", "/api/submenu/**", "/api/user/**", "/api/S3/link/**")
                 .hasAuthority(ERole.ROLE_USER.toString()).and()
                 .authorizeRequests().antMatchers("/**").hasAuthority(ERole.ROLE_ADMIN.toString())
