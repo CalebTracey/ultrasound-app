@@ -52,7 +52,7 @@ class Http {
 
     initHttp() {
         const http = axios.create({
-            baseURL: 'http://ultrasound.us-east-1.elasticbeanstalk.com/api/',
+            baseURL: process.env.REACT_APP_API_URL,
             headers,
             withCredentials: true,
         })

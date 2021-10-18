@@ -81,14 +81,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
         configuration.setAllowedOrigins(Arrays.asList(
-                "http://ultrasound-frontend.s3-website-us-east-1.amazonaws.com:3000/**",
-                "http://ultrasound-frontend.s3-website-us-east-1.amazonaws.com/**",
+                "http://35.203.106.213/**",
                 "http://localhost:3000/**",
                 "http://localhost:8080/**"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "response-type", "x-access-token"));
-        configuration.setExposedHeaders(Arrays.asList("authorization", "accessToken", "refreshToken"));
+        configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "response-type", "x-access-token", "access-control-allow-origin"));
+        configuration.setExposedHeaders(Arrays.asList("authorization", "accessToken", "refreshToken", "access-control-allow-origin"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
