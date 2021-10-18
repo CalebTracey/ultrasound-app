@@ -36,8 +36,8 @@ public class ContentController {
         return "Total Members: " + (long) userService.all().size();
     }
 
-    @GetMapping("/time")
-    public String localTime() {
+    @GetMapping("/date")
+    public String localDate() {
         LocalDate localDate = LocalDate.now();
         return localDate.getMonthOfYear() + " / " + localDate.getDayOfMonth() + " / " + localDate.getYear();
     }

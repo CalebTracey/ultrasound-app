@@ -29,7 +29,7 @@ import java.util.Arrays;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(
-        securedEnabled = true,
+//        securedEnabled = true,
 //        // jsr250Enabled = true,
         prePostEnabled = true)
 @RequiredArgsConstructor
@@ -66,7 +66,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.cors().configurationSource(corsConfigurationSource()).and().csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .authorizeRequests().antMatchers("/api/all", "/api/time", "/api/auth/sign-up", "/api/auth/sign-in").permitAll().and()
+                .authorizeRequests().antMatchers("/", "/api/date", "/api/auth/sign-up", "/api/auth/sign-in").permitAll().and()
                 .authorizeRequests().antMatchers("/api/classifications", "/api/classification/**", "/api/submenu/**", "/api/user/**", "/api/S3/link/**")
                 .hasAuthority(ERole.ROLE_USER.toString()).and()
                 .authorizeRequests().antMatchers("/**").hasAuthority(ERole.ROLE_ADMIN.toString())
@@ -80,10 +80,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000/*", "http://localhost:8080/*", "http://localhost/*", "http://frontend/*"));
+        configuration.setAllowedOrigins(Arrays.asList(
+                "http://35.203.106.213/**",
+                "http://localhost:3000/**",
+                "http://localhost:8080/**"
+        ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "response-type", "x-access-token"));
-        configuration.setExposedHeaders(Arrays.asList("authorization", "accessToken", "refreshToken"));
+        configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "response-type", "x-access-token", "access-control-allow-origin"));
+        configuration.setExposedHeaders(Arrays.asList("authorization", "accessToken", "refreshToken", "access-control-allow-origin"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

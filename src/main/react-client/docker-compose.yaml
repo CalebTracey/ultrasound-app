@@ -2,12 +2,11 @@
 # docker-compose down
 # docker-compose up -d --build --force-recreate
 
-version: "3.8"
+version: '3'
 services:
   ultrasound-client:
-#    image: frontend
-#    image: 218046717840.dkr.ecr.us-east-1.amazonaws.com/frontend-deploy
-    container_name: frontend
+    container_name: ultrasound-frontend
+    image: ultrasound-frontend-img
 #    hostname:
 #    build: ./frontend
     build:
@@ -15,20 +14,10 @@ services:
       dockerfile: Dockerfile
     ports:
       - 80:80
-#    depends_on:
-#      - backend
-#    networks:
-#      - ultrasound-network
+    volumes:
+      - /var/app
 
-#  backend:
-##    image: backend
-##    image: 218046717840.dkr.ecr.us-east-1.amazonaws.com/backend-deploy
-#    container_name: backend
-#    build:
-#      context: ./
-#      dockerfile: Dockerfile
-#    ports:
-#      - 8080:8080
+
 
 #version: "3.8"
 #services:

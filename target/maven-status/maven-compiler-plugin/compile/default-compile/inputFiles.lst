@@ -24,6 +24,7 @@
 /Users/calebtracey/Desktop/Code/react-spring-jwt/src/main/java/com/ultrasound/app/repo/RoleRepo.java
 /Users/calebtracey/Desktop/Code/react-spring-jwt/src/main/java/com/ultrasound/app/controller/AuthController.java
 /Users/calebtracey/Desktop/Code/react-spring-jwt/src/main/java/com/ultrasound/app/security/service/UserDetailsImpl.java
+/Users/calebtracey/Desktop/Code/react-spring-jwt/src/main/java/com/ultrasound/app/controller/HealthCheckController.java
 /Users/calebtracey/Desktop/Code/react-spring-jwt/src/main/java/com/ultrasound/app/controller/ContentController.java
 /Users/calebtracey/Desktop/Code/react-spring-jwt/src/main/java/com/ultrasound/app/aws/S3ServiceImpl.java
 /Users/calebtracey/Desktop/Code/react-spring-jwt/src/main/java/com/ultrasound/app/service/ClassificationServiceImpl.java

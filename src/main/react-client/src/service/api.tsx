@@ -52,7 +52,7 @@ class Http {
 
     initHttp() {
         const http = axios.create({
-            baseURL: 'http://localhost:8080/api/',
+            baseURL: process.env.REACT_APP_API_URL,
             headers,
             withCredentials: true,
         })

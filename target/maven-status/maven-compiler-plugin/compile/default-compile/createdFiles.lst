@@ -18,6 +18,7 @@ com/ultrasound/app/payload/request/LoginRequest.class
 com/ultrasound/app/model/user/AppUser.class
 com/ultrasound/app/filter/CustomAuthorizationFilter.class
 com/ultrasound/app/filter/AuthTokenFilter.class
+com/ultrasound/app/controller/HealthCheckController.class
 com/ultrasound/app/service/ClassificationServiceImpl.class
 com/ultrasound/app/exceptions/SubMenuNotFoundAdvice.class
 com/ultrasound/app/controller/Name.class
