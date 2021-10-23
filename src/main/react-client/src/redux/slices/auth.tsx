@@ -20,7 +20,7 @@ interface authSliceState {
 }
 
 const instance = axios.create({
-    baseURL: process.env.REACT_APP_API_URL,
+    baseURL: `${process.env.PUBLIC_URL}/api/`,
     headers: {
         'Content-Type': 'application/json',
     },

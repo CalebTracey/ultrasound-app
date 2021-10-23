@@ -7,6 +7,7 @@ import com.ultrasound.app.security.jwt.AuthTokenFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,6 +28,7 @@ import java.util.Arrays;
 
 @Slf4j
 @Configuration
+@EnableAutoConfiguration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(
 //        securedEnabled = true,
@@ -66,7 +68,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.cors().configurationSource(corsConfigurationSource()).and().csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .authorizeRequests().antMatchers("/", "/api/date", "/api/auth/sign-up", "/api/auth/sign-in").permitAll().and()
+                .authorizeRequests().antMatchers("/", "/api/date", "/api/auth/sign-up", "/api/auth/sign-in").anonymous().and()
                 .authorizeRequests().antMatchers("/api/classifications", "/api/classification/**", "/api/submenu/**", "/api/user/**", "/api/S3/link/**")
                 .hasAuthority(ERole.ROLE_USER.toString()).and()
                 .authorizeRequests().antMatchers("/**").hasAuthority(ERole.ROLE_ADMIN.toString())

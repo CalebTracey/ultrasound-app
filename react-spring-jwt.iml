@@ -14,6 +14,8 @@
       <excludeFolder url="file://$MODULE_DIR$/src/main/react-client/build" />
       <excludeFolder url="file://$MODULE_DIR$/src/main/react-client/node_modules" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
+      <excludeFolder url="file://$MODULE_DIR$/bin/.idea/libraries" />
+      <excludeFolder url="file://$MODULE_DIR$/bin/.idea/shelf" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

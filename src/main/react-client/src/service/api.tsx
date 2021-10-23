@@ -9,7 +9,6 @@ import axios, {
     AxiosError,
 } from 'axios'
 import TokenService from './token-service'
-import useErrorStatus from '../hooks/useErrorStatus'
 import EventBus from '../common/EventBus'
 
 type TError = { error: AxiosError | ResponseError }
@@ -26,8 +25,8 @@ enum StatusCode {
 const headers: Readonly<Record<string, string | boolean>> = {
     Accept: 'application/json',
     'Content-Type': 'application/json',
-    // 'Access-Control-Allow-Credentials': true,
-    // 'X-Requested-With': 'XMLHttpRequest',
+    'Access-Control-Allow-Credentials': true,
+    'X-Requested-With': 'XMLHttpRequest',
 }
 const { getLocalAccessToken } = TokenService
 const injectToken = (config: AxiosRequestConfig): AxiosRequestConfig => {
@@ -52,7 +51,7 @@ class Http {
 
     initHttp() {
         const http = axios.create({
-            baseURL: process.env.REACT_APP_API_URL,
+            baseURL: `${process.env.PUBLIC_URL}/api/`,
             headers,
             withCredentials: true,
         })

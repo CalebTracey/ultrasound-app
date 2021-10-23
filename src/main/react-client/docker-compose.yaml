@@ -15,7 +15,8 @@ services:
     ports:
       - 80:80
     volumes:
-      - /var/app
+      - '.:/app'
+      - '/app/node_modules'
 
 
 

@@ -10,7 +10,8 @@ FROM azul/zulu-openjdk-alpine:11
 ARG JAR_FILE=app-0.0.1-SNAPSHOT.jar
 
 WORKDIR /opt/app
-
+ENV PORT 8080
+EXPOSE 8080
 # Copy the spring-boot-api-tutorial.jar from the maven stage to the /opt/app directory of the current stage.
 COPY --from=maven /usr/src/app/target/${JAR_FILE} /opt/app/
 
