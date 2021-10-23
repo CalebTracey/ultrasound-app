@@ -11,7 +11,7 @@ const ContentHome: FC = () => {
                         <hr className="my-2" />
                     </Media>
                     <p className="lead">
-                        Utilize the sidebar to browse Ultrasound clips
+                        Use the sidebar to browse Ultrasound clips
                     </p>
                 </Media>
             </Container>
