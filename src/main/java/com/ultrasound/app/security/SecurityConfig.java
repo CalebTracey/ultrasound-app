@@ -29,7 +29,7 @@ import java.util.Arrays;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(
-//        // securedEnabled = true,
+        securedEnabled = true,
 //        // jsr250Enabled = true,
         prePostEnabled = true)
 @RequiredArgsConstructor

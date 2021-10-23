@@ -8,15 +8,7 @@ import axios, {
     AxiosResponse,
     AxiosError,
 } from 'axios'
-// import history from '../helpers/history'
-
-import { useHistory } from 'react-router'
-import EventBus from '../common/EventBus'
 import TokenService from './token-service'
-import { newError, messageSlice } from '../redux/slices/message'
-import { SerializedError } from '../schemas'
-// import { useAppDispatch } from '../redux/hooks'
-// import message from '../redux/slices/message'
 
 enum StatusCode {
     Unauthorized = 401,
@@ -70,8 +62,6 @@ class Http {
             (error: Error | AxiosError) => {
                 if (axios.isAxiosError(error)) {
                     this.handleError(error)
-                    // const {} = error
-                    // Access to config, request, and response
                 } else {
                     throw new Error(error.message)
                 }
@@ -149,14 +139,3 @@ class Http {
 }
 
 export const api = new Http()
-// // const { REACT_APP_API_URL } = process.env;
-
-// const instance = axios.create({
-//     // baseURL: REACT_APP_API_URL,
-//     baseURL: 'http://localhost:8080/api/',
-//     headers: {
-//         'Content-Type': 'application/json',
-//     },
-// })
-
-// export default instance

@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
@@ -50,26 +51,26 @@ public class S3Repository implements S3Service {
         fileMapKeys.forEach(key -> {
 
             String[] fileParts = key.toLowerCase().split("[-.+ ]+\\s");
-            if (fileParts.length > 2) {
-                List<String> remainingList = new ArrayList<>();
-                List<String> filePartList = Arrays.stream(fileParts).collect(Collectors.toList());
-                List<String> newFilePartList = new ArrayList<>();
-                newFilePartList.add(fileParts[0]);
-                List<String> subMenuList = Arrays.stream(fileParts[1].split(" ")).collect(Collectors.toList());
-
-                if (subMenuList.size() > 2) {
-                    StringBuilder str = new StringBuilder();
-                    str.append(subMenuList.get(0)).append(" ").append(subMenuList.get(1));
-                    List<String> remainingSubMenu = subMenuList.subList(2, subMenuList.size());
-                    newFilePartList.add(str.toString());
-                    newFilePartList.addAll(remainingSubMenu);
-                    if (filePartList.size() >= 3) {
-                        remainingList = filePartList.subList(2, filePartList.size());
-                    }
-                    newFilePartList.addAll(remainingList);
-                    fileParts = newFilePartList.toArray(new String[0]);
-                }
-            }
+//            if (fileParts.length > 2) {
+//                List<String> remainingList = new ArrayList<>();
+//                List<String> filePartList = Arrays.stream(fileParts).collect(Collectors.toList());
+//                List<String> newFilePartList = new ArrayList<>();
+//                newFilePartList.add(fileParts[0]);
+//                List<String> subMenuList = Arrays.stream(fileParts[1].split(" ")).collect(Collectors.toList());
+//
+//                if (subMenuList.size() > 2) {
+//                    StringBuilder str = new StringBuilder();
+//                    str.append(subMenuList.get(0)).append(" ").append(subMenuList.get(1));
+//                    List<String> remainingSubMenu = subMenuList.subList(2, subMenuList.size());
+//                    newFilePartList.add(str.toString());
+//                    newFilePartList.addAll(remainingSubMenu);
+//                    if (filePartList.size() >= 3) {
+//                        remainingList = filePartList.subList(2, filePartList.size());
+//                    }
+//                    newFilePartList.addAll(remainingList);
+//                    fileParts = newFilePartList.toArray(new String[0]);
+//                }
+//            }
             List<String> filePartsFinal = Arrays.stream(fileParts).collect(Collectors.toList());
 //            urlAndFileDataMap.put(s3Client.generatePresignedUrl(BUCKET_NAME, key, date.toDate()).toString(), filePartsFinal);
 //            urlAndFileDataMap.put(s3Client.getUrl(BUCKET_NAME, key).toString(), filePartsFinal);
@@ -211,3 +212,4 @@ public class S3Repository implements S3Service {
     }
 
 }
+

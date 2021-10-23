@@ -18,4 +18,6 @@ public interface ClassificationService {
     String delete(String id);
     void deleteSubMenu(String classificationId, String subMenuId);
     String editItemName(String id, String currentName, String name, String link);
+    void deleteTableEntities();
+    Boolean isItemPresent(String link);
 }

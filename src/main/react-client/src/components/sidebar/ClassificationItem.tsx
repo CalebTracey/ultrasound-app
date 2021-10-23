@@ -36,7 +36,7 @@ const ClassificationItem: FC<Props> = ({ classification }) => {
 
     const handleEditClick = useCallback(() => {
         if (isClassification(classification)) {
-            dispatch(resetItemSelection())
+            // dispatch(resetItemSelection())
             dispatch(editingSubMenu(false))
             dispatch(editingClassification(true))
             dispatch(selectedClassification(classification))

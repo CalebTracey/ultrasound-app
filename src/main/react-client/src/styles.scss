@@ -7,9 +7,31 @@ $font-stack: "OpenSans","OpenSansSemiBold", "RobotoCondensed", "RobotoSlab", "Ro
 $primary-color:#f8f9fa; 
 $secondary-color:#e9ecef;
 $border-color:#dee2e6;
+$minor-color:#ADB5BD;
 $primary-font-color:#212529;
 $secondary-font-color:#6c757d;
 $header-font-color:#343A40;
+
+
+//      =========================
+//*     === TABLE OF CONTENTS ===
+//      =========================
+
+/*      1. Common Styles
+        2. Common Text
+        3. Global Styles
+        4. Side Bar
+        5. Body
+        6. Content
+        7. Edit Page
+        8. Video Player
+        9. Components
+          - Form
+          - Search Bar
+          - Button
+          - Spinner
+*/ 
+
 
 //      =====================
 //*     === COMMON STYLES ===
@@ -23,8 +45,14 @@ $border: 1px solid $border-color;
 }
 
 %secondary-font {
-  font-family: "RobotoSlab";
+  font-family: "OpenSans";
   color: $secondary-font-color
+}
+
+%minor-font {
+  font-family: "RobotoCondensed";
+  color: $secondary-font-color
+  
 }
 %header-font {
   font-family: "RobotoSlabSemiBold";
@@ -32,6 +60,56 @@ $border: 1px solid $border-color;
   letter-spacing: 1px;
 }
 
+//      ===================
+//*     === COMMON TEXT ===
+//      ===================
+
+.span-text {
+  @extend %primary-font;
+  display: block;
+
+  &___light {
+    @extend %secondary-font;
+    letter-spacing: .5px;
+  }
+ 
+  &___bold {
+    @extend %primary-font;
+    font-weight:  bold;
+    letter-spacing: 1px;
+  }
+
+  &___italic {
+    font-style: italic;
+  }
+}
+
+.span-header {
+  @extend %header-font;
+  display: block;
+
+  &___capital {
+    @extend %header-font;
+    text-transform: capitalize;
+    &___light {
+      color: $secondary-font-color;
+      @extend %header-font;
+      text-transform: capitalize;
+    }
+  }
+
+  &___light {
+    color: $secondary-font-color;
+  }
+
+  &___bold {
+    font-weight:  bold;
+  }
+
+  &___italic {
+    font-style: italic;
+  }
+}
 
 //      =====================
 //*     === GLOBAL STYLES ===
@@ -56,6 +134,7 @@ header {
 }
 
 footer {
+  @extend %minor-font;
     border-top: $border;
     background-color: $primary-color;
     text-align: center;
@@ -64,12 +143,6 @@ footer {
     bottom: 0;
     right: 0;
     left: 0;
-
-    &___text {
-      margin-top: 0.5rem;
-      font-weight: 300;
-      font-size: small;
-    }
 }
 
 //      ===============
@@ -86,6 +159,7 @@ footer {
 
   &___content {
     @extend %primary-font;
+    color: $secondary-font-color;
     letter-spacing: 1px;
     display: flex;
     flex-direction: column;
@@ -102,6 +176,7 @@ footer {
   }
 
   &___footer {
+    @extend %minor-font;
     width: 100%;
     margin-top: 0.5rem;
     margin-bottom: 1rem;
@@ -141,13 +216,104 @@ footer {
   padding: 1rem;
 
   &___title {
+    @extend %header-font;
     text-transform: capitalize;
     text-align: center;
   }
 
+  &___header {
+    @extend %header-font;
+    letter-spacing: 1px;
+  }
+
+  &___text {
+    @extend %secondary-font;
+    letter-spacing: .5px;
+  }
 }
 
+//      =================
+//*     === EDIT PAGE ===
+//      =================
+
+.edit {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+
+  &___header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 4rem 0 4rem;
+
+    &___text {
+      @extend %header-font;
+      letter-spacing: 1px;
+    }
+
+    &___control {
+      padding: .75rem;
+      flex-direction: row;
+    }
+
+    &___buttons {
+      padding: 1rem
+    }
+  }
+
+  &___drop-downs {
+    display: flex;
+    position: relative;
+    margin-left: 0;
+    margin-right: auto;
+  }
+
+  &___drop-down-item {
+    letter-spacing: .5px;
+    text-transform: capitalize;
+  }
+
+  &___content {
+    padding-top: 2rem;
+    display: flex;
+    flex-direction: row;
+  }
+
+  &___form {
+    display: flex;
+    position: relative;
+    margin-left: 0;
+    margin-right: auto;
+  }
+  &___item {
+    margin: 1rem;
+  }
+}
+
+//      ====================
 //*     === VIDEO PLAYER ===
+//      ====================
+
+.video-page {
+  position: relative;
+
+  &___header {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  &___title {
+    padding-left: 1rem;
+    margin-right: 1rem;
+    padding-bottom: .5rem;
+    @extend %header-font;
+    text-transform: capitalize;
+    text-align: center;
+  }
+}
 
 .player {
   justify-content: center;
@@ -161,6 +327,7 @@ footer {
   top: 0;
   margin-left: auto;
   margin-right: auto;
+  padding-bottom: 4.5rem;
 }
 
 //      ==================
@@ -194,6 +361,7 @@ footer {
 //*     === BUTTONS ===
 
 .button-wrapper {
+  @extend %secondary-font;
   display: flex;
   flex-direction: row-reverse;
   padding: 1rem;

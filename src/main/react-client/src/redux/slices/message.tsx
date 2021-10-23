@@ -22,12 +22,12 @@ export const messageSlice = createSlice({
             state.text = action.payload
             state.error = true
         },
-        clearAll: (state) => {
+        clearMessage: (state) => {
             state.text = null
             state.error = false
         },
     },
 })
-export const { newMessage, newError, clearAll } = messageSlice.actions
+export const { newMessage, newError, clearMessage } = messageSlice.actions
 
 export default messageSlice.reducer as Reducer<typeof initialMessageState>

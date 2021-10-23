@@ -7,14 +7,12 @@ import {
 } from '@reduxjs/toolkit'
 import UserService from '../../service/user-service'
 import { IListItem } from '../../schemas'
-import { api } from '../../service/api'
 
 type TSelectedListPayload = {
     parentId: string
     list: IListItem[]
     itemType: 'subMenu' | 'classification'
 }
-type TEditPayload = { id: string; type: string; item: IListItem }
 type TSelectedPayload = { parentId: string; item: IListItem }
 type TMapItem = { key: string; value: IListItem[] }
 
@@ -58,14 +56,6 @@ export const selectedItemList = createAsyncThunk(
     }
 )
 
-export const deleteItem = createAsyncThunk(
-    'items/delete',
-    async (payload: TEditPayload) => {
-        const { id, type, item } = payload
-        return api.post(`/delete/${type}/${id}`, item)
-    }
-)
-
 export const itemSlice = createSlice({
     name: 'items',
     initialState: initialItemState,
@@ -98,7 +88,6 @@ export const itemSlice = createSlice({
             state.loading = 'pending'
         },
         selectedItem: (state, action: PayloadAction<TSelectedPayload>) => {
-            console.log('selected')
             const { parentId, item } = action.payload
             state.selected = item
             state.parentId = parentId
@@ -136,17 +125,10 @@ export const itemSlice = createSlice({
                     state.listMap[parentId] = list
                 }
                 state.loading = 'successful'
-                // state.editing = true
                 state.itemType = itemType
             }
         )
         builder.addDefaultCase((state) => {
-            // state.selected = {}
-            state.itemList = []
-            state.parentId = null
-            state.editing = false
-            // state.url = null
-            state.size = 0
             state.loading = 'idle'
             state.itemType = 'classification'
         })
@@ -159,7 +141,6 @@ export const {
     selectedItem,
     newListEntity,
     editingItems,
-    // selectedItemList,
     resetItemSelection,
 } = itemSlice.actions
 

@@ -97,6 +97,16 @@ public class ClassificationServiceImpl implements ClassificationService {
     }
 
     @Override
+    public void deleteTableEntities() {
+        classificationRepo.deleteAll();
+    }
+
+    @Override
+    public Boolean isItemPresent(String link) {
+        return null;
+    }
+
+    @Override
     public String delete(String id) {
         AtomicInteger count = new AtomicInteger(0);
         Classification classification = getById(id);
@@ -119,9 +129,13 @@ public class ClassificationServiceImpl implements ClassificationService {
         Map<String, String> subMenus = classification.getSubMenus();
         try {
             subMenus.remove(subName, subMenuId);
+            classification.setSubMenus(subMenus);
+            save(classification);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
+
+
 
 }

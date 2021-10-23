@@ -1,55 +1,47 @@
 /* eslint-disable react/prop-types */
-import React, { FC, useEffect, useState, useCallback } from 'react'
+import React, { FC } from 'react'
 import ReactPlayer from 'react-player'
 import SyncLoader from 'react-spinners/SyncLoader'
-import { PayloadAction } from '@reduxjs/toolkit'
-import { useAppDispatch, useAppSelector } from '../../redux/hooks'
-import { getLinkUrl } from '../../redux/slices/item'
+import { useAppSelector } from '../../redux/hooks'
+import DetailsPopover from '../DetailsPopover'
 import { IListItem } from '../../schemas'
 
 const VideoPlayer: FC = () => {
-    const { selected, loading, url } = useAppSelector((state) => state.item)
-    const dispatch = useAppDispatch()
-    const [signedLink, setSignedLink] = useState('')
-    const [isLoading, setIsLoading] = useState(false)
+    const { selected, editing } = useAppSelector((state) => state.item)
+    const { loading, url } = useAppSelector((state) => state.item)
 
-    // const selectedItem: IListItem | Record<string, never> = selected
-
-    // const getUrl = useCallback(() => {
-    //     setIsLoading(true)
-    //     dispatch(getLinkUrl(selected.link)).then((res: PayloadAction<any>) => {
-    //         setSignedLink(res.payload)
-    //         console.log(`SIGNED LINK ${res.payload}`)
-    //         setIsLoading(false)
-    //     })
-    // }, [dispatch, selected])
     const isUrl = (value: unknown): value is string => {
         return !!value && !!(value as string)
     }
-    useEffect(() => {
-        if (url && isUrl(url) && loading !== 'successful') {
-            // if (!isLoading && selected.link !== undefined) getUrl()
-            setSignedLink(url)
-        }
-    }, [selected, dispatch, loading, isLoading, url])
+    const isItemList = (value: unknown): value is IListItem => {
+        return !!value && !!(value as IListItem)
+    }
+    return isUrl(url) && loading === 'successful' ? (
+        <div className="video-page">
+            <div className="video-page___header">
+                {isItemList(selected) && <DetailsPopover item={selected} />}
+                <h2 className="video-page___title">
+                    {!editing && selected.title}
+                </h2>
+            </div>
 
-    return (
-        //     <div className="spinner">
-        //         <SyncLoader />
-        //     </div>
-        // ) : (
-        <div className="player">
-            <ReactPlayer
-                className="react-player"
-                url={signedLink}
-                volume={0}
-                muted
-                playing
-                loop
-                width="85%"
-                height="85%"
-                controls
-            />
+            <div className="player">
+                <ReactPlayer
+                    className="react-player"
+                    url={url}
+                    volume={0}
+                    muted
+                    playing
+                    loop
+                    width="85%"
+                    height="85%"
+                    controls
+                />
+            </div>
+        </div>
+    ) : (
+        <div className="spinner">
+            <SyncLoader />
         </div>
     )
 }

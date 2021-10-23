@@ -10,7 +10,7 @@ import { api } from './api'
 //     config
 // }
 
-interface IDataNameProps {
+type TDataNameProps = {
     id: string
     textValue: string
     type: string
@@ -21,7 +21,7 @@ interface IDeleteProps {
     type: string
 }
 
-// const editDataName = async (props: IDataNameProps): Promise<string> => {
+// const editDataName = async (props: TDataNameProps): Promise<string> => {
 //     const { id, textValue, type } = props
 //     const newName = { name: textValue }
 //     const { data } = await api.post(`/edit/${type}/name/${id}`, newName)

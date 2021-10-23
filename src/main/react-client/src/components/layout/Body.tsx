@@ -7,11 +7,11 @@ import Header from './Header'
 
 const Body: FC = () => {
     return (
-        <body className="body">
+        <div className="body">
             <Header />
             <Content />
             <Footer />
-        </body>
+        </div>
     )
 }
 

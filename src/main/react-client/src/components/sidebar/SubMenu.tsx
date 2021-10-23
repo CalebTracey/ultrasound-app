@@ -22,7 +22,7 @@ const SubMenuComponent: FC<Props> = ({ id, title }) => {
         isLoading: false,
         error: null,
     })
-    const { isLoading, subMenuObj } = response
+    const { subMenuObj } = response
 
     const isItemList = (value: unknown): value is IListItem[] => {
         return !!value && !!(value as IListItem[])
@@ -44,11 +44,7 @@ const SubMenuComponent: FC<Props> = ({ id, title }) => {
             title={title}
             onClick={onClickHandler}
         >
-            {!isLoading && isItemList(itemList) ? (
-                <ItemList parentId={id} listItems={itemList} />
-            ) : (
-                <>Loading... SM</>
-            )}
+            <ItemList parentId={id} listItems={itemList} />
         </SubMenu>
     )
 }

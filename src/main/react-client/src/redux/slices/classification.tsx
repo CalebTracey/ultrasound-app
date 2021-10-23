@@ -29,14 +29,6 @@ const initialClassificationState: classificationSliceState = {
     loading: 'idle',
 }
 
-// export const selectedClassification = createAsyncThunk(
-//     'classifications/selected',
-//     async (classification: IClassification) => {
-//         const value: IClassification = classification
-//         return value
-//     }
-// )
-
 export const getAllClassifications = createAsyncThunk<IClassification[], void>(
     'classifications/getAll',
     async () =>
@@ -94,21 +86,6 @@ export const classificationSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
-        // builder.addCase(selectedClassification.pending, (state) => {
-        //     state.loading = 'pending'
-        // })
-        // builder.addCase(
-        //     selectedClassification.fulfilled,
-        //     (state, action: PayloadAction<IClassification>) => {
-        //         const classification = action.payload
-        //         state.selected = classification
-        //         state.subMenuCount = Array.from(
-        //             Object.keys(classification.subMenus)
-        //         ).length
-        //         state.listItemsCount = classification.listItems.length
-        //         state.loading = 'successful'
-        //     }
-        // )
         builder.addCase(getAllClassifications.pending, (state) => {
             state.loading = 'pending'
         })

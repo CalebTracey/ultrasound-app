@@ -2,6 +2,7 @@ import React, { FC, useState } from 'react'
 import { Button } from 'reactstrap'
 import EditDataNameForm from './EditDataNameForm'
 import { useAppDispatch } from '../../redux/hooks'
+import { editDataName } from '../../redux/slices/edit'
 
 interface Props {
     id: string
@@ -9,36 +10,25 @@ interface Props {
     type: string
 }
 
-const EditDataName: FC<Props> = ({ id, currentName, type }) => {
-    const [editDataNameActive, setEditDataNameActive] = useState(false)
+const EditDataName: FC<Props> = ({ currentName, id, type }) => {
     const [textValue, setTextValue] = useState<string>('')
     const dispatch = useAppDispatch()
 
     const onSubmit = () => {
-        // dispatch(allActions.edit.dataName({ id, textValue, type }))
-        console.log('edit')
+        dispatch(editDataName({ id, textValue, type }))
     }
 
-    return editDataNameActive ? (
-        <div style={{ display: 'flex' }}>
+    return (
+        <>
             <EditDataNameForm
                 currentName={currentName}
                 textValue={textValue}
                 setInputText={setTextValue}
             />
-            <Button color="primary" size="sm" onClick={onSubmit}>
-                Save
+            <Button color="primary" onClick={onSubmit}>
+                <span>Save</span>
             </Button>
-        </div>
-    ) : (
-        <Button
-            outline
-            size="sm"
-            color="primary"
-            onClick={() => setEditDataNameActive(true)}
-        >
-            <span>Edit Name</span>
-        </Button>
+        </>
     )
 }
 

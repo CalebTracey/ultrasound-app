@@ -1,95 +1,100 @@
+/* eslint-disable no-undef */
 /* eslint-disable no-underscore-dangle */
-import React, { useEffect, FC, useCallback } from 'react'
-import { withRouter } from 'react-router-dom'
-import { Media, Jumbotron, Container, Alert, Button } from 'reactstrap'
+import React, { useEffect, FC, useCallback, useState } from 'react'
+import { useLocation, withRouter } from 'react-router-dom'
+import { Media, Jumbotron, Alert, Button } from 'reactstrap'
 import { useAppSelector, useAppDispatch } from '../redux/hooks'
-import EditSubMenuContainer from '../components/edit/EditSubMenuContainer'
-import EditListItemContainer from '../components/edit/EditListItemContainer'
-import EditDataName from '../components/edit/EditDataName'
-import DeleteButton from '../components/buttons/DeleteButton'
+import EditHeader from '../components/edit/EditHeader'
 import useClearSelections from '../hooks/useClearSelections'
-import EventBus from '../common/EventBus'
+import { IClassification } from '../schemas'
+import useItems from '../hooks/useItems'
+import { resetItemSelection } from '../redux/slices/item'
+import { editingSubMenu, resetSubMenuSelection } from '../redux/slices/subMenu'
+import { editingClassification } from '../redux/slices/classification'
+import EditContentPane from '../components/edit/EditContentPane'
+import { clearMessage } from '../redux/slices/message'
 
-// interface Props {
-//     history: RouteComponentProps['history']
-// }
-
-const Edit: FC = () => {
-    const { message } = useAppSelector((state) => state)
-    const { selected, subMenuCount, loading, editing } = useAppSelector(
+const Edit: FC = (): JSX.Element | null => {
+    const loadingState = useAppSelector((state) => state.classification.loading)
+    const { message, subMenu, item } = useAppSelector((state) => state)
+    const { selected, subMenuCount, editing } = useAppSelector(
         (state) => state.classification
     )
-    const subMenuEditing = useAppSelector((state) => state.subMenu.editing)
-    const { name, _id, hasSubMenu } = selected
+    const location = useLocation()
+    const [isDataLoading, setIsDataLoading] = useState(false)
     const [, clearSelections] = useClearSelections()
     const dispatch = useAppDispatch()
+    const [response, getItems] = useItems({
+        parentId: '',
+        list: [],
+        isLoading: false,
+        error: null,
+    })
+
+    const isClassification = (value: unknown): value is IClassification => {
+        return !!value && !!(value as IClassification)
+    }
 
     const handleCancel = useCallback(() => {
-        clearSelections()
-    }, [clearSelections])
+        setIsDataLoading(true)
+        dispatch(resetItemSelection())
+        dispatch(resetSubMenuSelection())
+        dispatch(editingClassification(true))
+        dispatch(editingSubMenu(false))
+        getItems()
+        dispatch(resetItemSelection())
+        setIsDataLoading(false)
+    }, [getItems, dispatch])
 
     useEffect(() => {
-        EventBus.on('cancel', () => {
-            handleCancel()
-        })
-        return () => {
-            EventBus.remove('cancel', handleCancel)
+        const controller = new AbortController()
+        if (
+            !response.isLoading &&
+            item.loading !== 'successful' &&
+            !subMenu.editing
+        ) {
+            setIsDataLoading(true)
+            if (item.size !== 0) {
+                resetItemSelection()
+            }
+            getItems()
         }
-    }, [dispatch, handleCancel])
+        setIsDataLoading(false)
+        return () => controller?.abort()
+    }, [getItems, item, loadingState, subMenu, response])
 
-    return (
+    useEffect(() => {
+        clearMessage()
+    }, [location.pathname])
+
+    return isClassification(selected) && !isDataLoading ? (
         <Jumbotron>
-            <div className="edit-content">
-                <Container>
-                    {message.text && <Alert color="info">{message.text}</Alert>}
-                    <Media body>
-                        <Media heading>
-                            <div className="editHeader">
-                                <span className="display-4">
-                                    {name && name.toUpperCase()}
-                                </span>
-                                <EditDataName
-                                    id={_id}
-                                    currentName={name}
-                                    type="classification"
-                                />
-                                <DeleteButton
-                                    id={_id}
-                                    type="classification"
-                                    title="Delete"
-                                />
-                                {/* <ResetButton reset={reset} /> */}
-                            </div>
-                            <hr className="my-2" />
-                        </Media>
-                        {loading === 'successful' && (
-                            <Container
-                                fluid
-                                style={{ display: 'flex', padding: '2rem' }}
-                            >
-                                <Button
-                                    outline
-                                    color="danger"
-                                    onClick={handleCancel}
-                                >
-                                    <span>Cancel</span>
-                                </Button>
-                                {hasSubMenu && (
-                                    <EditSubMenuContainer
-                                        subMenuCount={subMenuCount}
-                                        hasSubMenu={hasSubMenu}
-                                    />
-                                )}
-                                {editing && !subMenuEditing && (
-                                    <EditListItemContainer />
-                                )}
-                            </Container>
-                        )}
-                    </Media>
-                </Container>
+            {message.text && <Alert color="info">{message.text}</Alert>}
+
+            <EditHeader
+                classification={selected}
+                subMenuCount={subMenuCount}
+                hasSubMenu={selected.hasSubMenu}
+            />
+            <div className="edit">
+                <hr className="my-2" />
+                <Media body>
+                    <Button
+                        style={{ position: 'relative' }}
+                        outline
+                        color="danger"
+                        onClick={handleCancel}
+                    >
+                        <span className="edit___drop-down-item">Cancel</span>
+                    </Button>
+                    <EditContentPane
+                        hasSubMenu={selected.hasSubMenu}
+                        editing={editing}
+                    />
+                </Media>
             </div>
         </Jumbotron>
-    )
+    ) : null
 }
 
 export default withRouter(Edit)

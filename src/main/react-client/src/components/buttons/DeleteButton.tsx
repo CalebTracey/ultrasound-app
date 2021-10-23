@@ -1,6 +1,7 @@
 import React, { FC } from 'react'
 import { Button } from 'reactstrap'
 import { useAppDispatch } from '../../redux/hooks'
+import { deleteData } from '../../redux/slices/edit'
 
 interface Props {
     id: string
@@ -11,17 +12,22 @@ interface Props {
 const DeleteButton: FC<Props> = ({ id, type, title }) => {
     const dispatch = useAppDispatch()
 
-    const onClickHandler = () => {
-        // dispatch(allActions.remove.deleteData({ id, type }))
-        // dispatch(allActions.edit.update())
-        console.log('delete')
+    const handleDelete = () => {
+        dispatch(
+            deleteData({
+                id,
+                type: type.toLowerCase(),
+            })
+        )
     }
+
     return (
         <Button
+            style={{ marginLeft: '1rem' }}
             className="danger-btn-edit"
             outline
             color="danger"
-            onClick={onClickHandler}
+            onClick={handleDelete}
         >
             {title}
         </Button>
