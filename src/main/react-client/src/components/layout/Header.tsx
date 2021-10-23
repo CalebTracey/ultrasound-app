@@ -25,7 +25,12 @@ const Header: FC = () => {
     }, [message, dispatch])
     return (
         <header style={{ display: 'fixed' }}>
-            {message.text && <Alert color="info">{message.text}</Alert>}
+            {message.text && !message.error && (
+                <Alert color="info">{message.text}</Alert>
+            )}
+            {message.text && message.error && (
+                <Alert color="warn">{message.text}</Alert>
+            )}
             {!message.text && (
                 <div className="button-wrapper">
                     {/* <div className="header-date">{content}</div> */}

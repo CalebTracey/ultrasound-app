@@ -7,7 +7,6 @@ import {
     Reducer,
 } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
-// import history from '../../helpers/history'
 import { IClassification } from '../../schemas'
 import { api } from '../../service/api'
 import { newError } from './message'
@@ -31,18 +30,25 @@ const initialClassificationState: classificationSliceState = {
 
 export const getAllClassifications = createAsyncThunk<IClassification[], void>(
     'classifications/getAll',
-    async () =>
+    async (_, thunkApi) =>
         api
             .get('classifications')
             .then((res) => {
-                return Promise.resolve(res.data)
+                if (res !== undefined) {
+                    return Promise.resolve(res.data)
+                }
+                return Promise.reject(res)
             })
             .catch((err: AxiosError) => {
-                if (err.isAxiosError) {
-                    newError(err.message)
-                    // history.push('/home')
+                if (err !== undefined) {
+                    if (err.isAxiosError) {
+                        thunkApi.dispatch(newError(err.message))
+                    }
+                    Promise.reject(err)
+                } else {
+                    thunkApi.dispatch(newError('Server Error'))
                 }
-                Promise.reject(err)
+                Promise.reject()
             })
 )
 

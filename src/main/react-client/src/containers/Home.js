@@ -1,37 +1,29 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { Media, Jumbotron, Container } from 'reactstrap'
+import axios from 'axios'
 import LogoutButton from '../components/buttons/LogoutButton'
 import LoginButton from '../components/login/LoginButton'
 import RegisterButton from '../components/register/RegisterButton'
 import DashboardButton from '../components/buttons/DashboardButton'
-import UserService from '../service/user-service'
-
-const { getPublicContent } = UserService
-const user = JSON.parse(localStorage.getItem('user'))
 
 const Home = () => {
     const { isAuth } = useSelector((state) => state.auth)
     const [content, setContent] = useState(null)
-
+    const instance = axios.create({
+        baseURL: `${process.env.PUBLIC_URL}/api/`,
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
     useEffect(() => {
-        if (user) {
-            getPublicContent().then(
-                (response) => {
-                    setContent(response.data)
-                },
-                (error) => {
-                    const cont =
-                        (error.response && error.response.data) ||
-                        error.message ||
-                        error.toString()
-                    setContent(cont.error)
-                    console.log(cont.error)
-                }
-            )
+        const getDate = async () => {
+            const date = await instance.get(`date`)
+            setContent(date.data)
         }
+        getDate()
         // .catch((err) => Promise.reject(err));
-    }, [])
+    }, [instance])
 
     return (
         <>

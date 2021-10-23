@@ -13,7 +13,6 @@ const ProtectedRoute: FC<ProtectedRouteProps> = ({
     authenticationPath,
     ...routeProps
 }: ProtectedRouteProps) => {
-    console.log(`authenticated: ${isAuthenticated}`)
     if (isAuthenticated) {
         return <Route {...routeProps} />
     }

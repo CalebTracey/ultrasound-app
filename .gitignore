@@ -46,8 +46,9 @@
 # *.iml
 # *.ipr
 
-target
-src/main/resources/application.properties
+#target
+k8s
+
 # CMake
 cmake-build-*/
 
@@ -59,6 +60,8 @@ cmake-build-*/
 
 # IntelliJ
 out/
+
+# react-client
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/
@@ -133,7 +136,8 @@ fabric.properties
 *.tar.gz
 *.rar
 
-
+src/main/react-client/.env
+src/main/react-client/.env.production
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 

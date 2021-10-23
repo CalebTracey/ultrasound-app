@@ -1,8 +1,7 @@
 /* eslint-disable react/prop-types */
 import React, { FC, lazy, Suspense } from 'react'
-import { Route, Router, Switch, Redirect, useHistory } from 'react-router-dom'
+import { Route, Switch, Redirect } from 'react-router-dom'
 import SyncLoader from 'react-spinners/SyncLoader'
-// import history from '../helpers/history'
 import { useAppSelector } from '../redux/hooks'
 import Edit from '../containers/Edit'
 // import VideoPlayer from '../components/content/VideoPlayer'
@@ -14,13 +13,16 @@ import Edit from '../containers/Edit'
 const VideoPlayer = lazy(() => import('../components/content/VideoPlayer'))
 const Classification = lazy(() => import('../containers/Classification'))
 const ContentHome = lazy(() => import('../components/content/ContentHome'))
-// const ProtectedRouteAdmin = lazy(() => import('./ProtectedRouteAdmin'))
+const ProtectedRouteAdmin = lazy(() => import('./ProtectedRouteAdmin'))
 
 interface Props {
     routePath: string
 }
 
 const ContentRoutes: FC<Props> = ({ routePath }) => {
+    const { roles } = useAppSelector((state) => state.auth.user)
+
+    const isAdmin = roles !== null && roles.includes('ROLE_ADMIN')
     return (
         <Suspense
             fallback={
@@ -39,13 +41,13 @@ const ContentRoutes: FC<Props> = ({ routePath }) => {
                     path={`${routePath}/classification/:id`}
                     component={Classification}
                 />
-                {/* <ProtectedRouteAdmin
+                <ProtectedRouteAdmin
                     isAuthenticated={isAdmin}
                     path={`${routePath}/edit/:id`}
                     authenticationPath={`${routePath}`}
                     component={Edit}
-                /> */}
-                <Route path="/dashboard/admin/edit/:id" component={Edit} />
+                />
+                {/* <Route path="/dashboard/admin/edit/:id" component={Edit} /> */}
                 {/* <ProtectedRoute
                         isAuthenticated={isAuth}
                         path=`${routePath}`

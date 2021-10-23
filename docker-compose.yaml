@@ -1,37 +1,28 @@
-# === to rebuild containers ===
-# docker-compose down
-# docker-compose up -d --build --force-recreate
+version: '3'
 
-version: "3.8"
 services:
-  frontend:
-#    image: frontend
-#    image: 218046717840.dkr.ecr.us-east-1.amazonaws.com/frontend-deploy
-    container_name: frontend
-#    hostname:
-#    build: ./frontend
-    build:
-      context: src/main/react-client/
-      dockerfile: Dockerfile
-    ports:
-      - 80:80
+#  nginx:
+#    container_name: nginx
+#    image: nginx:alpine
+#    ports:
+#      - 80:80
+#    volumes:
+#      - ./nginx/conf.d:/etc/nginx/conf.d
 #    depends_on:
-#      - backend
-#    networks:
-#      - ultrasound-network
+#      - api
 
-  backend:
-#    image: backend
-#    image: 218046717840.dkr.ecr.us-east-1.amazonaws.com/backend-deploy
-    container_name: backend
+  api:
+    container_name: api
+    image: api:maven
     build:
       context: ./
       dockerfile: Dockerfile
     ports:
       - 8080:8080
+    volumes:
+      - /var/app
+    restart: always
 
-#version: "3.8"
-#services:
   mongodb:
     image: mongo
     container_name: mongodb-dev

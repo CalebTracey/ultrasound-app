@@ -9,7 +9,12 @@ import axios, {
     AxiosError,
 } from 'axios'
 import TokenService from './token-service'
+import EventBus from '../common/EventBus'
 
+type TError = { error: AxiosError | ResponseError }
+interface ResponseError extends Error {
+    status?: number
+}
 enum StatusCode {
     Unauthorized = 401,
     Forbidden = 403,
@@ -20,8 +25,8 @@ enum StatusCode {
 const headers: Readonly<Record<string, string | boolean>> = {
     Accept: 'application/json',
     'Content-Type': 'application/json',
-    // 'Access-Control-Allow-Credentials': true,
-    // 'X-Requested-With': 'XMLHttpRequest',
+    'Access-Control-Allow-Credentials': true,
+    'X-Requested-With': 'XMLHttpRequest',
 }
 const { getLocalAccessToken } = TokenService
 const injectToken = (config: AxiosRequestConfig): AxiosRequestConfig => {
@@ -40,15 +45,13 @@ const injectToken = (config: AxiosRequestConfig): AxiosRequestConfig => {
 class Http {
     private instance: AxiosInstance | null = null
 
-    // history = useHistory()
-
     private get http(): AxiosInstance {
         return this.instance != null ? this.instance : this.initHttp()
     }
 
     initHttp() {
         const http = axios.create({
-            baseURL: 'http://localhost:8080/api/',
+            baseURL: `${process.env.PUBLIC_URL}/api/`,
             headers,
             withCredentials: true,
         })
@@ -60,11 +63,10 @@ class Http {
         http.interceptors.response.use(
             (response) => response,
             (error: Error | AxiosError) => {
-                if (axios.isAxiosError(error)) {
-                    this.handleError(error)
-                } else {
-                    throw new Error(error.message)
+                if (axios.isAxiosError(error) && error.response !== undefined) {
+                    this.handleError(error.response?.status)
                 }
+                throw new Error(error.message)
             }
         )
         this.instance = http
@@ -109,24 +111,25 @@ class Http {
 
     // Handle global app errors
     // We can handle generic app errors depending on the status code
-    private handleError(error: AxiosError) {
-        console.log(error)
-
-        switch (error.response?.status) {
+    private handleError(response: number) {
+        switch (response) {
             case StatusCode.InternalServerError:
                 // history.push('/home')
-                // EventBus.dispatch('logout')
+                EventBus.dispatch('logout')
+                Promise.reject(new Error('Internal Server Error'))
                 break
 
             case StatusCode.Forbidden:
                 // history.push('/home')
-                // EventBus.dispatch('logout')
+                EventBus.dispatch('logout')
+                Promise.reject(new Error('Forbidden'))
                 break
 
             case StatusCode.Unauthorized:
-                console.error(error)
                 // history.push('/home')
-                // EventBus.dispatch('logout')
+                EventBus.dispatch('logout')
+                Promise.reject(new Error('Unauthorized'))
+
                 break
 
             // case StatusCode.TooManyRequests:
@@ -134,7 +137,7 @@ class Http {
             // break
             // no default
         }
-        return Promise.reject(error)
+        return Promise.reject(response)
     }
 }
 
