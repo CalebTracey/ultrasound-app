@@ -35,6 +35,7 @@ export const getAllClassifications = createAsyncThunk<IClassification[], void>(
             .get('classifications')
             .then((res) => {
                 if (res !== undefined) {
+                    console.log(`Classifications: ${res.data}`)
                     return Promise.resolve(res.data)
                 }
                 return Promise.reject(res)
@@ -44,6 +45,7 @@ export const getAllClassifications = createAsyncThunk<IClassification[], void>(
                     if (err.isAxiosError) {
                         thunkApi.dispatch(newError(err.message))
                     }
+                    console.error(err)
                     Promise.reject(err)
                 } else {
                     thunkApi.dispatch(newError('Server Error'))

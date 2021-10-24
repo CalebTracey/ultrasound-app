@@ -40,8 +40,10 @@ com/ultrasound/app/exceptions/ClassificationNotFoundException.class
 com/ultrasound/app/aws/S3Service.class
 com/ultrasound/app/controller/AuthController.class
 com/ultrasound/app/security/jwt/JwtUtils.class
+com/ultrasound/app/aws/AWSCredentialsProviderImpl.class
 com/ultrasound/app/repo/RoleRepo.class
 com/ultrasound/app/payload/response/JwtResponse.class
+com/ultrasound/app/aws/AWSCredentialsConfig.class
 com/ultrasound/app/model/user/Role.class
 com/ultrasound/app/repo/ClassificationRepo.class
 com/ultrasound/app/controller/ContentController.class

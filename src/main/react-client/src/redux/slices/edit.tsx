@@ -11,6 +11,11 @@ import {
 import { resetItemSelection } from './item'
 import { newMessage } from './message'
 
+const headers: Readonly<Record<string, string | boolean>> = {
+    'Access-Control-Allow-Methods': 'GET, DELETE, HEAD, OPTIONS',
+    'X-Requested-With': 'XMLHttpRequest',
+}
+
 type TDeleteItemPayload = { id: string; type: string; item: IListItem }
 type TDeleteDataPayload = {
     id: string
@@ -44,6 +49,7 @@ export const editDataName = createAsyncThunk(
         api.post<TDataNamePayload, AxiosResponse>(
             `/edit/${type}/name/${id}`,
             newName
+            // headers
         ).then((res: AxiosResponse<string>) => {
             thunkApi.dispatch(getAllClassifications())
             thunkApi.dispatch(resetClassificationSelection())
@@ -60,6 +66,7 @@ export const editItemName = createAsyncThunk(
         api.post<TDataNamePayload, AxiosResponse>(
             `/edit/${type}/item/name/${id}`,
             newName
+            // headers
         ).then((res: AxiosResponse<string>) => {
             thunkApi.dispatch(getAllClassifications())
             thunkApi.dispatch(resetClassificationSelection())
@@ -90,6 +97,7 @@ export const deleteItem = createAsyncThunk(
         api.post<IListItem, AxiosResponse>(
             `/delete-item/${type}/${id}`,
             item
+            // headers
         ).then((res: AxiosResponse<string>) => {
             thunkApi.dispatch(getAllClassifications())
             thunkApi.dispatch(resetClassificationSelection())
@@ -101,7 +109,7 @@ export const deleteItem = createAsyncThunk(
 export const importData = createAsyncThunk('edit/import', async (_, thunkApi) =>
     api.delete('/tables/clear').then(() => {
         thunkApi.dispatch(newMessage('Data import success'))
-        api.post('/S3/update/').then(() => {
+        api.put('/S3/update/').then(() => {
             thunkApi.dispatch(getAllClassifications())
         })
     })

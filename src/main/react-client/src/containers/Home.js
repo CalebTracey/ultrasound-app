@@ -10,11 +10,26 @@ import DashboardButton from '../components/buttons/DashboardButton'
 const Home = () => {
     const { isAuth } = useSelector((state) => state.auth)
     const [content, setContent] = useState(null)
+
+    // const headers = new Headers()
+    // headers.append('Content-Type', 'application/json')
+    // headers.append('Accept', 'application/json')
+    // headers.append('Access-Control-Allow-Origin', `${process.env.PUBLIC_URL}`)
+    // headers.append('Access-Control-Allow-Credentials', 'true')
+
+    const headers = {
+        // Credentials: 'include',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, PUT, GET, OPTIONS, DELETE',
+        'X-Requested-With': 'XMLHttpRequest',
+        'Content-Type': 'application/json',
+    }
+
     const instance = axios.create({
-        baseURL: `${process.env.PUBLIC_URL}/api/`,
-        headers: {
-            'Content-Type': 'application/json',
-        },
+        // baseURL: `${process.env.PUBLIC_URL}/api/`,
+        baseURL: 'http://localhost:8080/api/',
+        headers,
+        withCredentials: true,
     })
     useEffect(() => {
         const getDate = async () => {

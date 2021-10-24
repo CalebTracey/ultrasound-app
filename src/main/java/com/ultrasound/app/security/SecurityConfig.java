@@ -1,6 +1,7 @@
 package com.ultrasound.app.security;
 
 import com.ultrasound.app.model.user.ERole;
+import com.ultrasound.app.security.exceptions.CustomAccessDeniedHandler;
 import com.ultrasound.app.security.jwt.AuthEntryPointJwt;
 import com.ultrasound.app.security.service.UserDetailsServiceImpl;
 import com.ultrasound.app.security.jwt.AuthTokenFilter;
@@ -11,24 +12,34 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.web.HttpSecurityBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configurers.AnonymousConfigurer;
+import org.springframework.security.config.annotation.web.configurers.ExceptionHandlingConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
+import org.springframework.security.config.http.HeadersBeanDefinitionParser;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.header.HeaderWriter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.util.UrlPathHelper;
 
+import java.nio.file.Path;
+import java.nio.file.PathMatcher;
 import java.util.Arrays;
 
 @Slf4j
 @Configuration
-@EnableAutoConfiguration
+//@EnableAutoConfiguration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(
 //        securedEnabled = true,
@@ -36,9 +47,11 @@ import java.util.Arrays;
         prePostEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
     @Autowired
     UserDetailsServiceImpl userDetailsService;
-
+    @Autowired
+    private CustomAccessDeniedHandler accessDeniedHandler;
     @Autowired
     private AuthEntryPointJwt unauthorizedHandler;
 
@@ -65,33 +78,64 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors().configurationSource(corsConfigurationSource()).and().csrf().disable()
-                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .authorizeRequests().antMatchers("/", "/api/date", "/api/auth/sign-up", "/api/auth/sign-in").anonymous().and()
-                .authorizeRequests().antMatchers("/api/classifications", "/api/classification/**", "/api/submenu/**", "/api/user/**", "/api/S3/link/**")
-                .hasAuthority(ERole.ROLE_USER.toString()).and()
-                .authorizeRequests().antMatchers("/**").hasAuthority(ERole.ROLE_ADMIN.toString())
-//                .antMatchers("/**").permitAll()
-                .anyRequest().authenticated();
+        String[] noAuthRoutes = new String[]{"/", "/api/date", "/api/auth/sign-up", "/api/auth/sign-in"};
+        String[] userAuthRoutes = new String[]{"/api/classifications", "/api/classifications/**", "/api/submenu/**", "/api/user/**", "/api/S3/link/**"};
+        String[] adminAuthRoutes = new String[]{"/**", "/api/**", "/api/tables/clear", "/api/admin/**"};
+
+//        http.authorizeRequests()
+                http.cors().configurationSource(corsConfigurationSource())
+                        .and()
+                .csrf().disable().exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
+                        .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        .and()
+                // no auth
+                .authorizeRequests()
+                        .antMatchers(noAuthRoutes).permitAll()
+                        .antMatchers(userAuthRoutes).hasAnyAuthority(ERole.ROLE_USER.toString(), ERole.ROLE_ADMIN.toString())
+                        .antMatchers(adminAuthRoutes).hasAuthority(ERole.ROLE_ADMIN.toString())
+                        .anyRequest().authenticated()
+                        .and()
+                        .httpBasic()
+                        .and()
+                        .formLogin().loginPage("/login").permitAll()
+                        .and()
+                        .logout().permitAll();
+                // user
+//                .authorizeRequests().antMatchers(userAuthRoutes)
+//                .hasAuthority(ERole.ROLE_USER.toString()).and()
+//                .cors().disable()
+                // admin
+//                .authorizeRequests().antMatchers(adminAuthRoutes)
+//                .hasAuthority(ERole.ROLE_ADMIN.toString());
+                    //TODO remove for prod
+//                .permitAll().and().authorizeRequests().antMatchers(adminAuthRoutes)
+//                .and().cors().disable();
+//                .anyRequest().authenticated();
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+//        http.exceptionHandling().accessDeniedHandler(accessDeniedHandler);
+
     }
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowCredentials(true);
+       configuration.setAllowCredentials(true);
+        // configuration.addAllowedOriginPattern("**");
         configuration.setAllowedOrigins(Arrays.asList(
-                "http://35.203.106.213/**",
-                "http://localhost:3000/**",
-                "http://localhost:8080/**"
+                "http://localhost:8080/**",
+                "http://localhost:8080**",
+                "http://localhost/**",
+                "http://localhost"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "response-type", "x-access-token", "access-control-allow-origin"));
-        configuration.setExposedHeaders(Arrays.asList("authorization", "accessToken", "refreshToken", "access-control-allow-origin"));
+        configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "response-type", "x-access-token", "Access-Control-Allow-Origin", "x-requested-with", "access-control-allow-methods", "Accept", "Accept-Language", "Content-Language", "Content-Type"));
+        configuration.setExposedHeaders(Arrays.asList("authorization", "accessToken", "refreshToken", "Access-Control-Allow-Origin"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
+//        source.setUrlPathHelper(pathHelper());
+
         return source;
     }
 

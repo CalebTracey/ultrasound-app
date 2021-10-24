@@ -1,15 +1,12 @@
 package com.ultrasound.app.controller;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
+//@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 public class HealthCheckController {
 
-    @RequestMapping(path = "/", method = RequestMethod.GET)
+    @GetMapping(path = "/")
     public String sayHello() {
         return "hello";
     }

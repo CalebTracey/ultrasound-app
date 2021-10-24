@@ -11,6 +11,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -18,14 +20,31 @@ import java.util.Set;
 //@EnableMongoRepositories(basePackages= "com.ultrasound.app.repos")
 @SpringBootApplication
 public class AppApplication {
-//
+
+	// TODO delete for prod
+
 //	@Autowired
 //	PasswordEncoder encoder;
-//
+
 
 	public static void main(String[] args) {
 		SpringApplication.run(AppApplication.class, args);
 	}
+
+//	@Bean
+//	public WebMvcConfigurer corsConfigurer() {
+//		return new WebMvcConfigurer() {
+//			@Override
+//			public void addCorsMappings(CorsRegistry registry) {
+//				registry.addMapping("/**").allowedOrigins("http://localhost:3000");
+//				registry.addMapping("*").allowedOrigins("http://localhost:3000");
+//				registry.addMapping("/**").allowedOrigins("classifications");
+//
+//
+//			}
+		}
+
+		// TODO delete for prod
 
 //	@Bean
 //	CommandLineRunner run(AppUserService userService) {
@@ -40,5 +59,6 @@ public class AppApplication {
 //
 //		};
 //	}
-}
+
+
 

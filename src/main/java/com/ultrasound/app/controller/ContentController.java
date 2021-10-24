@@ -8,17 +8,26 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.MultipartBodyBuilder;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.function.ServerResponse;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.net.http.HttpResponse;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
-@CrossOrigin(origins = "*", maxAge = 3600)
+//@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api")
-public class ContentController {
+public class ContentController  {
 
     @Autowired
     private ClassificationServiceImpl classificationService;
@@ -43,11 +52,12 @@ public class ContentController {
     }
 
     @GetMapping("/classifications")
-//    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<?> classifications() {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/api/classifications").toUriString());
-        return ResponseEntity.created(uri).body(classificationService.all());
+
+        return ResponseEntity.ok()
+                .body(classificationService.all());
     }
 
     @GetMapping("/submenu/{id}")
@@ -139,7 +149,16 @@ public class ContentController {
                 .path("/tables/clear").toUriString());
         subMenuService.deleteTableEntities();
         classificationService.deleteTableEntities();
+
         return ResponseEntity.created(uri).body("Database table entities deleted");
+    }
+
+    private HttpHeaders resHeaders() {
+        HttpHeaders resHeaders = new HttpHeaders();
+        resHeaders.set("Access-Control-Allow-Origin", "localhost:8080");
+        resHeaders.set("Access-Control-Allow-Methods:", "GET, DELETE, HEAD, OPTIONS");
+
+        return resHeaders;
     }
 }
 

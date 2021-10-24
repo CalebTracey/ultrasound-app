@@ -31,10 +31,11 @@ import com.ultrasound.app.repo.AppUserRepo;
 import com.ultrasound.app.security.service.UserDetailsImpl;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
+//@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+
     @Autowired
     AuthenticationManager authenticationManager;
     @Autowired

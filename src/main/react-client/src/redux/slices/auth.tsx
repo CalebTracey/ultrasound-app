@@ -19,11 +19,18 @@ interface authSliceState {
     contentPath: '/dashboard' | '/dashboard/admin' | null
 }
 
+const headers: Readonly<Record<string, string | boolean>> = {
+    // 'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'POST, PUT, GET, OPTIONS, DELETE',
+    'X-Requested-With': 'XMLHttpRequest',
+    'Content-Type': 'application/json',
+}
+
 const instance = axios.create({
-    baseURL: `${process.env.PUBLIC_URL}/api/`,
-    headers: {
-        'Content-Type': 'application/json',
-    },
+    // baseURL: `${process.env.PUBLIC_URL}/api/`,
+    baseURL: 'http://localhost:8080/api/',
+    headers,
+    withCredentials: true,
 })
 
 const data: string | null = localStorage.getItem('user')

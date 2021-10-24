@@ -8,6 +8,7 @@
 /Users/calebtracey/Desktop/Code/react-spring-jwt/src/main/java/com/ultrasound/app/repo/AppUserRepo.java
 /Users/calebtracey/Desktop/Code/react-spring-jwt/src/main/java/com/ultrasound/app/security/service/UserDetailsServiceImpl.java
 /Users/calebtracey/Desktop/Code/react-spring-jwt/src/main/java/com/ultrasound/app/model/data/EType.java
+/Users/calebtracey/Desktop/Code/react-spring-jwt/src/main/java/com/ultrasound/app/aws/AWSCredentialsConfig.java
 /Users/calebtracey/Desktop/Code/react-spring-jwt/src/main/java/com/ultrasound/app/security/SecurityConfig.java
 /Users/calebtracey/Desktop/Code/react-spring-jwt/src/main/java/com/ultrasound/app/exceptions/SubMenuNotFoundAdvice.java
 /Users/calebtracey/Desktop/Code/react-spring-jwt/src/main/java/com/ultrasound/app/exceptions/ClassificationNotFoundAdvice.java
@@ -40,6 +41,7 @@
 /Users/calebtracey/Desktop/Code/react-spring-jwt/src/main/java/com/ultrasound/app/model/data/SubMenu.java
 /Users/calebtracey/Desktop/Code/react-spring-jwt/src/main/java/com/ultrasound/app/model/user/ERole.java
 /Users/calebtracey/Desktop/Code/react-spring-jwt/src/main/java/com/ultrasound/app/security/jwt/JwtUtils.java
+/Users/calebtracey/Desktop/Code/react-spring-jwt/src/main/java/com/ultrasound/app/aws/AWSCredentialsProviderImpl.java
 /Users/calebtracey/Desktop/Code/react-spring-jwt/src/main/java/com/ultrasound/app/payload/response/MessageResponse.java
 /Users/calebtracey/Desktop/Code/react-spring-jwt/src/main/java/com/ultrasound/app/exceptions/SubMenuNotFoundException.java
 /Users/calebtracey/Desktop/Code/react-spring-jwt/src/main/java/com/ultrasound/app/service/ItemServiceImpl.java

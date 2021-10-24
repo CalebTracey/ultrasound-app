@@ -5,13 +5,15 @@ import com.ultrasound.app.service.ClassificationServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 
 @Slf4j
-@CrossOrigin(origins = "*", maxAge = 3600)
+//@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin()
 @RestController
 @RequestMapping("/api/S3")
 public class S3Controller {
@@ -22,13 +24,15 @@ public class S3Controller {
     private ClassificationServiceImpl classificationService;
 
     @GetMapping("/link/{link}")
+
     public ResponseEntity<?> getPreSignedUrl(@PathVariable String link) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/api/S3/link/{link}").toUriString());
         return ResponseEntity.created(uri).body(s3Service.getPreSignedUrl(link));
     }
 
-    @PostMapping("/update/")
+    @PutMapping("/update/")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateBucket() {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/api/S3/update/").toUriString());
