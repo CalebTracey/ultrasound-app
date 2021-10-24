@@ -1,24 +1,17 @@
-import React, { useState, useEffect } from 'react'
-import { useSelector } from 'react-redux'
+import React, { useState, useEffect, FC } from 'react'
 import { Media, Jumbotron, Container } from 'reactstrap'
 import axios from 'axios'
 import LogoutButton from '../components/buttons/LogoutButton'
 import LoginButton from '../components/login/LoginButton'
 import RegisterButton from '../components/register/RegisterButton'
 import DashboardButton from '../components/buttons/DashboardButton'
+import { useAppSelector } from '../redux/hooks'
 
-const Home = () => {
-    const { isAuth } = useSelector((state) => state.auth)
+const Home: FC = () => {
+    const { isAuth } = useAppSelector((state) => state.auth)
     const [content, setContent] = useState(null)
 
-    // const headers = new Headers()
-    // headers.append('Content-Type', 'application/json')
-    // headers.append('Accept', 'application/json')
-    // headers.append('Access-Control-Allow-Origin', `${process.env.PUBLIC_URL}`)
-    // headers.append('Access-Control-Allow-Credentials', 'true')
-
     const headers = {
-        // Credentials: 'include',
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'POST, PUT, GET, OPTIONS, DELETE',
         'X-Requested-With': 'XMLHttpRequest',
@@ -37,7 +30,6 @@ const Home = () => {
             setContent(date.data)
         }
         getDate()
-        // .catch((err) => Promise.reject(err));
     }, [instance])
 
     return (
@@ -46,16 +38,15 @@ const Home = () => {
                 <div className="button-wrapper">
                     {isAuth ? (
                         <>
-                            <div className="header-date">{content}</div>
                             <LogoutButton />
                             <DashboardButton />
+                            <div className="header-date">{content}</div>
                         </>
                     ) : (
                         <>
-                            <div className="header-date">{content}</div>
-
                             <LoginButton />
                             <RegisterButton />
+                            <div className="header-date">{content}</div>
                         </>
                     )}
                 </div>

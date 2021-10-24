@@ -44,7 +44,6 @@ const loginService = async (
             }
             return res
         })
-    console.log(response)
     return response
 }
 

@@ -19,10 +19,6 @@ import org.springframework.security.config.annotation.web.HttpSecurityBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.annotation.web.configurers.AnonymousConfigurer;
-import org.springframework.security.config.annotation.web.configurers.ExceptionHandlingConfigurer;
-import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
-import org.springframework.security.config.http.HeadersBeanDefinitionParser;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,10 +27,7 @@ import org.springframework.security.web.header.HeaderWriter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.util.UrlPathHelper;
 
-import java.nio.file.Path;
-import java.nio.file.PathMatcher;
 import java.util.Arrays;
 
 @Slf4j
@@ -82,14 +75,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         String[] userAuthRoutes = new String[]{"/api/classifications", "/api/classifications/**", "/api/submenu/**", "/api/user/**", "/api/S3/link/**"};
         String[] adminAuthRoutes = new String[]{"/**", "/api/**", "/api/tables/clear", "/api/admin/**"};
 
-//        http.authorizeRequests()
                 http.cors().configurationSource(corsConfigurationSource())
                         .and()
                 .csrf().disable().exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
                         .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                         .and()
-                // no auth
                 .authorizeRequests()
                         .antMatchers(noAuthRoutes).permitAll()
                         .antMatchers(userAuthRoutes).hasAnyAuthority(ERole.ROLE_USER.toString(), ERole.ROLE_ADMIN.toString())
@@ -101,17 +92,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         .formLogin().loginPage("/login").permitAll()
                         .and()
                         .logout().permitAll();
-                // user
-//                .authorizeRequests().antMatchers(userAuthRoutes)
-//                .hasAuthority(ERole.ROLE_USER.toString()).and()
-//                .cors().disable()
-                // admin
-//                .authorizeRequests().antMatchers(adminAuthRoutes)
-//                .hasAuthority(ERole.ROLE_ADMIN.toString());
-                    //TODO remove for prod
-//                .permitAll().and().authorizeRequests().antMatchers(adminAuthRoutes)
-//                .and().cors().disable();
-//                .anyRequest().authenticated();
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 //        http.exceptionHandling().accessDeniedHandler(accessDeniedHandler);
