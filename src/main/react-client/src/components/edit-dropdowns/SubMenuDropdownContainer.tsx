@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React, { useState, FC } from 'react'
+import React, { useState, FC, useEffect } from 'react'
 import { ButtonDropdown, DropdownToggle } from 'reactstrap'
 import { useAppSelector } from '../../redux/hooks'
 import SubMenuDropdown from './SubMenuDropdown'
@@ -9,8 +9,16 @@ interface Props {
 }
 const SubMenuDropdownContainer: FC<Props> = ({ subMenuCount }) => {
     const [subMenuOpen, setSubMenuOpen] = useState(false)
-    const { subMenu } = useAppSelector((state) => state)
+    const [isLoading, setIsLoading] = useState(true)
+    const { subMenu, classification } = useAppSelector((state) => state)
     const subMenuToggle = () => setSubMenuOpen((prevState) => !prevState)
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setIsLoading(false)
+        }, 250)
+        return () => clearTimeout(timer)
+    }, [])
 
     return (
         <ButtonDropdown
@@ -18,15 +26,24 @@ const SubMenuDropdownContainer: FC<Props> = ({ subMenuCount }) => {
             addonType="prepend"
             isOpen={subMenuOpen}
             toggle={subMenuToggle}
+            disabled={classification.loading !== 'successful'}
         >
             <DropdownToggle caret>
                 {!subMenu.editing ? (
                     <span className="edit___drop-down-item">
-                        {`Sub Menus: ${subMenuCount}`}
+                        {isLoading ? (
+                            <span className="spinner-border spinner-border-sm" />
+                        ) : (
+                            `Sub Menus: ${subMenuCount}`
+                        )}
                     </span>
                 ) : (
                     <span className="edit___drop-down-item">
-                        {subMenu.selected.name}
+                        {isLoading ? (
+                            <span className="spinner-border spinner-border-sm" />
+                        ) : (
+                            subMenu.selected.name
+                        )}
                     </span>
                 )}
             </DropdownToggle>

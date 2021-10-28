@@ -9,7 +9,6 @@ import {
     SidebarFooter,
 } from 'react-pro-sidebar'
 import ClassificationList from '../components/sidebar/ClassificationList'
-import '../components/custom.scss'
 
 const Sidebar: FC = () => {
     return (
@@ -31,9 +30,7 @@ const Sidebar: FC = () => {
                 </div>
                 <div className="sidebar___footer">
                     <SidebarFooter>
-                        {/* <footer> */}
-                        <small>v0.5 {new Date().getFullYear()}</small>
-                        {/* </footer> */}
+                        <small>v0.6 {new Date().getFullYear()}</small>
                     </SidebarFooter>
                 </div>
             </ProSidebar>

@@ -1,12 +1,17 @@
+/* eslint-disable react/require-default-props */
 import React, { FC } from 'react'
-import { useAppSelector } from '../../redux/hooks'
 import { IListItem } from '../../schemas'
 import ListItem from './ListItem'
 
-const ItemListComponentList: FC = () => {
-    const { itemList, size, loading } = useAppSelector((state) => state.item)
+interface Props {
+    loading: 'pending' | 'idle' | 'successful'
+    itemList: IListItem[]
+    size: number
+}
+const ItemListComponentList: FC<Props> = ({ size, itemList, loading }) => {
     const listNode =
         size !== 0 &&
+        itemList &&
         loading === 'successful' &&
         (itemList as IListItem[]).map((listItem: IListItem) => {
             return <ListItem item={listItem} />

@@ -22,11 +22,11 @@ const Content: FC = () => {
 
     return isAuth ? (
         <div className="content">
-            <Jumbotron fluid style={{ maxHeight: '80vh', paddingTop: '2rem' }}>
-                <Container fluid>
-                    <ContentRoutes routePath={routePath} />
-                </Container>
-            </Jumbotron>
+            {/* <Jumbotron fluid style={{ maxHeight: '80vh', paddingTop: '2rem' }}> */}
+            {/* <Container fluid> */}
+            <ContentRoutes routePath={routePath} />
+            {/* </Container> */}
+            {/* </Jumbotron> */}
         </div>
     ) : (
         <div className="spinner">

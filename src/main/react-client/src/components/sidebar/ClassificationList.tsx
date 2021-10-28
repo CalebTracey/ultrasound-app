@@ -28,7 +28,14 @@ const ClassificationList: FC = () => {
         classifications !== undefined &&
         isClassifications(classifications) &&
         classifications.map((classification: IClassification) => {
-            return <ClassificationItem classification={classification} />
+            return (
+                <div id={`clitem-${classification._id}`}>
+                    <ClassificationItem
+                        key={`clitem-${classification._id}`}
+                        classification={classification}
+                    />
+                </div>
+            )
         })
 
     return <>{classificationListNode}</>

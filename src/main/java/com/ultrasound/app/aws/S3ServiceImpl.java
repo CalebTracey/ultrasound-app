@@ -72,6 +72,7 @@ public class S3ServiceImpl implements S3Service {
         // Use the data map generated from "createFileStructureMap()" to upload data to mongo
         fileStructureDataMap.keySet().forEach(key -> {
             FileStructureDataContainer currentData = fileStructureDataMap.get(key);
+
             Map<String, String> newClassificationSubMenuMap = new TreeMap<>();
             Boolean hasSubMenus = currentData.getHasSubMenu();
             boolean hasClassificationScans = currentData.getClassificationScans().size() != 0;
@@ -79,6 +80,13 @@ public class S3ServiceImpl implements S3Service {
             Classification newClassification = new Classification();
             newClassification.setName(key);
             newClassification.setHasSubMenu(hasSubMenus);
+
+            if (hasClassificationScans) {
+                FileStructureDataContainer condenseData = condenseDataContainer(currentData);
+                currentData.setSubMenus(condenseData.getSubMenus());
+                newClassification.setListItems(condenseData.getClassificationScans());
+                scanCount.addAndGet(condenseData.getClassificationScans().size());
+            }
 
             if (hasSubMenus) {
                 ListIterator<FileStructureSubMenu> subMenuListIterator = currentData.getSubMenus().listIterator();
@@ -94,10 +102,7 @@ public class S3ServiceImpl implements S3Service {
             }
             newClassification.setSubMenus(newClassificationSubMenuMap);
 
-            if (hasClassificationScans) {
-                newClassification.setListItems(currentData.getClassificationScans());
-                scanCount.addAndGet(currentData.getClassificationScans().size());
-            }
+
             classificationService.save(newClassification);
             classificationCount.getAndIncrement();
         });
@@ -105,6 +110,59 @@ public class S3ServiceImpl implements S3Service {
                 " Classifications, " + subMenuCount +
                 " sub-menus, and " + scanCount +
                 " total scan files.";
+    }
+
+    /**
+     * Creates new SubMenu from frequently occurring classification-level Scans with similar names
+     * @return FileStructureDataContainer with new submenus if needed
+     */
+    private FileStructureDataContainer condenseDataContainer(FileStructureDataContainer dataContainer) {
+        List<FileStructureSubMenu> returnSubMenus = new ArrayList<>();
+        if (dataContainer.getHasSubMenu()) {
+            returnSubMenus.addAll(dataContainer.getSubMenus());
+        }
+        List<ListItem> startingItems = dataContainer.getClassificationScans();
+        Map<String, List<ListItem>> commonScanNames = new TreeMap<>();
+
+        startingItems.forEach(item -> {
+            String[] matchValue = StringUtils.strip(item.getName()).split(" ");
+            String valueStrip = matchValue[0].replaceAll("[^a-zA-Z0-9\\s]", "");
+            List<ListItem> newList = new ArrayList<>();
+            List<ListItem> commonScans = commonScanNames.getOrDefault(valueStrip, newList);
+            commonScans.add(item);
+            commonScanNames.put(valueStrip, commonScans);
+        });
+
+        commonScanNames.keySet().forEach(commonName -> {
+            List<ListItem> commonScanList = commonScanNames.get(commonName);
+            FileStructureSubMenu newSubMenu = new FileStructureSubMenu();
+
+            if (commonScanList.size() > 1) {
+                newSubMenu.setName(commonName);
+                newSubMenu.setClassification(dataContainer.getClassification());
+                newSubMenu.setItemList(commonScanList);
+
+                List<FileStructureSubMenu> subMenuCommonNameMatchList = returnSubMenus.stream().filter(
+                        subMenu -> subMenu.getName().contains(commonName)).collect(Collectors.toList());
+
+                if (subMenuCommonNameMatchList.size() > 0) {
+                    List<ListItem> combinedScanList = new ArrayList<>(commonScanList);
+                    subMenuCommonNameMatchList.forEach(subMenu -> {
+                        combinedScanList.addAll(subMenu.getItemList());
+                    });
+                    newSubMenu.setItemList(combinedScanList);
+                    returnSubMenus.removeAll(subMenuCommonNameMatchList);
+                }
+                startingItems.removeAll(commonScanList);
+                returnSubMenus.add(newSubMenu);
+            }
+        });
+        return new FileStructureDataContainer(
+                dataContainer.getClassification(),
+                returnSubMenus,
+                startingItems,
+                dataContainer.link,
+                !returnSubMenus.isEmpty());
     }
 
     /**

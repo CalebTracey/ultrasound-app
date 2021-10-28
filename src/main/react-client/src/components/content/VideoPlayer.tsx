@@ -4,12 +4,15 @@ import ReactPlayer from 'react-player'
 import SyncLoader from 'react-spinners/SyncLoader'
 import { useAppDispatch, useAppSelector } from '../../redux/hooks'
 import DetailsPopover from '../DetailsPopover'
-import { IListItem } from '../../schemas'
+import { IListItem, IAppUser } from '../../schemas'
 import { newError } from '../../redux/slices/message'
+import VideoDeleteButton from '../buttons/VideoDeleteButton'
 
 const VideoPlayer: FC = () => {
-    const { selected, editing } = useAppSelector((state) => state.item)
-    const { loading, url } = useAppSelector((state) => state.item)
+    const { auth } = useAppSelector((state) => state)
+    const { parentId, url, selected, editing } = useAppSelector(
+        (state) => state.item
+    )
     const dispatch = useAppDispatch()
     const isUrl = (value: unknown): value is string => {
         return !!value && !!(value as string)
@@ -17,10 +20,20 @@ const VideoPlayer: FC = () => {
     const isItemList = (value: unknown): value is IListItem => {
         return !!value && !!(value as IListItem)
     }
+    const isUser = (value: unknown): value is IAppUser => {
+        return !!value && !!(value as IAppUser)
+    }
+    const isAdmin = isUser(auth.user) && auth.user.roles?.includes('ROLE_ADMIN')
+
     return isUrl(url) ? (
         <div className="video-page">
             <div className="video-page___header">
-                {isItemList(selected) && <DetailsPopover item={selected} />}
+                {isAdmin && isItemList(selected) && parentId && (
+                    <>
+                        <VideoDeleteButton /> <DetailsPopover item={selected} />
+                    </>
+                )}
+
                 <h2 className="video-page___title">
                     {!editing && selected.title}
                 </h2>

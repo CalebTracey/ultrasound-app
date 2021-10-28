@@ -1,4 +1,4 @@
-package com.ultrasound.app.controller;
+package com.ultrasound.app.controller.util;
 
 import org.springframework.web.bind.annotation.*;
 

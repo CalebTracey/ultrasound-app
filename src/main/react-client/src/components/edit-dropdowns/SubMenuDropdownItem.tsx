@@ -1,50 +1,43 @@
+/* eslint-disable react/require-default-props */
 /* eslint-disable no-underscore-dangle */
-import React, { FC, MouseEvent } from 'react'
+import React, { FC, useCallback } from 'react'
 import { DropdownItem } from 'reactstrap'
-import SyncLoader from 'react-spinners/SyncLoader'
-import useSubMenu from '../../hooks/useSubMenu'
-import { useAppDispatch, useAppSelector } from '../../redux/hooks'
+import { useAppDispatch } from '../../redux/hooks'
 import { editingSubMenu } from '../../redux/slices/subMenu'
-import { resetItemSelection } from '../../redux/slices/item'
+import useSubMenu from '../../hooks/useSubMenu'
+import { editingItems } from '../../redux/slices/item'
 
 interface Props {
     id: string
     title: string
 }
 const SubMenuDropdownItem: FC<Props> = ({ id, title }) => {
-    const loadingClassification = useAppSelector(
-        (state) => state.classification.loading
-    )
-    const { subMenu } = useAppSelector((state) => state)
+    const dispatch = useAppDispatch()
     const [response, getSubMenu] = useSubMenu({
         id,
         subMenuObj: {},
         isLoading: false,
         error: null,
     })
-    const dispatch = useAppDispatch()
 
-    const handleGetSubMenu = async () => getSubMenu()
+    const onClickHandler = useCallback(() => {
+        const ac = new AbortController()
 
-    const handleEditSubMenu = (e: MouseEvent) => {
-        e.preventDefault()
-        if (!response.isLoading && subMenu.loading !== 'pending') {
+        if (!response.isLoading) {
             dispatch(editingSubMenu(true))
-            dispatch(resetItemSelection())
-            handleGetSubMenu()
+            dispatch(editingItems(false))
+            getSubMenu()
         }
-    }
-    return !response.isLoading && loadingClassification === 'successful' ? (
+        return ac.abort()
+    }, [dispatch, response, getSubMenu])
+
+    return (
         <DropdownItem
             style={{ textTransform: 'uppercase' }}
-            onClick={handleEditSubMenu}
+            onClick={onClickHandler}
         >
             {title}
         </DropdownItem>
-    ) : (
-        <div className="spinner">
-            <SyncLoader />
-        </div>
     )
 }
 

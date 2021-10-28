@@ -14,20 +14,14 @@ const EditDataNameForm: FC<Props> = (props: Props) => {
         setInputText(e.target.value)
     }
     return (
-        // <Form>
-        <div className="edit___form">
-            <FormGroup>
-                <Label for="dataForm">Edit Name</Label>
-                <Input
-                    type="email"
-                    name="email"
-                    id="dataForm"
-                    placeholder={currentName}
-                    value={textValue}
-                    onChange={onChangeHandler}
-                />
-            </FormGroup>
-        </div>
+        <Input
+            type="email"
+            name="email"
+            id="dataForm"
+            placeholder={currentName}
+            value={textValue}
+            onChange={onChangeHandler}
+        />
     )
 }
 

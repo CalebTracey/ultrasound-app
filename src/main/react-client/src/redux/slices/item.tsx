@@ -49,17 +49,31 @@ export const getLinkUrl = createAsyncThunk(
     }
 )
 
-export const selectedItemList = createAsyncThunk(
-    'items/selectedItemList',
-    async (payload: TSelectedListPayload) => {
-        return payload
-    }
-)
-
 export const itemSlice = createSlice({
     name: 'items',
     initialState: initialItemState,
     reducers: {
+        itemLoading: (
+            state,
+            action: PayloadAction<'idle' | 'pending' | 'successful'>
+        ) => {
+            state.loading = action.payload
+        },
+        selectedItemList: (
+            state,
+            action: PayloadAction<TSelectedListPayload>
+        ) => {
+            const { parentId, list, itemType } = action.payload
+            state.itemList = list
+            state.size = list.length
+            state.parentId = parentId
+            if (state.listMap[parentId] === null) {
+                state.listMap[parentId] = list
+            }
+            state.loading = 'successful'
+            // state.editing = true
+            state.itemType = itemType
+        },
         itemType: (
             state,
             action: PayloadAction<'subMenu' | 'classification'>
@@ -78,14 +92,9 @@ export const itemSlice = createSlice({
             state.itemType = 'classification'
         },
         editingItems: (state, action: PayloadAction<boolean>) => {
+            const currentSize = state.itemList.length
+            state.size = currentSize
             state.editing = action.payload
-        },
-        newListEntity: (state, action: PayloadAction<TMapItem>) => {
-            const mapItem = action.payload
-            state.listMap[mapItem.key] = mapItem.value
-        },
-        getItems: (state) => {
-            state.loading = 'pending'
         },
         selectedItem: (state, action: PayloadAction<TSelectedPayload>) => {
             const { parentId, item } = action.payload
@@ -96,6 +105,10 @@ export const itemSlice = createSlice({
             state.itemList = state.itemList.filter(
                 ({ link }) => link !== action.payload
             )
+            state.editing = false
+            if (state.size > 0) {
+                state.size -= 1
+            }
         },
     },
     extraReducers: (builder) => {
@@ -111,35 +124,14 @@ export const itemSlice = createSlice({
                 state.editing = false
             }
         )
-        builder.addCase(selectedItemList.pending, (state) => {
-            state.loading = 'pending'
-        })
-        builder.addCase(
-            selectedItemList.fulfilled,
-            (state, action: PayloadAction<TSelectedListPayload>) => {
-                const { parentId, list, itemType } = action.payload
-                state.itemList = list
-                state.size = list.length
-                state.parentId = parentId
-                if (state.listMap[parentId] === null) {
-                    state.listMap[parentId] = list
-                }
-                state.loading = 'successful'
-                state.itemType = itemType
-            }
-        )
-        builder.addDefaultCase((state) => {
-            state.loading = 'idle'
-            state.itemType = 'classification'
-        })
     },
 })
 export const {
+    itemLoading,
+    selectedItemList,
     itemType,
-    getItems,
     removeItem,
     selectedItem,
-    newListEntity,
     editingItems,
     resetItemSelection,
 } = itemSlice.actions

@@ -40,10 +40,10 @@ export const selectedSubMenu = createAsyncThunk(
 export const getOne = createAsyncThunk<ISubMenuObj, string>(
     'subMenu/getOne',
     async (id: string, thunkApi) => {
-        const response = await api.get(`submenu/${id}`).then((res) => {
+        const response = await api.get(`subMenu/${id}`).then((res) => {
+            thunkApi.dispatch(selectedSubMenu(res.data))
             return res.data
         })
-        thunkApi.dispatch(selectedSubMenu(response))
         return response
     }
 )
@@ -52,6 +52,12 @@ export const subMenuSlice = createSlice({
     name: 'subMenu',
     initialState: initialSubMenuState,
     reducers: {
+        subMenuLoading: (
+            state,
+            action: PayloadAction<'idle' | 'pending' | 'successful'>
+        ) => {
+            state.loading = action.payload
+        },
         resetSubMenuSelection: (state) => {
             state.selected = {}
             state.itemList = []
@@ -66,9 +72,15 @@ export const subMenuSlice = createSlice({
             state.itemList = state.itemList.filter(
                 ({ link }) => link !== action.payload
             )
+            state.selected.itemList = state.selected.itemList.filter(
+                ({ link }) => link !== action.payload
+            )
         },
     },
     extraReducers: (builder) => {
+        builder.addCase(getOne.pending, (state) => {
+            state.loading = 'pending'
+        })
         builder.addCase(selectedSubMenu.pending, (state) => {
             state.loading = 'pending'
         })
@@ -86,12 +98,13 @@ export const subMenuSlice = createSlice({
                 }
             }
         )
-        // builder.addDefaultCase((state) => {
-        //     state.loading = 'idle'
-        // })
     },
 })
-export const { removeListItem, resetSubMenuSelection, editingSubMenu } =
-    subMenuSlice.actions
+export const {
+    subMenuLoading,
+    removeListItem,
+    resetSubMenuSelection,
+    editingSubMenu,
+} = subMenuSlice.actions
 
 export default subMenuSlice.reducer as Reducer<typeof initialSubMenuState>

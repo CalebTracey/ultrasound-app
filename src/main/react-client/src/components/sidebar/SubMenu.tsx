@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import React, { FC, useState, useEffect } from 'react'
+import React, { FC, useState, useCallback, useEffect } from 'react'
 import { SubMenu } from 'react-pro-sidebar'
 import useSubMenu from '../../hooks/useSubMenu'
 import ItemList from './ItemList'
@@ -27,15 +27,24 @@ const SubMenuComponent: FC<Props> = ({ id, title }) => {
     const isItemList = (value: unknown): value is IListItem[] => {
         return !!value && !!(value as IListItem[])
     }
-    const onClickHandler = () => {
-        getSubMenu()
-    }
 
-    useEffect(() => {
-        if (loading !== 'pending' && isItemList(subMenuObj.itemList)) {
+    const updateItemList = useCallback(() => {
+        if (isItemList(subMenuObj.itemList)) {
             setItemList(subMenuObj.itemList)
         }
-    }, [subMenuObj, loading])
+    }, [subMenuObj])
+
+    const onClickHandler = useCallback(() => {
+        if (!response.isLoading) {
+            getSubMenu()
+        }
+    }, [getSubMenu, response])
+
+    useEffect(() => {
+        if (loading === 'successful' && !response.isLoading) {
+            updateItemList()
+        }
+    }, [loading, updateItemList, response])
 
     return (
         <SubMenu

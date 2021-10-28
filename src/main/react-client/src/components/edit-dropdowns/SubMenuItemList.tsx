@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import React, { FC } from 'react'
 import { useAppSelector } from '../../redux/hooks'
 import SubMenuDropdownItem from './SubMenuDropdownItem'
@@ -10,8 +11,8 @@ const SubMenuItemList: FC = () => {
     const listNode = Object.keys(subMenus).map((key: string) => {
         return (
             <SubMenuDropdownItem
-                key={subMenus[key]}
                 id={subMenus[key]}
+                key={subMenus[key]}
                 title={key}
             />
         )

@@ -1,7 +1,7 @@
 import { api } from './api'
 import { IClassification, ISubMenuObj } from '../schemas'
 
-const getPublicContent = () => api.get(`time`)
+const getDate = async (): Promise<any> => api.get(`date`)
 
 const getClassifications = async (): Promise<IClassification[]> => {
     const response = await api.get('classifications')
@@ -22,7 +22,7 @@ const getSubMenuObj = async (id: string): Promise<ISubMenuObj> => {
 
 const UserService = {
     getClassifications,
-    getPublicContent,
+    getDate,
     getAdminContent,
     getSubMenuObj,
     getUrl,

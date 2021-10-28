@@ -32,30 +32,25 @@ const useItems = (props: Props): [Props, () => void] => {
     }
 
     const getItems = useCallback(() => {
-        const controller = new AbortController()
-
+        const ac = new AbortController()
         const dispatchSelection = async (
             id: string,
             listSelection: IListItem[],
             selectionType: 'classification' | 'subMenu'
         ) => {
-            await dispatch(
+            dispatch(
                 selectedItemList({
                     parentId: id,
                     list: listSelection,
                     itemType: selectionType,
                 })
-                // ).catch((err) => {
-                //     // history.push('/dashboard')
-                //     dispatch(newError(err))
-                //     return Promise.reject(err)
-                // })
             )
         }
+
         setResponse((prevState) => ({ ...prevState, isLoading: true }))
 
         if (
-            subMenu.loading === 'successful' &&
+            subMenu.loading !== 'pending' &&
             isSubMenuEditing &&
             isItemList(subMenuItems)
         ) {
@@ -71,15 +66,11 @@ const useItems = (props: Props): [Props, () => void] => {
                     error: null,
                 })
             })
-            // .catch((err) => {
-            //     dispatch(newError(err))
-            // })
         } else if (
-            // subMenu.loading !== 'pending' &&
+            subMenu.loading !== 'pending' &&
             isClassificationEditing &&
             !isSubMenuEditing &&
-            isItemList(classificationItems) &&
-            classification.loading === 'successful'
+            isItemList(classificationItems)
         ) {
             dispatchSelection(
                 classification.selected._id,
@@ -93,13 +84,9 @@ const useItems = (props: Props): [Props, () => void] => {
                     error: null,
                 })
             })
-            // .catch((err) => {
-            //     dispatch(newError(err))
-            //     return Promise.reject(err)
-            // })
         }
 
-        return () => controller?.abort()
+        return () => ac.abort()
     }, [
         classification,
         subMenu,

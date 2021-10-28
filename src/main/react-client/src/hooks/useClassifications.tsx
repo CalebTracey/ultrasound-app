@@ -61,7 +61,6 @@ const useClassifications = (props: Props): [Props, () => void] => {
                     }
                 })
                 .catch((err: Error) => {
-                    console.error(err)
                     dispatch(newError(err.message))
                     // return Promise.reject(err)
                 })

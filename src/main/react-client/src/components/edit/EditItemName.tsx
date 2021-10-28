@@ -1,6 +1,6 @@
 /* eslint-disable react/require-default-props */
 import React, { FC, useState } from 'react'
-import { Button } from 'reactstrap'
+import { Button, InputGroupAddon } from 'reactstrap'
 import EditDataNameForm from './EditDataNameForm'
 import { useAppDispatch } from '../../redux/hooks'
 import { editItemName } from '../../redux/slices/edit'
@@ -26,10 +26,11 @@ const EditItemName: FC<Props> = ({ id, item, type }) => {
                 textValue={textValue}
                 setInputText={setTextValue}
             />
-
-            <Button color="primary" onClick={onSubmit}>
-                Save
-            </Button>
+            <InputGroupAddon addonType="append">
+                <Button color="primary" onClick={onSubmit}>
+                    <span>Save</span>
+                </Button>
+            </InputGroupAddon>
         </>
     )
 }

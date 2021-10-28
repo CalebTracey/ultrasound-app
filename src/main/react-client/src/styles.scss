@@ -25,7 +25,8 @@ $header-font-color:#343A40;
         6. Content
         7. Edit Page
         8. Video Player
-        9. Components
+        9. Side Bar
+        10. Components
           - Form
           - Search Bar
           - Button
@@ -127,7 +128,7 @@ header {
 
   &___date {
     @extend %secondary-font;
-    position: fixed;
+    position: absolute;
     left: 2rem;
     top: 1.75rem;
   }
@@ -205,6 +206,7 @@ footer {
 //      ===============
 
 .content {
+  // height:100%;
   border: $border;
   background-color: $primary-color;
   border-radius: 5px;
@@ -239,14 +241,16 @@ footer {
 .edit {
   display: flex;
   flex-direction: column;
-  padding: 1rem;
+  position: relative;
+  // bottom: 3rem;
+  // padding: 1rem;
 
   &___header {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    margin: 0 4rem 0 4rem;
+    margin: 0 2rem 0 2rem;
 
     &___text {
       @extend %header-font;
@@ -256,6 +260,7 @@ footer {
     &___control {
       padding: .75rem;
       flex-direction: row;
+      overflow: auto;
     }
 
     &___buttons {
@@ -275,10 +280,8 @@ footer {
     text-transform: capitalize;
   }
 
-  &___content {
-    padding-top: 2rem;
-    display: flex;
-    flex-direction: row;
+  &___text-wrap {
+   padding: 1rem;
   }
 
   &___form {
@@ -288,6 +291,7 @@ footer {
     margin-right: auto;
   }
   &___item {
+    // max-width: 40%;
     margin: 1rem;
   }
 }
@@ -329,6 +333,19 @@ footer {
   margin-right: auto;
   padding-bottom: 4.5rem;
 }
+
+//      ===============
+//*     === SIDEBAR ===
+//      ===============
+   
+$sidebar-bg-color: #E9ECEF;
+$sidebar-color: #343A40;
+// $submenu-bg-color: #CED4DA;
+$submenu-bg-color-collapsed: #CED4DA;
+$highlight-color: #0466C8;
+$submenu-bg-color: #2b2b2b !default;
+@import '~react-pro-sidebar/dist/scss/styles.scss';
+
 
 //      ==================
 //*     === COMPONENTS ===
@@ -382,4 +399,9 @@ footer {
   position: absolute;
   left: 50%;
   top: 50%;
+}
+
+.date {
+  position: absolute;
+  left: 2rem;
 }

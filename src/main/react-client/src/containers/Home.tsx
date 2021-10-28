@@ -1,36 +1,23 @@
 import React, { useState, useEffect, FC } from 'react'
 import { Media, Jumbotron, Container } from 'reactstrap'
-import axios from 'axios'
 import LogoutButton from '../components/buttons/LogoutButton'
 import LoginButton from '../components/login/LoginButton'
 import RegisterButton from '../components/register/RegisterButton'
 import DashboardButton from '../components/buttons/DashboardButton'
 import { useAppSelector } from '../redux/hooks'
+import { api } from '../service/api'
 
 const Home: FC = () => {
     const { isAuth } = useAppSelector((state) => state.auth)
     const [content, setContent] = useState(null)
 
-    const headers = {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, PUT, GET, OPTIONS, DELETE',
-        'X-Requested-With': 'XMLHttpRequest',
-        'Content-Type': 'application/json',
-    }
-
-    const instance = axios.create({
-        // baseURL: `${process.env.PUBLIC_URL}/api/`,
-        baseURL: 'http://localhost:8080/api/',
-        headers,
-        withCredentials: true,
-    })
     useEffect(() => {
         const getDate = async () => {
-            const date = await instance.get(`date`)
+            const date = await api.get(`date`)
             setContent(date.data)
         }
         getDate()
-    }, [instance])
+    }, [])
 
     return (
         <>
@@ -40,13 +27,13 @@ const Home: FC = () => {
                         <>
                             <LogoutButton />
                             <DashboardButton />
-                            <div className="header-date">{content}</div>
+                            <div className="date">{content}</div>
                         </>
                     ) : (
                         <>
                             <LoginButton />
                             <RegisterButton />
-                            <div className="header-date">{content}</div>
+                            <div className="date">{content}</div>
                         </>
                     )}
                 </div>

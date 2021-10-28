@@ -7,8 +7,10 @@ import axios, {
     AxiosResponse,
     AxiosError,
 } from 'axios'
+
 import TokenService from './token-service'
 import EventBus from '../common/EventBus'
+import { messageSlice } from '../redux/slices/message'
 
 enum StatusCode {
     Unauthorized = 401,
@@ -27,13 +29,16 @@ const { getLocalAccessToken } = TokenService
 const injectToken = (config: AxiosRequestConfig): AxiosRequestConfig => {
     try {
         const token = getLocalAccessToken()
+        console.log(`=== TOKEN === ${token}`)
         if (token !== null || token !== undefined) {
             config.headers.Authorization = `Bearer ${token}`
         }
         return config
     } catch (error: any) {
-        throw new Error('Error!')
+        Promise.reject(error)
+        EventBus.dispatch('logout')
     }
+    return config
 }
 
 class Http {
@@ -62,7 +67,6 @@ class Http {
                     this.handleError(error.response?.status)
                 }
                 return Promise.reject(error.message)
-                // new Error(error.message)
             }
         )
         this.instance = http
@@ -112,19 +116,20 @@ class Http {
             case StatusCode.InternalServerError:
                 // history.push('/home')
                 EventBus.dispatch('logout')
-                Promise.reject(new Error('Internal Server Error'))
+                messageSlice.actions.newError('Internal Server Error')
+                // Promise.reject(new Error('Internal Server Error'))
                 break
 
             case StatusCode.Forbidden:
                 // history.push('/home')
                 EventBus.dispatch('logout')
-                Promise.reject(new Error('Forbidden'))
+                messageSlice.actions.newError('Forbidden')
                 break
 
             case StatusCode.Unauthorized:
                 // history.push('/home')
                 EventBus.dispatch('logout')
-                Promise.reject(new Error('Unauthorized'))
+                messageSlice.actions.newError('Unauthorized')
 
                 break
 

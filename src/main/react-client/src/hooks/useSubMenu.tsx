@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from '../redux/hooks'
 import { ISubMenuObj } from '../schemas'
 import { selectedSubMenu, getOne } from '../redux/slices/subMenu'
 import { newError } from '../redux/slices/message'
+import eventBus from '../common/EventBus'
 
 interface Props {
     id: string
@@ -13,8 +14,10 @@ interface Props {
 }
 const useSubMenu = (props: Props): [Props, () => void] => {
     const { id, subMenuObj, isLoading, error } = props
-    const itemListState = useAppSelector((state) => state.item.listMap)
-    const loadingItem = useAppSelector((state) => state.item.loading)
+    const subMenuListState = useAppSelector(
+        (state) => state.subMenu.subMenuList
+    )
+    // const loadingItem = useAppSelector((state) => state.item.loading)
     const loadingState = useAppSelector((state) => state.subMenu.loading)
     const dispatch = useAppDispatch()
     const [response, setResponse] = useState({
@@ -29,40 +32,40 @@ const useSubMenu = (props: Props): [Props, () => void] => {
     }
 
     const getSubMenu = useCallback(() => {
-        const controller = new AbortController()
+        const ac = new AbortController()
 
         setResponse((prevState) => ({ ...prevState, isLoading: true }))
-        const subMenuCurrent: ISubMenuObj = itemListState[id]
-        if (isSubMenuObj(subMenuCurrent) && loadingItem === 'idle') {
+        const subMenuCurrent: ISubMenuObj = subMenuListState[id]
+        if (isSubMenuObj(subMenuCurrent) && loadingState !== 'pending') {
             dispatch(selectedSubMenu(subMenuCurrent))
                 .then((res) => {
-                    if (loadingState === 'successful')
+                    if (loadingState === 'successful') {
                         setResponse({
                             id,
                             subMenuObj: res,
                             isLoading: false,
                             error: null,
                         })
+                        eventBus.dispatch('updateItems')
+                    }
                 })
                 .catch((err: Error) => {
                     dispatch(newError(err.message))
                     return Promise.reject(err.message)
                 })
-        } else {
+        } else if (loadingState !== 'pending') {
             dispatch(getOne(id))
                 .then(unwrapResult)
                 .then((res: ISubMenuObj) => {
-                    const subMenuFetched: ISubMenuObj = res
-                    if (
-                        subMenuFetched !== undefined &&
-                        isSubMenuObj(subMenuFetched)
-                    ) {
+                    // const subMenuFetched: ISubMenuObj = res
+                    if (res !== undefined && isSubMenuObj(res)) {
                         setResponse({
                             id,
-                            subMenuObj: subMenuFetched,
+                            subMenuObj: res,
                             isLoading: false,
                             error: null,
                         })
+                        eventBus.dispatch('updateItems')
                     }
                 })
                 .catch((err: Error) => {
@@ -70,8 +73,9 @@ const useSubMenu = (props: Props): [Props, () => void] => {
                     return Promise.reject(err.message)
                 })
         }
-        return () => controller?.abort()
-    }, [id, dispatch, itemListState, loadingState, loadingItem])
+
+        return () => ac.abort()
+    }, [id, dispatch, subMenuListState, loadingState])
 
     return [response, getSubMenu]
 }

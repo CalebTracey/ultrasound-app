@@ -3,13 +3,13 @@ import React, { FC, lazy, Suspense } from 'react'
 import { Route, Switch, Redirect } from 'react-router-dom'
 import SyncLoader from 'react-spinners/SyncLoader'
 import { useAppSelector } from '../redux/hooks'
-import Edit from '../containers/Edit'
+// import Edit from '../containers/Edit'
 // import VideoPlayer from '../components/content/VideoPlayer'
 // import ContentHome from '../components/content/ContentHome'
 // import Classification from '../containers/Classification'
 // import ProtectedRouteAdmin from './ProtectedRouteAdmin'
 
-// const Edit = lazy(() => import('../containers/Edit'))
+const Edit = lazy(() => import('../containers/Edit'))
 const VideoPlayer = lazy(() => import('../components/content/VideoPlayer'))
 const Classification = lazy(() => import('../containers/Classification'))
 const ContentHome = lazy(() => import('../components/content/ContentHome'))

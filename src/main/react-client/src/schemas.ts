@@ -5,7 +5,7 @@ export interface IListItem {
     name: string
     title: string
     link: string
-    type: string
+    type: 'subMenu' | 'classification'
 }
 export interface ISubMenu {
     [key: string]: string
@@ -25,7 +25,7 @@ export interface IClassification {
     type: string
 }
 /**
- * Auth
+ * * Auth
  */
 export interface IAppUser {
     accessToken: string

@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react'
-import { Button } from 'reactstrap'
+import { Button, InputGroupAddon } from 'reactstrap'
 import EditDataNameForm from './EditDataNameForm'
 import { useAppDispatch } from '../../redux/hooks'
 import { editDataName } from '../../redux/slices/edit'
@@ -25,9 +25,11 @@ const EditDataName: FC<Props> = ({ currentName, id, type }) => {
                 textValue={textValue}
                 setInputText={setTextValue}
             />
-            <Button color="primary" onClick={onSubmit}>
-                <span>Save</span>
-            </Button>
+            <InputGroupAddon addonType="append">
+                <Button color="primary" onClick={onSubmit}>
+                    <span>Save</span>
+                </Button>
+            </InputGroupAddon>
         </>
     )
 }

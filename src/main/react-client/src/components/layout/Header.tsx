@@ -1,28 +1,40 @@
 /* eslint-disable react/prop-types */
-import React, { FC, useEffect } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { Button, Alert } from 'reactstrap'
 import Logout from '../buttons/LogoutButton'
 import UserInfoHeader from '../UserInfoHeader'
 import { useAppSelector, useAppDispatch } from '../../redux/hooks'
 import { importData } from '../../redux/slices/edit'
 import { clearMessage, newError, newMessage } from '../../redux/slices/message'
+import { api } from '../../service/api'
 
 const Header: FC = () => {
     const { message } = useAppSelector((state) => state)
     const { user } = useAppSelector((state) => state.auth)
+    const [content, setContent] = useState<string | null>(null)
+    const isAdmin = user.roles?.includes('ROLE_ADMIN')
+
     const dispatch = useAppDispatch()
     const handleImport = () => {
         dispatch(importData())
         dispatch(newMessage('Importing Data'))
     }
 
-    const isAdmin = user.roles?.includes('ROLE_ADMIN')
+    useEffect(() => {
+        const getDate = async () => {
+            const date = await api.get(`date`)
+            setContent(date.data)
+        }
+        getDate()
+    }, [])
+
     useEffect(() => {
         const timer = setTimeout(() => {
             dispatch(clearMessage())
-        }, 5000)
+        }, 4000)
         return () => clearTimeout(timer)
     }, [message, dispatch])
+
     return (
         <header style={{ display: 'fixed' }}>
             {message.text && !message.error && (
@@ -33,7 +45,7 @@ const Header: FC = () => {
             )}
             {!message.text && (
                 <div className="button-wrapper">
-                    {/* <div className="header-date">{content}</div> */}
+                    <div className="date">{content}</div>
                     {isAdmin && (
                         <div
                             className="form-group"

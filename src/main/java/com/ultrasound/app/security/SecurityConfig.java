@@ -1,7 +1,6 @@
 package com.ultrasound.app.security;
 
 import com.ultrasound.app.model.user.ERole;
-import com.ultrasound.app.security.exceptions.CustomAccessDeniedHandler;
 import com.ultrasound.app.security.jwt.AuthEntryPointJwt;
 import com.ultrasound.app.security.service.UserDetailsServiceImpl;
 import com.ultrasound.app.security.jwt.AuthTokenFilter;
@@ -20,8 +19,11 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.header.HeaderWriter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -29,6 +31,9 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @Configuration
@@ -44,9 +49,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     UserDetailsServiceImpl userDetailsService;
     @Autowired
-    private CustomAccessDeniedHandler accessDeniedHandler;
-    @Autowired
     private AuthEntryPointJwt unauthorizedHandler;
+//    @Autowired
+//    private LoginSuccessHandler loginSuccessHandler;
 
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
@@ -93,9 +98,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         .and()
                         .logout().permitAll();
 
+//                .successHandler(loginSuccessHandler)
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-//        http.exceptionHandling().accessDeniedHandler(accessDeniedHandler);
-
     }
 
     @Bean
@@ -104,9 +108,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
        configuration.setAllowCredentials(true);
         // configuration.addAllowedOriginPattern("**");
         configuration.setAllowedOrigins(Arrays.asList(
-                "http://localhost:8080/**",
-                "http://localhost:8080**",
-                "http://localhost/**",
+//                "http://localhost:8080/**",
+//                "http://localhost:8080**",
+                "http://localhost:3000",
+//                "http://localhost/**",
                 "http://localhost"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
@@ -114,9 +119,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         configuration.setExposedHeaders(Arrays.asList("authorization", "accessToken", "refreshToken", "Access-Control-Allow-Origin"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
-//        source.setUrlPathHelper(pathHelper());
 
         return source;
     }
+
 
 }

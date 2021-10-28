@@ -5,7 +5,7 @@ import { deleteData } from '../../redux/slices/edit'
 
 interface Props {
     id: string
-    type: string
+    type: 'subMenu' | 'classification'
     title: string
 }
 
@@ -16,7 +16,7 @@ const DeleteButton: FC<Props> = ({ id, type, title }) => {
         dispatch(
             deleteData({
                 id,
-                type: type.toLowerCase(),
+                type,
             })
         )
     }

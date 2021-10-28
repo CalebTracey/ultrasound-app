@@ -2,14 +2,14 @@ import React, { FC, lazy, Suspense } from 'react'
 import { Route, Switch } from 'react-router-dom'
 import SyncLoader from 'react-spinners/SyncLoader'
 import { IAppUser } from '../schemas'
-import Dashboard from '../containers/Dashboard'
+// import Dashboard from '../containers/Dashboard'
 import { useAppSelector } from '../redux/hooks'
 
+const Dashboard = lazy(() => import('../containers/Dashboard'))
 const Home = lazy(() => import('../containers/Home'))
 const Login = lazy(() => import('../containers/Login'))
 const ProtectedRoute = lazy(() => import('./ProtectedRoute'))
 const Register = lazy(() => import('../containers/Register'))
-
 const Routes: FC = () => {
     const { isAuth, user } = useAppSelector((state) => state.auth)
 
@@ -26,10 +26,10 @@ const Routes: FC = () => {
                 </div>
             }
         >
+            <Route exact path={['/', '/home']} component={Home} />
+            <Route exact path="/login" component={Login} />
+            <Route exact path="/register" component={Register} />
             <Switch>
-                <Route exact path={['/', '/home']} component={Home} />
-                <Route exact path="/login" component={Login} />
-                <Route exact path="/register" component={Register} />
                 <ProtectedRoute
                     isAuthenticated={isAuth}
                     path="/dashboard"

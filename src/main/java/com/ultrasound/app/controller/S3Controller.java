@@ -24,15 +24,13 @@ public class S3Controller {
     private ClassificationServiceImpl classificationService;
 
     @GetMapping("/link/{link}")
-
     public ResponseEntity<?> getPreSignedUrl(@PathVariable String link) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/api/S3/link/{link}").toUriString());
         return ResponseEntity.created(uri).body(s3Service.getPreSignedUrl(link));
     }
 
-    @PutMapping("/update/")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/update/")
     public ResponseEntity<?> updateBucket() {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/api/S3/update/").toUriString());

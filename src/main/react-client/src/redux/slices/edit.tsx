@@ -1,3 +1,5 @@
+/* eslint-disable import/no-named-as-default */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-param-reassign */
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { AxiosResponse } from 'axios'
@@ -6,20 +8,20 @@ import { api } from '../../service/api'
 import {
     getAllClassifications,
     resetClassificationSelection,
-    // eslint-disable-next-line import/named
+    editingClassification,
 } from './classification'
-import { resetItemSelection } from './item'
+import { removeListItem } from './subMenu'
+import { resetItemSelection, removeItem } from './item'
 import { newMessage } from './message'
 
-const headers: Readonly<Record<string, string | boolean>> = {
-    'Access-Control-Allow-Methods': 'GET, DELETE, HEAD, OPTIONS',
-    'X-Requested-With': 'XMLHttpRequest',
-}
-
-type TDeleteItemPayload = { id: string; type: string; item: IListItem }
-type TDeleteDataPayload = {
+type TDeleteItemPayload = {
     id: string
     type: string
+    item: IListItem
+}
+type TDeleteDataPayload = {
+    id: string
+    type: 'subMenu' | 'classification'
 }
 type TDataNamePayload = { name: string }
 type TDataNameProps = {
@@ -97,11 +99,14 @@ export const deleteItem = createAsyncThunk(
         api.post<IListItem, AxiosResponse>(
             `/delete-item/${type}/${id}`,
             item
-            // headers
-        ).then((res: AxiosResponse<string>) => {
-            thunkApi.dispatch(getAllClassifications())
-            thunkApi.dispatch(resetClassificationSelection())
+        ).then((res) => {
+            thunkApi.dispatch(removeItem(item.name))
             thunkApi.dispatch(newMessage(res.data))
+            if (type === 'subMenu') {
+                thunkApi.dispatch(removeItem(item.link)) // remove from item slice
+                thunkApi.dispatch(removeListItem(item.link)) // remove from subMenu slice
+            }
+            thunkApi.dispatch(editingClassification(true))
         })
     }
 )
@@ -109,7 +114,7 @@ export const deleteItem = createAsyncThunk(
 export const importData = createAsyncThunk('edit/import', async (_, thunkApi) =>
     api.delete('/tables/clear').then(() => {
         thunkApi.dispatch(newMessage('Data import success'))
-        api.put('/S3/update/').then(() => {
+        api.post('/S3/update/').then(() => {
             thunkApi.dispatch(getAllClassifications())
         })
     })
@@ -126,11 +131,15 @@ const editSlice = createSlice({
         builder.addCase(editDataName.fulfilled, (state) => {
             state.loading = 'successful'
         })
+        builder.addCase(deleteItem.pending, (state) => {
+            state.loading = 'pending'
+        })
+        builder.addCase(deleteItem.fulfilled, (state) => {
+            state.loading = 'successful'
+        })
     },
 })
 
-// export const { editingItem, editingSubMenu, subMenusLoading } =
-//     editSlice.actions
 export const editReducer = editSlice.reducer
 
 export default editSlice.reducer

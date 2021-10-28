@@ -33,7 +33,6 @@ const Login = () => {
         setIsLoading(true)
         try {
             dispatch(login(data)).then((res) => {
-                console.log(`Login page  ${JSON.stringify(res)}`)
                 setIsLoading(false)
             })
         } catch (error) {

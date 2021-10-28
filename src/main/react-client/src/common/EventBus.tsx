@@ -1,15 +1,23 @@
 /* eslint-disable no-undef */
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-const eventBus = {
-    on(event: string, callback: { (): void; (arg0: Event): void }) {
-        document.addEventListener(event, (e) => callback(e))
-    },
-    dispatch(event: string, data?: any) {
-        document.dispatchEvent(new CustomEvent(event, { detail: data }))
-    },
-    remove(event: string, callback: EventListenerOrEventListenerObject) {
-        document.removeEventListener(event, callback)
-    },
+
+const on = (
+    event: string,
+    ac: AbortController,
+    callback: { (): void; (arg: Event): void }
+): void => {
+    document.addEventListener(event, (e) => callback(e), {
+        signal: ac.signal,
+    })
+}
+const dispatch = (event: string, data?: any): void => {
+    document.dispatchEvent(new CustomEvent(event, { detail: data }))
+}
+const remove = (
+    event: string,
+    callback: EventListenerOrEventListenerObject
+): void => {
+    document.removeEventListener(event, callback)
 }
 
+const eventBus = { on, dispatch, remove }
 export default eventBus

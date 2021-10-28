@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
+import { InputGroup, InputGroupAddon, InputGroupText } from 'reactstrap'
 import EditDataName from './EditDataName'
-import DeleteButton from '../buttons/DeleteButton'
 import { IClassification } from '../../schemas'
 import ItemListDropdownContainer from '../edit-dropdowns/ItemListDropdownContainer'
 import SubMenuDropdownContainer from '../edit-dropdowns/SubMenuDropdownContainer'
@@ -29,15 +29,20 @@ const EditHeader: FC<Props> = ({
                 {hasSubMenu && (
                     <SubMenuDropdownContainer subMenuCount={subMenuCount} />
                 )}
-                {item.loading === 'successful' && <ItemListDropdownContainer />}
+                {item.itemList.length !== 0 && <ItemListDropdownContainer />}
             </div>
+
             <div className="edit___header___control">
-                <EditDataName
-                    id={_id}
-                    currentName={name}
-                    type="classification"
-                />
-                <DeleteButton id={_id} type="classification" title="Delete" />
+                <InputGroup>
+                    <InputGroupAddon addonType="prepend">
+                        <InputGroupText>Edit Title</InputGroupText>
+                    </InputGroupAddon>
+                    <EditDataName
+                        id={_id}
+                        currentName={name}
+                        type="classification"
+                    />
+                </InputGroup>
             </div>
         </div>
     )

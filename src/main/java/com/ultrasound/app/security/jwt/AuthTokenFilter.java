@@ -45,27 +45,16 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-
-
             }
         } catch (Exception e) {
             logger.error("Cannot set user authentication: {}", e);
         }
 
-
-        response.setHeader("Access-Control-Allow-Origin", "http://localhost");
+        response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
         response.setHeader("Access-Control-Allow-Credentials", "true");
         response.setHeader("Access-Control-Allow-Methods", "POST, PUT, GET, OPTIONS, DELETE");
         response.setHeader("Access-Control-Allow-Headers", "Content-Type, X-Requested-With, Access-Control-Allow-Methods, Authorization, Content-Type");
         response.setHeader("Access-Control-Max-Age", "3600");
-//        if ("OPTIONS".equalsIgnoreCase((request).getMethod())) {
-//            response.setStatus(HttpServletResponse.SC_OK);
-//        } else {
-//            filterChain.doFilter(request, response);
-//        }
-
-//        response.setHeader("X-Requested-With", "XMLHttpRequest");
-//        response.setStatus(200);
 
         filterChain.doFilter(request, response);
     }

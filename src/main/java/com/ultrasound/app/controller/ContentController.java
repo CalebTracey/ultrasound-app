@@ -60,10 +60,10 @@ public class ContentController  {
                 .body(classificationService.all());
     }
 
-    @GetMapping("/submenu/{id}")
+    @GetMapping("/subMenu/{id}")
     public ResponseEntity<?> subMenu(@PathVariable String id) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/api/submenu/{id}").toUriString());
+                .path("/api/subMenu/{id}").toUriString());
         return ResponseEntity.created(uri).body(subMenuService.getById(id));
     }
 
@@ -116,7 +116,7 @@ public class ContentController  {
                 .delete(id));
     }
 
-    @DeleteMapping("/delete-data/submenu/{classificationId}/{subMenuId}")
+    @DeleteMapping("/delete-data/subMenu/{classificationId}/{subMenuId}")
     public ResponseEntity<?> deleteSubmenu(@PathVariable String classificationId,
                                            @PathVariable String subMenuId) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath()

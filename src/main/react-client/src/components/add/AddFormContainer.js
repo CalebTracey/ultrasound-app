@@ -9,7 +9,7 @@ import AddForm from './AddForm'
 const AddFormContainer = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [successful, setSuccessful] = useState(false)
-    const { message } = useSelector((state) => state.message)
+    // const { message } = useSelector((state) => state.message)
     const [details, setDetails] = useState(null)
     const [files, setFiles] = useState([])
     const [category, setCategory] = useState('')
@@ -40,14 +40,12 @@ const AddFormContainer = () => {
             } else {
                 setPayload(details)
             }
-            console.log(`FORM DATA: ${payload}`)
         }
     }
 
     const onSubmit = (data) => {
         if (Array.from(errors).length === 0) {
             // const { category, classification } = data;
-            console.log(data)
             const file = data.files
             setCategory(data.category)
             setClassification(data.classification)
@@ -79,7 +77,7 @@ const AddFormContainer = () => {
             <div>{`Files: ${files.length}\n`}</div>
             <AddForm
                 successful={successful}
-                message={message}
+                // message={message}
                 onSubmit={onSubmit}
                 errors={errors}
                 register={register}

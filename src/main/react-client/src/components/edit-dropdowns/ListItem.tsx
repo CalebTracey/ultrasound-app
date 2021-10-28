@@ -8,11 +8,11 @@ interface Props {
     item: IListItem
 }
 const ListItem: FC<Props> = ({ item }) => {
-    const { parentId, loading } = useAppSelector((state) => state.item)
+    const { parentId } = useAppSelector((state) => state.item)
     const dispatch = useAppDispatch()
 
     const handleItemSelection = () => {
-        if (loading === 'successful' && parentId && parentId !== undefined) {
+        if (parentId && parentId !== undefined) {
             dispatch(editingItems(true))
             dispatch(selectedItem({ parentId, item }))
         }

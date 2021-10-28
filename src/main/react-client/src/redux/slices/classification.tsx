@@ -10,6 +10,7 @@ import { AxiosError } from 'axios'
 import { IClassification } from '../../schemas'
 import { api } from '../../service/api'
 import { newError } from './message'
+import { itemType } from './item'
 
 interface classificationSliceState {
     entities: IClassification[] | []
@@ -52,22 +53,18 @@ export const getAllClassifications = createAsyncThunk<IClassification[], void>(
             })
 )
 
+export const selectedClassification = createAsyncThunk(
+    'classifications/selected',
+    async (classification: IClassification, thunkApi) => {
+        thunkApi.dispatch(itemType('classification'))
+        return classification
+    }
+)
+
 export const classificationSlice = createSlice({
     name: 'classifications',
     initialState: initialClassificationState,
     reducers: {
-        selectedClassification: (
-            state,
-            action: PayloadAction<IClassification>
-        ) => {
-            const classification = action.payload
-            state.selected = classification
-            state.subMenuCount = Array.from(
-                Object.keys(classification.subMenus)
-            ).length
-            state.listItemsCount = classification.listItems.length
-            state.loading = 'successful'
-        },
         editingClassification: (state, action: PayloadAction<boolean>) => {
             state.editing = action.payload
         },
@@ -85,11 +82,6 @@ export const classificationSlice = createSlice({
             const classifications = action.payload
             state.entities = classifications
         },
-        removeClassification: (state, action: PayloadAction<string>) => {
-            state.entities = state.entities.filter(
-                ({ _id }) => _id !== action.payload
-            )
-        },
     },
     extraReducers: (builder) => {
         builder.addCase(getAllClassifications.pending, (state) => {
@@ -102,11 +94,24 @@ export const classificationSlice = createSlice({
                 state.loading = 'idle'
             }
         )
+        builder.addCase(selectedClassification.pending, (state) => {
+            state.loading = 'pending'
+        })
+        builder.addCase(
+            selectedClassification.fulfilled,
+            (state, action: PayloadAction<IClassification>) => {
+                const classification = action.payload
+                state.selected = classification
+                state.subMenuCount = Array.from(
+                    Object.keys(classification.subMenus)
+                ).length
+                state.listItemsCount = classification.listItems.length
+                state.loading = 'successful'
+            }
+        )
     },
 })
 export const {
-    selectedClassification,
-    removeClassification,
     setClassifications,
     resetClassificationSelection,
     editingClassification,
