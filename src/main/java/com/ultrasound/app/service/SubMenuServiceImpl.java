@@ -3,17 +3,17 @@ package com.ultrasound.app.service;
 import com.ultrasound.app.exceptions.ClassificationNotFoundException;
 import com.ultrasound.app.exceptions.SubMenuNotFoundException;
 import com.ultrasound.app.model.data.Classification;
+import com.ultrasound.app.model.data.EType;
 import com.ultrasound.app.model.data.ListItem;
 import com.ultrasound.app.model.data.SubMenu;
+import com.ultrasound.app.payload.response.MessageResponse;
 import com.ultrasound.app.repo.SubMenuRepo;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Predicate;
 
 @Slf4j
@@ -43,27 +43,48 @@ public class SubMenuServiceImpl implements SubMenuService{
     }
 
     @Override
-    public String deleteById(String id) {
+    public boolean existsById(String id) {
+        return subMenuRepo.existsById(id);
+    }
+
+    @Override
+    public MessageResponse deleteById(String id) {
         SubMenu subMenu = getById(id);
+        Classification classification = classificationService.getByName(subMenu.getClassification());
         String name = subMenu.getName();
         int count = subMenu.getItemList().size();
         log.info("Deleting Submenu {} and {} listItems",name, count);
         subMenuRepo.delete(subMenu);
-        return "Deleted submenu " + name + " and " + count + " list items";
+//        classificationService.deleteSubMenu(classification.get_id(), subMenu.get_id());
+        return new MessageResponse("Deleted submenu " + name + " and " + count + " list items");
     }
 
     @Override
-    public String deleteByIdClassification(String classificationId, String subMenuId) {
+    public MessageResponse createNew(String classificationId, String name) {
+        Classification classification = classificationService.getById(classificationId);
+        SubMenu newSubMenu = new SubMenu(name, new ArrayList<>(), EType.TYPE_SUB_MENU);
+        String newSubMenuId = save(newSubMenu).get_id();
+        Map<String, String> classificationSubMenus = new TreeMap<>(classification.getSubMenus());
+        classificationSubMenus.put(name, newSubMenuId);
+        classification.setSubMenus(classificationSubMenus);
+        classificationService.save(classification);
+
+        return new MessageResponse("Added " + name + " to " + classification.getName());
+    }
+
+    @Override
+    public MessageResponse deleteByIdClassification(String classificationId, String subMenuId) {
         String subName = getById(subMenuId).getName();
         classificationService.deleteSubMenu(classificationId, subMenuId);
         deleteById(subMenuId);
-        return "Deleted " + subName;
+        return new MessageResponse("Deleted " + subName);
     }
 
     @Override
-    public String editName(Classification classification, SubMenu subMenu, String id, String name) {
+    public MessageResponse editName(
+            @NotNull Classification classification, @NotNull SubMenu subMenu, String id, String name) {
         String origName = subMenu.getName();
-        Map<String, String> subMenus = classification.getSubMenus();
+        Map<String, String> subMenus = new TreeMap<>(classification.getSubMenus());
         subMenus.put(name, id);
         subMenus.remove(origName);
         classification.setSubMenus(subMenus);
@@ -80,11 +101,11 @@ public class SubMenuServiceImpl implements SubMenuService{
         log.info("Changing Submenu name {} to {} in Classification: {}",origName, name, classification.getName());
         subMenuRepo.save(subMenu);
         stringBuilder.append("Changed Submenu name ").append(origName).append(" to ").append(name);
-        return stringBuilder.toString();
+        return new MessageResponse(stringBuilder.toString());
     }
 
     @Override
-    public String editItemName(String id, String currentName, String name, String link) {
+    public MessageResponse editItemName(String id, String currentName, String name, String link) {
         SubMenu subMenu = getById(id);
         String subName = subMenu.getName();
         List<ListItem> listItems = subMenu.getItemList();
@@ -101,23 +122,11 @@ public class SubMenuServiceImpl implements SubMenuService{
         itemList.add(item);
         subMenu.setItemList(itemList);
         save(subMenu);
-        return "Saved " + currentName + " as " + name + " in " + subName;
+        return new MessageResponse("Saved " + currentName + " as " + name + " in " + subName);
     }
 
     @Override
     public void deleteTableEntities() {
         subMenuRepo.deleteAll();
     }
-
-    @Override
-    public Boolean isItemPresent(String id, String link) {
-        SubMenu subMenu = subMenuRepo.findById(id).orElseThrow(
-                () -> new ClassificationNotFoundException(id));
-        List<ListItem> itemList = subMenu.getItemList();
-        Predicate<ListItem> linkMatch = ListItem -> ListItem.getLink().equals(link);
-
-        return itemList.stream().anyMatch(linkMatch);
-    }
-
-
 }

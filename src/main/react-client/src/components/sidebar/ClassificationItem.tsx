@@ -1,5 +1,5 @@
 import { SubMenu, SidebarHeader } from 'react-pro-sidebar'
-import React, { FC, useCallback, useRef } from 'react'
+import React, { FC, useCallback, useRef, useEffect, useState } from 'react'
 import { FiEdit3 } from 'react-icons/fi'
 import { Link } from 'react-router-dom'
 import { Badge } from 'reactstrap'
@@ -14,13 +14,15 @@ import {
 import { editingSubMenu } from '../../redux/slices/subMenu'
 import eventBus from '../../common/EventBus'
 import { editingItems } from '../../redux/slices/item'
+import CreateSubMenuButton from '../buttons/CreateSubMenuButton'
 
 interface Props {
     classification: IClassification
 }
 const ClassificationItem: FC<Props> = ({ classification }) => {
     const { _id, name, hasSubMenu, listItems, subMenus } = classification
-
+    const [width, setWidth] = useState('20rem')
+    const { showEdit } = useAppSelector((state) => state.auth)
     const roles = useAppSelector((state) => state.auth.user?.roles)
     const dispatch = useAppDispatch()
     const ref = useRef(null)
@@ -50,10 +52,15 @@ const ClassificationItem: FC<Props> = ({ classification }) => {
         }
     }, [classification, dispatch])
 
+    useEffect(() => {
+        if (showEdit) {
+            setWidth('17rem')
+        }
+    }, [showEdit])
     return (
         <>
             <div style={{ display: 'flex' }}>
-                {roles && roles.includes('ROLE_ADMIN') && (
+                {roles && roles.includes('ROLE_ADMIN') && showEdit && (
                     <button
                         key={`edit-button${_id}`}
                         type="button"
@@ -69,7 +76,8 @@ const ClassificationItem: FC<Props> = ({ classification }) => {
                 <SubMenu
                     ref={ref}
                     style={{
-                        width: '85%',
+                        width,
+                        // width: '100%',
                         fontWeight: 'bold',
                         // marginLeft: '15%',
                         zIndex: 1,
@@ -83,28 +91,49 @@ const ClassificationItem: FC<Props> = ({ classification }) => {
                 >
                     {hasSubMenu && (
                         <>
-                            <SidebarHeader>
+                            <SidebarHeader
+                                style={{
+                                    // margin: '10px',
+                                    lineHeight: '2rem',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                }}
+                            >
+                                {roles &&
+                                    roles.includes('ROLE_ADMIN') &&
+                                    showEdit && <CreateSubMenuButton />}
                                 <span
-                                    style={{ fontSize: '12px' }}
+                                    style={{
+                                        margin: '10px',
+                                        fontSize: '14px',
+                                    }}
                                     className="span-text___light"
                                 >
-                                    Sub Menus{'  '}
+                                    Submenus{'  '}
                                 </span>
                                 <Badge pill>
                                     {Object.keys(subMenus).length}
                                 </Badge>
                             </SidebarHeader>
                             <SubMenuList
-                                key={`smig${_id}`}
+                                key={`sm-ig${_id}`}
                                 subMenus={subMenus}
                             />
                         </>
                     )}
                     {listItems && (
                         <>
-                            <SidebarHeader>
+                            <SidebarHeader
+                                style={{
+                                    // margin: '10px',
+                                    lineHeight: '2rem',
+                                }}
+                            >
                                 <span
-                                    style={{ fontSize: '12px' }}
+                                    style={{
+                                        margin: '10px',
+                                        fontSize: '14px',
+                                    }}
                                     className="span-text___light"
                                 >
                                     Scans{'  '}
@@ -112,7 +141,7 @@ const ClassificationItem: FC<Props> = ({ classification }) => {
                                 <Badge pill>{listItems.length}</Badge>
                             </SidebarHeader>
                             <ListItemGroup
-                                key={`lig${_id}`}
+                                key={`l-ig${_id}`}
                                 parentId={_id}
                                 listItems={listItems}
                             />

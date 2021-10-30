@@ -9,5 +9,4 @@ import java.util.Optional;
 
 public interface SubMenuRepo extends MongoRepository<SubMenu, String> {
     Optional<SubMenu> findByName(String name);
-
 }

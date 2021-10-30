@@ -1,12 +1,15 @@
 /* eslint-disable react/prop-types */
-import React from 'react'
+import React, { FC } from 'react'
 
-const UserInfoHeader = ({ user }) => (
+interface Props {
+    email: string
+}
+const UserInfoHeader: FC<Props> = ({ email }) => (
     <div
         style={{ fontSize: '1.35ch', color: '#6C757D' }}
         className="form-group"
     >
-        {user.email}
+        {email}
     </div>
 )
 export default UserInfoHeader

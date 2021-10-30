@@ -1,14 +1,14 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { Link } from 'react-router-dom'
 
-const LoginButton = () => (
-    <Link to="/login">
+const HomeButton: FC = () => (
+    <Link to="/home">
         <div className="form-group" style={{ marginLeft: '1rem' }}>
             <button type="button" className="btn btn-outline-primary">
-                Log in
+                Home
             </button>
         </div>
     </Link>
 )
 
-export default LoginButton
+export default HomeButton

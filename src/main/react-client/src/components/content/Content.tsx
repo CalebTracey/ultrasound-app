@@ -1,13 +1,16 @@
 import React, { FC, useEffect, useState } from 'react'
-import { Jumbotron, Container } from 'reactstrap'
-import SyncLoader from 'react-spinners/SyncLoader'
+import { Button } from 'reactstrap'
+import { FiXSquare } from 'react-icons/fi'
+import { useLocation, useHistory } from 'react-router-dom'
 import ContentRoutes from '../../routes/ContentRoutes'
 import { useAppSelector } from '../../redux/hooks'
 import { IAppUser } from '../../schemas'
 
 const Content: FC = () => {
-    const { isAuth, user } = useAppSelector((state) => state.auth)
+    const { isAuth, user, contentPath } = useAppSelector((state) => state.auth)
     const [routePath, setRoutePath] = useState('/dashboard')
+    const location = useLocation()
+    const history = useHistory()
 
     const isUser = (value: unknown): value is IAppUser => {
         return !!value && !!(value as IAppUser)
@@ -20,18 +23,20 @@ const Content: FC = () => {
         }
     }, [isAdmin])
 
-    return isAuth ? (
+    return isAuth && contentPath ? (
         <div className="content">
-            {/* <Jumbotron fluid style={{ maxHeight: '80vh', paddingTop: '2rem' }}> */}
-            {/* <Container fluid> */}
+            {location.pathname !== `${contentPath}/home` && (
+                <Button
+                    style={{ position: 'absolute', zIndex: 1000 }}
+                    onClick={() => history.push(contentPath)}
+                >
+                    <big>
+                        <FiXSquare />
+                    </big>
+                </Button>
+            )}
             <ContentRoutes routePath={routePath} />
-            {/* </Container> */}
-            {/* </Jumbotron> */}
         </div>
-    ) : (
-        <div className="spinner">
-            <SyncLoader />
-        </div>
-    )
+    ) : null
 }
 export default Content

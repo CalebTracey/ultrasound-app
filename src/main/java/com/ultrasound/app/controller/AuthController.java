@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 import com.ultrasound.app.security.jwt.JwtUtils;
 import com.ultrasound.app.security.service.UserDetailsServiceImpl;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -31,7 +32,6 @@ import com.ultrasound.app.repo.AppUserRepo;
 import com.ultrasound.app.security.service.UserDetailsImpl;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-//@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -56,29 +56,12 @@ public class AuthController {
     }
 
     @PostMapping("/sign-in")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-
-//        Authentication authentication = authenticationManager.authenticate(
-//                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
-//
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
-//        String jwt = jwtUtils.generateJwtToken(authentication);
-//
-//        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-//        List<String> roles = userDetails.getAuthorities().stream()
-//                .map(GrantedAuthority::getAuthority)
-//                .collect(Collectors.toList());
-//
-//        return ResponseEntity.ok(new JwtResponse(jwt,
-//                userDetails.getId(),
-//                userDetails.getUsername(),
-//                userDetails.getEmail(),
-//                roles));
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody @NotNull LoginRequest loginRequest) {
         return getAuthenticatedResponse(loginRequest.getUsername(),loginRequest.getPassword());
     }
 
     @PostMapping("/sign-up")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterRequest registerRequest) {
+    public ResponseEntity<?> registerUser(@Valid @RequestBody @NotNull RegisterRequest registerRequest) {
 
         if (userRepository.existsByUsername(registerRequest.getUsername())) {
             return ResponseEntity
@@ -117,29 +100,11 @@ public class AuthController {
                 }
             });
         }
-
         user.setRoles(roles);
         userRepository.save(user);
 
         // now log them in
-//        Authentication authentication = authenticationManager.authenticate(
-//                new UsernamePasswordAuthenticationToken(registerRequest.getUsername(), registerRequest.getPassword()));
-//
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
-//        String jwt = jwtUtils.generateJwtToken(authentication);
-//
-//        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-//        List<String> roles = userDetails.getAuthorities().stream()
-//                .map(GrantedAuthority::getAuthority)
-//                .collect(Collectors.toList());
         return getAuthenticatedResponse(registerRequest.getUsername(),registerRequest.getPassword());
-
-//        return ResponseEntity.ok().body(new JwtResponse(jwt,
-//                        userDetails.getId(),
-//                        userDetails.getUsername(),
-//                        userDetails.getEmail(),
-//                        roles));
-//                //new MessageResponse("User registered successfully!"));
     }
 
     protected ResponseEntity<?> getAuthenticatedResponse(String userName, String password) {

@@ -29,7 +29,6 @@ const { getLocalAccessToken } = TokenService
 const injectToken = (config: AxiosRequestConfig): AxiosRequestConfig => {
     try {
         const token = getLocalAccessToken()
-        console.log(`=== TOKEN === ${token}`)
         if (token !== null || token !== undefined) {
             config.headers.Authorization = `Bearer ${token}`
         }

@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'
+import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap'
 
 interface Props {
     setModal: boolean
@@ -19,9 +19,6 @@ const WarningModal: FC<Props> = ({
     return (
         <div>
             <Modal isOpen={setModal} toggle={toggleCallback}>
-                <ModalHeader toggle={toggleCallback}>
-                    <span className="span-text">Warning!</span>
-                </ModalHeader>
                 <ModalBody>
                     <p className="span-text___light">
                         {actionText}{' '}

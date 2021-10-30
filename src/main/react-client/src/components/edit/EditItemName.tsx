@@ -9,7 +9,7 @@ import { IListItem } from '../../schemas'
 interface Props {
     id: string
     item: IListItem
-    type: string
+    type: 'subMenu' | 'classification'
 }
 const EditItemName: FC<Props> = ({ id, item, type }) => {
     const [textValue, setTextValue] = useState<string>('')

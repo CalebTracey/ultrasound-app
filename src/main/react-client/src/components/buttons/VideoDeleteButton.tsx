@@ -1,5 +1,5 @@
 import React, { useState, FC, useCallback } from 'react'
-import { FiXSquare } from 'react-icons/fi'
+import { FiTrash2 } from 'react-icons/fi'
 import { useHistory } from 'react-router-dom'
 import { IListItem } from '../../schemas'
 import WarningModal from '../WarningModal'
@@ -15,6 +15,7 @@ const VideoDeleteButton: FC = () => {
     const { name, link } = selected
     const dispatch = useAppDispatch()
     const history = useHistory()
+
     const isItem = (value: unknown): value is IListItem => {
         return !!value && !!(value as IListItem)
     }
@@ -30,7 +31,7 @@ const VideoDeleteButton: FC = () => {
                 dispatch(
                     deleteItem({
                         id: parentId,
-                        type: itemType.toLowerCase(),
+                        type: itemType,
                         item: selected,
                     })
                 )
@@ -38,7 +39,7 @@ const VideoDeleteButton: FC = () => {
                     selected.type === 'subMenu' &&
                     subMenu.selected.itemList.length === 1
                 ) {
-                    dispatch(deleteData({ id: parentId, type: 'subMenu' }))
+                    dispatch(deleteData({ id: parentId, type: itemType }))
                 }
             }
         }
@@ -61,13 +62,13 @@ const VideoDeleteButton: FC = () => {
     return (
         <>
             <button
-                id="info"
+                id="video-delete-button"
                 type="button"
                 className="btn btn-outline-danger menu-button"
                 onClick={toggle}
             >
                 <big>
-                    <FiXSquare />
+                    <FiTrash2 />
                 </big>
             </button>
             <WarningModal

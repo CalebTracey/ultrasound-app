@@ -61,6 +61,14 @@ export const selectedClassification = createAsyncThunk(
     }
 )
 
+export const getOneClassification = createAsyncThunk(
+    'classifications/getOne',
+    async (id: string) => {
+        const response = await api.get(`classifications/${id}`)
+        return response.data
+    }
+)
+
 export const classificationSlice = createSlice({
     name: 'classifications',
     initialState: initialClassificationState,
@@ -91,7 +99,7 @@ export const classificationSlice = createSlice({
             getAllClassifications.fulfilled,
             (state, action: PayloadAction<IClassification[]>) => {
                 state.entities = action.payload
-                state.loading = 'idle'
+                state.loading = 'successful'
             }
         )
         builder.addCase(selectedClassification.pending, (state) => {

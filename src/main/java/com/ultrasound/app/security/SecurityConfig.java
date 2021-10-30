@@ -4,6 +4,7 @@ import com.ultrasound.app.model.user.ERole;
 import com.ultrasound.app.security.jwt.AuthEntryPointJwt;
 import com.ultrasound.app.security.service.UserDetailsServiceImpl;
 import com.ultrasound.app.security.jwt.AuthTokenFilter;
+import com.ultrasound.app.security.util.CustomAccessDeniedHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,10 +31,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Configuration
@@ -50,8 +48,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     UserDetailsServiceImpl userDetailsService;
     @Autowired
     private AuthEntryPointJwt unauthorizedHandler;
-//    @Autowired
-//    private LoginSuccessHandler loginSuccessHandler;
 
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
@@ -76,9 +72,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        String[] noAuthRoutes = new String[]{"/", "/api/date", "/api/auth/sign-up", "/api/auth/sign-in"};
-        String[] userAuthRoutes = new String[]{"/api/classifications", "/api/classifications/**", "/api/submenu/**", "/api/user/**", "/api/S3/link/**"};
-        String[] adminAuthRoutes = new String[]{"/**", "/api/**", "/api/tables/clear", "/api/admin/**"};
+        String[] noAuthRoutes =
+                new String[]{"/", "/api/date", "/api/auth/sign-up", "/api/auth/sign-in"};
+        String[] userAuthRoutes =
+                new String[]{"/api/classifications", "/api/classifications/**", "/api/subMenu/**", "/api/user/**", "/api/S3/link/**"};
+        String[] adminAuthRoutes =
+                new String[]{"/**", "/api/**", "/api/tables/clear", "/api/admin/**", "/api/delete-data/classification/*", "/api/delete-data/subMenu/*"};
 
                 http.cors().configurationSource(corsConfigurationSource())
                         .and()
@@ -98,21 +97,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         .and()
                         .logout().permitAll();
 
-//                .successHandler(loginSuccessHandler)
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-       configuration.setAllowCredentials(true);
-        // configuration.addAllowedOriginPattern("**");
+        configuration.setAllowCredentials(true);
         configuration.setAllowedOrigins(Arrays.asList(
-//                "http://localhost:8080/**",
-//                "http://localhost:8080**",
-                "http://localhost:3000",
-//                "http://localhost/**",
-                "http://localhost"
+                // TODO Config for cors "cross-origin"
+              "http://localhost:3000"
+//                "http://localhost"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "response-type", "x-access-token", "Access-Control-Allow-Origin", "x-requested-with", "access-control-allow-methods", "Accept", "Accept-Language", "Content-Language", "Content-Type"));

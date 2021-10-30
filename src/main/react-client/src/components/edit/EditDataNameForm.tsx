@@ -1,5 +1,5 @@
 import React, { FC, ChangeEvent } from 'react'
-import { FormGroup, Label, Input } from 'reactstrap'
+import { Input } from 'reactstrap'
 
 interface Props {
     currentName: string

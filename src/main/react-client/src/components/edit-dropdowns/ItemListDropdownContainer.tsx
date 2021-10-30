@@ -6,16 +6,16 @@ import ItemListDropdown from './ItemListDropdown'
 import { useAppSelector } from '../../redux/hooks'
 
 const ItemListDropdownContainer: FC = () => {
+    const { classification, item } = useAppSelector((state) => state)
+    const { editing, selected, size } = item
     const [isLoading, setIsLoading] = useState(true)
-    const { editing, selected, size } = useAppSelector((state) => state.item)
-    const { classification } = useAppSelector((state) => state)
     const [itemOpen, setItemOpen] = useState(false)
     const itemToggle = () => setItemOpen((prevState) => !prevState)
 
     useEffect(() => {
         const timer = setTimeout(() => {
             setIsLoading(false)
-        }, 250)
+        }, 500)
         return () => clearTimeout(timer)
     }, [])
 

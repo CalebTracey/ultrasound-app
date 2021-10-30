@@ -3,6 +3,7 @@ package com.ultrasound.app.aws;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.*;
 import com.ultrasound.app.model.data.*;
+import com.ultrasound.app.payload.response.MessageResponse;
 import com.ultrasound.app.service.ClassificationServiceImpl;
 import com.ultrasound.app.service.SubMenuService;
 import lombok.AllArgsConstructor;
@@ -50,7 +51,7 @@ public class S3ServiceImpl implements S3Service {
      * @return Update information
      */
     @Override
-    public String initializeMongoDatabase() {
+    public MessageResponse initializeMongoDatabase() {
         List<String> s3FileNames = s3FileNames().stream().map(S3ObjectSummary::getKey)     // keys = title of file
                 .collect(Collectors.toList());
 
@@ -58,10 +59,11 @@ public class S3ServiceImpl implements S3Service {
     }
 
     /**
+     * TODO: remove empty Classifications / Submenus before upload to mongo
      * Initializes parsing of S3 mp4 file names and uses resulting data to upload to mongo.
      * @return Details of uploaded data info for http response
      */
-    private String createAndSaveMongoData(List<String> s3FileNames) {
+    private MessageResponse createAndSaveMongoData(List<String> s3FileNames) {
         AtomicInteger classificationCount = new AtomicInteger();
         AtomicInteger subMenuCount = new AtomicInteger();
         AtomicInteger scanCount = new AtomicInteger();
@@ -94,6 +96,7 @@ public class S3ServiceImpl implements S3Service {
                     SubMenu newSubMenuObj = new SubMenu();
                     newSubMenuObj.setName(subMenu.getName());
                     newSubMenuObj.setItemList(subMenu.getItemList());
+                    newSubMenuObj.setClassification(currentData.getClassification());
 
                     newClassificationSubMenuMap.put(subMenu.getName(), subMenuService.save(newSubMenuObj).get_id());
                     subMenuCount.getAndIncrement();
@@ -106,13 +109,14 @@ public class S3ServiceImpl implements S3Service {
             classificationService.save(newClassification);
             classificationCount.getAndIncrement();
         });
-        return "Added " + classificationCount +
+        return new MessageResponse("Added " + classificationCount +
                 " Classifications, " + subMenuCount +
-                " sub-menus, and " + scanCount +
-                " total scan files.";
+                " submenus, and " + scanCount +
+                " total scan files.");
     }
 
     /**
+     * TODO: check for/update "scan index" number
      * Creates new SubMenu from frequently occurring classification-level Scans with similar names
      * @return FileStructureDataContainer with new submenus if needed
      */
@@ -228,10 +232,10 @@ public class S3ServiceImpl implements S3Service {
                         if (fileData.getClassificationScans().get(0).getName()
                                 .equals(newFileStructure.getScan().getName())) {
                             ListItem classificationScanItem = fileData.getClassificationScans().get(0);
-                            String scanSuffix = (classificationScanItem.getName().replaceAll("[^\\d]", ""));
-                            if (scanSuffix.length() != 0) {
-                                log.info("Scan Suffix Classification: {} Length: {}", scanSuffix, scanSuffix.length());
-                                int scanDigits = Integer.parseInt(scanSuffix);
+                            String scanIndex = (classificationScanItem.getName().replaceAll("[^\\d]", ""));
+                            if (scanIndex.length() != 0) {
+                                log.info("Scan Index Classification: {} Length: {}", scanIndex, scanIndex.length());
+                                int scanDigits = Integer.parseInt(scanIndex);
                                 String newName = classificationScanItem.getName() + " " + (scanDigits + 1);
                                 newFileStructure.getScan().setName(newName);
                             } else {
@@ -337,16 +341,16 @@ public class S3ServiceImpl implements S3Service {
             currentScans.forEach(scan -> {
                 String currentScanName = scan.getName();
                 String currentScanLink = scan.getLink();
-                String scanSuffix = (RegExUtils.removeAll(currentScanName, "[A-Za-z]"));
-                StringUtils.deleteWhitespace(scanSuffix);
-                if (!scanSuffix.equals(" ") &&
-                        NumberUtils.isCreatable(scanSuffix) &&
+                String scanIndex = (RegExUtils.removeAll(currentScanName, "[A-Za-z]"));
+                StringUtils.deleteWhitespace(scanIndex);
+                if (!scanIndex.equals(" ") &&
+                        NumberUtils.isCreatable(scanIndex) &&
                         !currentScanLink.equals(newScanItemLink)) {
 
                     if (currentScanName.equals(newScanItemName)) {
 
-                        log.info("Scan Suffix: {} Length: {}", scanSuffix, scanSuffix.length());
-                        int scanDigits = Integer.parseInt(scanSuffix);
+                        log.info("Scan Index: {} Length: {}", scanIndex, scanIndex.length());
+                        int scanDigits = Integer.parseInt(scanIndex);
                         String newName = scan.getName() + " " + (scanDigits + 1);
                         newScanItem.setName(newName);
                     } else {
@@ -356,7 +360,7 @@ public class S3ServiceImpl implements S3Service {
                     }
                     returnList.add(newScanItem);
                 }
-                else if (!NumberUtils.isCreatable(scanSuffix) && currentScanName.equals(newScanItemName) && !currentScanLink.equals(newScanItemLink)) {
+                else if (!NumberUtils.isCreatable(scanIndex) && currentScanName.equals(newScanItemName) && !currentScanLink.equals(newScanItemLink)) {
                     String newName = scan.getName() + " " + 2;
                     scan.setName(scan.getName() + " " + 1);
                     newScanItem.setName(newName);
@@ -368,10 +372,10 @@ public class S3ServiceImpl implements S3Service {
         } else {
             ListItem singletonCurrentScan = currentScans.get(0);
             if (singletonCurrentScan.getName().equals(newScanItemName) && !checkIfSameLink(singletonCurrentScan, newScanItem)) {
-                String scanSuffix = (singletonCurrentScan.getName().replaceAll("[^\\d]", ""));
-                if (scanSuffix.length() != 0 && NumberUtils.isCreatable(scanSuffix)) {
-                    log.info("Scan Suffix: {} Length: {}", scanSuffix, scanSuffix.length());
-                    int scanDigits = Integer.parseInt(scanSuffix);
+                String scanIndex = (singletonCurrentScan.getName().replaceAll("[^\\d]", ""));
+                if (scanIndex.length() != 0 && NumberUtils.isCreatable(scanIndex)) {
+                    log.info("Scan Index: {} Length: {}", scanIndex, scanIndex.length());
+                    int scanDigits = Integer.parseInt(scanIndex);
                     String newName = singletonCurrentScan.getName() + " " + (scanDigits + 1);
                     newScanItem.setName(newName);
 

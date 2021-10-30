@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { Link } from 'react-router-dom'
 
-const RegisterButton = () => (
+const RegisterButton: FC = () => (
     <Link to="/register">
         <div className="form-group">
             <button type="button" className="btn btn-primary">

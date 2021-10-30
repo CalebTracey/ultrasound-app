@@ -2,6 +2,7 @@
 import React, { FC } from 'react'
 import ReactPlayer from 'react-player'
 import SyncLoader from 'react-spinners/SyncLoader'
+
 import { useAppDispatch, useAppSelector } from '../../redux/hooks'
 import DetailsPopover from '../DetailsPopover'
 import { IListItem, IAppUser } from '../../schemas'
@@ -28,7 +29,7 @@ const VideoPlayer: FC = () => {
     return isUrl(url) ? (
         <div className="video-page">
             <div className="video-page___header">
-                {isAdmin && isItemList(selected) && parentId && (
+                {isAdmin && isItemList(selected) && parentId && auth.showEdit && (
                     <>
                         <VideoDeleteButton /> <DetailsPopover item={selected} />
                     </>

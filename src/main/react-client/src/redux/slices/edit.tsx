@@ -3,7 +3,7 @@
 /* eslint-disable no-param-reassign */
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { AxiosResponse } from 'axios'
-import { IListItem } from '../../schemas'
+import { IListItem, IMessageResponse } from '../../schemas'
 import { api } from '../../service/api'
 import {
     getAllClassifications,
@@ -16,7 +16,7 @@ import { newMessage } from './message'
 
 type TDeleteItemPayload = {
     id: string
-    type: string
+    type: 'subMenu' | 'classification'
     item: IListItem
 }
 type TDeleteDataPayload = {
@@ -27,13 +27,13 @@ type TDataNamePayload = { name: string }
 type TDataNameProps = {
     id: string
     textValue: string
-    type: string
+    type: 'subMenu' | 'classification'
 }
 type TItemNameProps = {
     id: string
     textValue: string
     item: IListItem
-    type: string
+    type: 'subMenu' | 'classification'
 }
 interface editSliceState {
     loading: 'pending' | 'idle' | 'successful'
@@ -52,10 +52,9 @@ export const editDataName = createAsyncThunk(
             `/edit/${type}/name/${id}`,
             newName
             // headers
-        ).then((res: AxiosResponse<string>) => {
+        ).then((res: AxiosResponse<IMessageResponse>) => {
             thunkApi.dispatch(getAllClassifications())
-            thunkApi.dispatch(resetClassificationSelection())
-            thunkApi.dispatch(newMessage(res.data))
+            thunkApi.dispatch(newMessage(res.data.message))
         })
     }
 )
@@ -69,11 +68,10 @@ export const editItemName = createAsyncThunk(
             `/edit/${type}/item/name/${id}`,
             newName
             // headers
-        ).then((res: AxiosResponse<string>) => {
+        ).then((res: AxiosResponse<IMessageResponse>) => {
             thunkApi.dispatch(getAllClassifications())
-            thunkApi.dispatch(resetClassificationSelection())
             thunkApi.dispatch(resetItemSelection())
-            thunkApi.dispatch(newMessage(res.data))
+            thunkApi.dispatch(newMessage(res.data.message))
         })
     }
 )
@@ -82,13 +80,12 @@ export const deleteData = createAsyncThunk(
     'items/delete',
     async (data: TDeleteDataPayload, thunkApi) => {
         const { id, type } = data
-        api.delete<TDataNamePayload, AxiosResponse>(
+        const response = await api.delete<TDataNamePayload, AxiosResponse>(
             `/delete-data/${type}/${id}`
-        ).then((res: AxiosResponse<string>) => {
-            thunkApi.dispatch(getAllClassifications())
-            thunkApi.dispatch(resetClassificationSelection())
-            thunkApi.dispatch(newMessage(res.data))
-        })
+        )
+        thunkApi.dispatch(getAllClassifications())
+        thunkApi.dispatch(resetClassificationSelection())
+        thunkApi.dispatch(newMessage(response.data.message))
     }
 )
 
@@ -99,9 +96,9 @@ export const deleteItem = createAsyncThunk(
         api.post<IListItem, AxiosResponse>(
             `/delete-item/${type}/${id}`,
             item
-        ).then((res) => {
+        ).then((res: AxiosResponse<IMessageResponse>) => {
             thunkApi.dispatch(removeItem(item.name))
-            thunkApi.dispatch(newMessage(res.data))
+            thunkApi.dispatch(newMessage(res.data.message))
             if (type === 'subMenu') {
                 thunkApi.dispatch(removeItem(item.link)) // remove from item slice
                 thunkApi.dispatch(removeListItem(item.link)) // remove from subMenu slice
@@ -113,9 +110,10 @@ export const deleteItem = createAsyncThunk(
 
 export const importData = createAsyncThunk('edit/import', async (_, thunkApi) =>
     api.delete('/tables/clear').then(() => {
-        thunkApi.dispatch(newMessage('Data import success'))
-        api.post('/S3/update/').then(() => {
+        thunkApi.dispatch(newMessage('Initializing the database'))
+        api.post('/S3/update').then((res: AxiosResponse<IMessageResponse>) => {
             thunkApi.dispatch(getAllClassifications())
+            thunkApi.dispatch(newMessage(res.data.message))
         })
     })
 )

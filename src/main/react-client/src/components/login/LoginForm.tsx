@@ -1,8 +1,24 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/jsx-props-no-spreading */
-import React from 'react'
+import React, { FC } from 'react'
+import {
+    UseFormRegister,
+    UseFormHandleSubmit,
+    SubmitHandler,
+    FieldErrors,
+} from 'react-hook-form'
 
-const LoginForm = ({
+type TFormValues = { username: string; password: string }
+
+interface Props {
+    message: string | null
+    isLoading: boolean
+    onSubmit: SubmitHandler<TFormValues>
+    errors: FieldErrors<TFormValues>
+    register: UseFormRegister<TFormValues>
+    handleSubmit: UseFormHandleSubmit<TFormValues>
+}
+const LoginForm: FC<Props> = ({
     message,
     isLoading,
     onSubmit,
@@ -11,7 +27,7 @@ const LoginForm = ({
     handleSubmit,
 }) => (
     <div className="form">
-        <span htmlFor="login">
+        <span>
             <h4>Log in</h4>
         </span>
         <div id="login" className="register-form">
@@ -21,7 +37,6 @@ const LoginForm = ({
                         Username
                         <input
                             defaultValue=""
-                            name="username"
                             type="text"
                             {...register('username')}
                             className={`form-control ${
@@ -39,7 +54,6 @@ const LoginForm = ({
                         Password
                         <input
                             defaultValue=""
-                            name="password"
                             type="password"
                             {...register('password')}
                             className={`form-control ${

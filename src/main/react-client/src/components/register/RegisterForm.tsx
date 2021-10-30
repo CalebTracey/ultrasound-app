@@ -1,8 +1,32 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/jsx-props-no-spreading */
-import React from 'react'
+import React, { FC } from 'react'
+import {
+    UseFormRegister,
+    UseFormHandleSubmit,
+    SubmitHandler,
+    FieldErrors,
+    UseFormReset,
+} from 'react-hook-form'
 
-const RegisterForm = ({
+type TFormValues = {
+    fullName: string
+    username: string
+    email: string
+    password: string
+    confirmPassword: string
+    acceptTerms: boolean
+}
+interface Props {
+    successful: boolean
+    message: string | null
+    onSubmit: SubmitHandler<TFormValues>
+    errors: FieldErrors<TFormValues>
+    register: UseFormRegister<TFormValues>
+    handleSubmit: UseFormHandleSubmit<TFormValues>
+    reset: UseFormReset<TFormValues>
+}
+const RegisterForm: FC<Props> = ({
     successful,
     onSubmit,
     errors,
@@ -12,7 +36,7 @@ const RegisterForm = ({
     reset,
 }) => (
     <div className="form">
-        <span htmlFor="signup">
+        <span>
             <h4>Register</h4>
         </span>
         <div id="signup" className="register-form">
@@ -22,7 +46,6 @@ const RegisterForm = ({
                         Full Name
                         <input
                             defaultValue=""
-                            name="fullName"
                             type="text"
                             {...register('fullName')}
                             className={`form-control ${
@@ -40,7 +63,6 @@ const RegisterForm = ({
                         Username
                         <input
                             defaultValue=""
-                            name="username"
                             type="text"
                             {...register('username')}
                             className={`form-control ${
@@ -58,7 +80,6 @@ const RegisterForm = ({
                         Email
                         <input
                             defaultValue=""
-                            name="email"
                             type="email"
                             {...register('email')}
                             className={`form-control ${
@@ -76,7 +97,6 @@ const RegisterForm = ({
                         Password
                         <input
                             defaultValue=""
-                            name="password"
                             type="password"
                             {...register('password')}
                             className={`form-control ${
@@ -94,7 +114,6 @@ const RegisterForm = ({
                         Confirm Password
                         <input
                             defaultValue=""
-                            name="confirmPassword"
                             type="password"
                             {...register('confirmPassword')}
                             className={`form-control ${
@@ -109,14 +128,13 @@ const RegisterForm = ({
 
                 <div className="form-group form-check">
                     <input
-                        name="acceptTerms"
                         type="checkbox"
                         {...register('acceptTerms')}
                         className={`form-check-input ${
                             errors.acceptTerms ? 'is-invalid' : ''
                         }`}
                     />
-                    <span htmlFor="acceptTerms" className="form-check-label">
+                    <span className="form-check-label">
                         I have read and agree to the Terms
                     </span>
                     <div className="invalid-feedback">

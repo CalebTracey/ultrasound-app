@@ -1,19 +1,28 @@
-import React, { useState } from 'react'
+import React, { useState, FC } from 'react'
 import { useForm } from 'react-hook-form'
-import { useSelector, useDispatch } from 'react-redux'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as Yup from 'yup'
 import RegisterForm from '../components/register/RegisterForm'
 import LoginButton from '../components/login/LoginButton'
 import HomeButton from '../components/buttons/HomeButton'
 import { userRegister } from '../redux/slices/auth'
+import { useAppDispatch, useAppSelector } from '../redux/hooks'
 
-const Register = () => {
+type TFormValues = {
+    fullName: string
+    username: string
+    email: string
+    password: string
+    confirmPassword: string
+    acceptTerms: boolean
+}
+
+const Register: FC = () => {
     const [successful, setSuccessful] = useState(false)
-    const message = useSelector((state) => {
+    const message = useAppSelector((state) => {
         return state.auth.error || ''
     })
-    const dispatch = useDispatch()
+    const dispatch = useAppDispatch()
 
     const validationSchema = Yup.object().shape({
         fullName: Yup.string().required('Fullname is required'),
@@ -36,25 +45,24 @@ const Register = () => {
             ),
         acceptTerms: Yup.bool().oneOf([true], 'Accept Terms is required'),
     })
+
     const {
         register,
         handleSubmit,
         reset,
         formState: { errors },
-    } = useForm({
+    } = useForm<TFormValues>({
         resolver: yupResolver(validationSchema),
     })
 
-    const onSubmit = (data) => {
-        if (Array.from(errors).length === 0) {
-            dispatch(userRegister(data))
-                .then(() => {
-                    setSuccessful(true)
-                })
-                .catch(() => {
-                    setSuccessful(false)
-                })
-        }
+    const onSubmit = (data: TFormValues) => {
+        dispatch(userRegister(data))
+            .then(() => {
+                setSuccessful(true)
+            })
+            .catch(() => {
+                setSuccessful(false)
+            })
     }
     return (
         <>

@@ -5,33 +5,35 @@ import {
     PayloadAction,
     Reducer,
 } from '@reduxjs/toolkit'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import AuthService from '../../service/auth-service'
 import TokenService from '../../service/token-service'
 import { IAppUser } from '../../schemas'
+import { api } from '../../service/api'
 
 type TLogin = { username: string; password: string }
+type TRegister = {
+    fullName: string
+    username: string
+    email: string
+    password: string
+    confirmPassword: string
+}
+interface TUserLoginResponse extends AxiosResponse {
+    accessToken: string
+    email: string
+    id: string
+    roles: string[]
+    tokenType: string
+}
 interface authSliceState {
     isAuth: boolean
     user: IAppUser | Record<string, null>
     loading: 'idle' | 'pending' | 'successful'
     error: string | null
     contentPath: '/dashboard' | '/dashboard/admin' | null
+    showEdit: boolean
 }
-
-const headers: Readonly<Record<string, string | boolean>> = {
-    // 'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'POST, PUT, GET, OPTIONS, DELETE',
-    'X-Requested-With': 'XMLHttpRequest',
-    'Content-Type': 'application/json',
-}
-
-const instance = axios.create({
-    // baseURL: `${process.env.PUBLIC_URL}/api/`,
-    baseURL: 'http://localhost:8080/api/',
-    headers,
-    withCredentials: true,
-})
 
 const data: string | null = localStorage.getItem('user')
 const user = data ? JSON.parse(data) : null
@@ -43,6 +45,7 @@ const initialAuthState: authSliceState = user
           loading: 'successful',
           error: null,
           contentPath: null,
+          showEdit: false,
       }
     : {
           isAuth: false,
@@ -50,6 +53,7 @@ const initialAuthState: authSliceState = user
           loading: 'idle',
           error: null,
           contentPath: null,
+          showEdit: false,
       }
 
 const isUser = (value: unknown): value is IAppUser => {
@@ -59,8 +63,8 @@ const isUser = (value: unknown): value is IAppUser => {
 export const login = createAsyncThunk(
     'auth/login',
     async (credentials: TLogin) => {
-        const res = await instance.post(`auth/sign-in`, credentials)
-        return res.data
+        const response = await api.post(`auth/sign-in`, credentials)
+        return response.data
     }
 )
 
@@ -70,12 +74,14 @@ export const logout = createAsyncThunk('auth/logout', async () => {
 
 export const userRegister = createAsyncThunk(
     'auth/register',
-    async (credentials: TLogin) =>
-        instance.post(`auth/sign-up`, credentials).then((res) => {
-            const userData = res.data
-            TokenService.setUser(userData)
-            return Promise.resolve(userData)
-        })
+    async (regCredentials: TRegister) => {
+        const response = await api.post<TRegister, TUserLoginResponse>(
+            `auth/sign-up`,
+            regCredentials
+        )
+        TokenService.setUser(response.data)
+        return response.data
+    }
 )
 
 export const authSlice = createSlice({
@@ -106,6 +112,10 @@ export const authSlice = createSlice({
         userRefreshToken: (state, action: PayloadAction<string>) => {
             const token = action.payload
             state.user = { ...user, accessToken: token }
+        },
+        showEditToggle: (state) => {
+            const currentState = state.showEdit
+            state.showEdit = !currentState
         },
     },
     extraReducers: (builder) => {
@@ -153,7 +163,7 @@ export const authSlice = createSlice({
                 state.error = 'Registration failed'
             }
         })
-        builder.addCase(userRegister.rejected, (state, action) => {
+        builder.addCase(userRegister.rejected, (state) => {
             state.isAuth = false
             state.loading = 'idle'
             state.user = {}
@@ -168,11 +178,9 @@ export const authSlice = createSlice({
     },
 })
 export const {
-    // loginFail,
+    showEditToggle,
     registerSuccess,
     registerFail,
-    // loginSuccess,
-    // userLogout,
     defineContentPath,
     userRefreshToken,
 } = authSlice.actions

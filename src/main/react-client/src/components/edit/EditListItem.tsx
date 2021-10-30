@@ -36,7 +36,7 @@ const EditItemList: FC = () => {
                 dispatch(
                     deleteItem({
                         id: parentId,
-                        type: itemType.toLowerCase(),
+                        type: itemType,
                         item: selected,
                     })
                 )
@@ -77,7 +77,7 @@ const EditItemList: FC = () => {
                     <EditItemName
                         id={parentId}
                         item={selected}
-                        type={itemType.toLowerCase()}
+                        type={itemType}
                     />
                 )}
             </InputGroup>

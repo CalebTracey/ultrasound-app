@@ -47,3 +47,10 @@ export interface SerializedError {
     stack?: string
     code?: string
 }
+
+/**
+ * * Other
+ */
+export interface IMessageResponse {
+    message: string
+}

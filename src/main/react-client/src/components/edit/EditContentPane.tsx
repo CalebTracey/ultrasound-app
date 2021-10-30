@@ -16,24 +16,20 @@ const EditContentPane: FC<Props> = ({ hasSubMenu, editing }) => {
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            if (
-                itemType === 'classification' &&
-                classification.listItemsCount !== item.size
-            ) {
-                eventBus.dispatch('updateItems')
-            }
-            if (
-                itemType === 'subMenu' &&
-                subMenu.itemList.length !== item.size
-            ) {
-                eventBus.dispatch('updateItems')
-            }
-        }, 100)
+            eventBus.dispatch('updateItems')
+        }, 10)
         return () => clearTimeout(timer)
     }, [classification, subMenu, item, itemType, dispatch])
 
     return (
-        <Container fluid style={{ display: 'flex', padding: '2rem' }}>
+        <Container
+            fluid
+            style={{
+                display: 'flex',
+                padding: '2rem',
+                justifyContent: 'center',
+            }}
+        >
             {hasSubMenu &&
                 subMenu.editing &&
                 subMenu.loading === 'successful' && <EditSubMenuContainer />}

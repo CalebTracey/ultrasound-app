@@ -7,7 +7,7 @@ import { editDataName } from '../../redux/slices/edit'
 interface Props {
     id: string
     currentName: string
-    type: string
+    type: 'subMenu' | 'classification'
 }
 
 const EditDataName: FC<Props> = ({ currentName, id, type }) => {

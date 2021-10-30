@@ -10,7 +10,14 @@ import {
 import { itemType } from './item'
 import { IListItem, ISubMenuObj } from '../../schemas'
 import { api } from '../../service/api'
+import { getOneClassification } from './classification'
 
+type TNewSubMenu = { classification: string; name: string }
+type TNewSubMenuLocation = {
+    newParentId: string
+    oldParentId: string
+    subMenuId: string
+}
 interface subMenuSliceState {
     selected: ISubMenuObj | Record<string, never>
     subMenuList: { [key: string]: ISubMenuObj } | Record<string, never>
@@ -45,6 +52,23 @@ export const getOne = createAsyncThunk<ISubMenuObj, string>(
             return res.data
         })
         return response
+    }
+)
+
+export const createSubMenu = createAsyncThunk(
+    'subMenu/create',
+    async (data: TNewSubMenu, thunkApi) => {
+        const response = await api.post(`subMenu/create`, data)
+        thunkApi.dispatch(getOneClassification(data.classification))
+        return response
+    }
+)
+
+export const changeSubmenuParent = createAsyncThunk(
+    'subMenu/move',
+    async (data: TNewSubMenuLocation) => {
+        const response = await api.post('subMenu/move', data)
+        return response.data
     }
 )
 

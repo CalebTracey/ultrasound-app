@@ -51,7 +51,7 @@ const EditSubMenu: FC = () => {
                             </InputGroupAddon>
                             <EditDataName
                                 id={`${classificationId}/${_id}`}
-                                type="submenu"
+                                type="subMenu"
                                 currentName={name}
                             />
                         </InputGroup>

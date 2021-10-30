@@ -1,6 +1,7 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable react/prop-types */
 
-import React, { FC } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import {
     ProSidebar,
     Menu,
@@ -9,13 +10,30 @@ import {
     SidebarFooter,
 } from 'react-pro-sidebar'
 import ClassificationList from '../components/sidebar/ClassificationList'
+import eventBus from '../common/EventBus'
 
 const Sidebar: FC = () => {
+    const [editState, setEditState] = useState(true)
+
+    useEffect(() => {
+        const toggle = () => setEditState(!editState)
+
+        const ac = new AbortController()
+
+        eventBus.on('toggleEdit', ac, () => {
+            toggle()
+        })
+        return () => {
+            ac.abort()
+            eventBus.remove('toggleEdit', toggle)
+        }
+    }, [editState])
+
     return (
         <div className="sidebar">
-            <ProSidebar width="16rem">
+            <ProSidebar>
                 <div className="sidebar___header">
-                    <SidebarHeader>
+                    <SidebarHeader style={{ display: 'flex' }}>
                         <p className="sidebar___header___text">
                             Classifications
                         </p>

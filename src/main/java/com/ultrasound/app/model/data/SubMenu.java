@@ -17,6 +17,7 @@ public class SubMenu {
     @Id
     private String _id;
 
+    private String classification;
     private String name;
     private List<ListItem> itemList;
     private EType type = EType.TYPE_SUB_MENU;
@@ -24,5 +25,11 @@ public class SubMenu {
     public SubMenu(String name, List<ListItem> itemList) {
         this.name = name;
         this.itemList = itemList;
+    }
+
+    public SubMenu(String name, List<ListItem> itemList, EType type) {
+        this.name = name;
+        this.itemList = itemList;
+        this.type = type;
     }
 }

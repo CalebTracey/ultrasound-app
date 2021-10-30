@@ -29,9 +29,9 @@ const ClassificationList: FC = () => {
         isClassifications(classifications) &&
         classifications.map((classification: IClassification) => {
             return (
-                <div id={`clitem-${classification._id}`}>
+                <div id={`cl-item-${classification._id}`}>
                     <ClassificationItem
-                        key={`clitem-${classification._id}`}
+                        key={`cl-item-${classification._id}`}
                         classification={classification}
                     />
                 </div>

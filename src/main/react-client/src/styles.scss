@@ -25,8 +25,7 @@ $header-font-color:#343A40;
         6. Content
         7. Edit Page
         8. Video Player
-        9. Side Bar
-        10. Components
+        9. Components
           - Form
           - Search Bar
           - Button
@@ -129,7 +128,7 @@ header {
   &___date {
     @extend %secondary-font;
     position: absolute;
-    left: 2rem;
+    left: 4rem;
     top: 1.75rem;
   }
 }
@@ -150,10 +149,20 @@ footer {
 //*     === SIDEBAR ===
 //      ===============
 
+$sidebar-bg-color: #E9ECEF;
+$sidebar-color: #343A40;
+$submenu-indent: 2rem;
+$sidebar-width: 20rem;
+// $submenu-bg-color: #CED4DA;
+$submenu-bg-color-collapsed: #CED4DA;
+$highlight-color: #0466C8;
+$submenu-bg-color: #2b2b2b !default;
+@import '~react-pro-sidebar/dist/scss/styles.scss';
+
 .sidebar {
   display: flex;
   left: 0;
-  width: 16rem;
+  // width: 16rem;
   top: 5rem;
   position: fixed;
   bottom: 3rem;
@@ -195,7 +204,7 @@ footer {
 .body {
   background: $secondary-color;
   position: fixed;
-  left: 16rem;
+  left: 20rem;
   right: 0;
   bottom: 3rem;
   top: 5rem;
@@ -213,7 +222,7 @@ footer {
   position: fixed;
   top: 6rem;
   bottom: 4rem;
-  left: 16rem;
+  left: 20rem;
   right: 1rem;
   padding: 1rem;
 
@@ -251,6 +260,7 @@ footer {
     justify-content: space-between;
     align-items: center;
     margin: 0 2rem 0 2rem;
+    padding-left: 6rem;
 
     &___text {
       @extend %header-font;
@@ -334,19 +344,6 @@ footer {
   padding-bottom: 4.5rem;
 }
 
-//      ===============
-//*     === SIDEBAR ===
-//      ===============
-   
-$sidebar-bg-color: #E9ECEF;
-$sidebar-color: #343A40;
-// $submenu-bg-color: #CED4DA;
-$submenu-bg-color-collapsed: #CED4DA;
-$highlight-color: #0466C8;
-$submenu-bg-color: #2b2b2b !default;
-@import '~react-pro-sidebar/dist/scss/styles.scss';
-
-
 //      ==================
 //*     === COMPONENTS ===
 //      ==================
@@ -403,5 +400,6 @@ $submenu-bg-color: #2b2b2b !default;
 
 .date {
   position: absolute;
-  left: 2rem;
+  left: 4rem;
+  margin-bottom: 1rem;
 }

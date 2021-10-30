@@ -1,5 +1,3 @@
-import { IAppUser } from '../schemas'
-
 type TUserLoginResponse = {
     accessToken: string
     email: string
@@ -17,7 +15,7 @@ const getLocalRefreshToken = (): string | undefined => {
     return undefined
 }
 
-const getLocalAccessToken = () => {
+const getLocalAccessToken = (): string | undefined => {
     const userStorage = localStorage.getItem('user')
     if (userStorage) {
         const user = JSON.parse(userStorage)
