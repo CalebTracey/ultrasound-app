@@ -1,0 +1,4 @@
+[build]
+  base    = "src/main/react-client"
+  publish = "src/main/react-client/dist/"
+  command = "yarn build"
