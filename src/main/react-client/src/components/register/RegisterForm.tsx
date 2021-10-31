@@ -18,6 +18,7 @@ type TFormValues = {
     acceptTerms: boolean
 }
 interface Props {
+    isLoading: boolean
     successful: boolean
     message: string | null
     onSubmit: SubmitHandler<TFormValues>
@@ -27,6 +28,7 @@ interface Props {
     reset: UseFormReset<TFormValues>
 }
 const RegisterForm: FC<Props> = ({
+    isLoading,
     successful,
     onSubmit,
     errors,
@@ -143,7 +145,14 @@ const RegisterForm: FC<Props> = ({
                 </div>
 
                 <div className="form-group">
-                    <button type="submit" className="btn btn-primary btn-block">
+                    <button
+                        type="submit"
+                        className="btn btn-primary btn-block"
+                        disabled={isLoading}
+                    >
+                        {isLoading && (
+                            <span className="spinner-border spinner-border-sm" />
+                        )}
                         <span>Register</span>
                     </button>
                     <button

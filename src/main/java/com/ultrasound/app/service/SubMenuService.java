@@ -7,7 +7,6 @@ import com.ultrasound.app.payload.response.MessageResponse;
 import java.util.List;
 
 public interface SubMenuService {
-
     SubMenu save(SubMenu subMenu);
     SubMenu getById(String id);
     String insert(SubMenu subMenu);

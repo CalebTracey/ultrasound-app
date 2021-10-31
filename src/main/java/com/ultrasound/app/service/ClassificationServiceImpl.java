@@ -2,6 +2,7 @@ package com.ultrasound.app.service;
 
 import com.ultrasound.app.exceptions.ClassificationNotFoundException;
 import com.ultrasound.app.model.data.Classification;
+import com.ultrasound.app.model.data.EType;
 import com.ultrasound.app.model.data.ListItem;
 import com.ultrasound.app.model.data.SubMenu;
 import com.ultrasound.app.payload.response.MessageResponse;
@@ -28,17 +29,19 @@ public class ClassificationServiceImpl implements ClassificationService {
     private SubMenuServiceImpl subMenuService;
     @Autowired
     private ItemServiceImpl itemService;
-//
-//    @Override
-//    public Boolean subMenuExists(String id, String subMenu) {
-//        Predicate<String> matchThisSubMenu = String -> String.equals(subMenu);
-//        SubMenu subMenuObj = subMenuService.
-//        return classification.getSubMenus().keySet().stream().anyMatch(matchThisSubMenu);
-//    }
 
     @Override
     public void insert(Classification classification) {
         classificationRepo.insert(classification);
+    }
+
+    @Override
+    public MessageResponse createNew(String name) {
+        Map<String, String> subMenus = new TreeMap<>();
+        Classification classification =
+                new Classification(name, false, new ArrayList<>(), subMenus, EType.TYPE_CLASSIFICATION);
+        classificationRepo.insert(classification);
+        return new MessageResponse(name + " created");
     }
 
     @Override
@@ -103,21 +106,6 @@ public class ClassificationServiceImpl implements ClassificationService {
     public void deleteTableEntities() {
         classificationRepo.deleteAll();
     }
-//
-//    @Override
-//    public MessageResponse delete(String id) {
-//        AtomicInteger count = new AtomicInteger(0);
-//        Classification classification = getById(id);
-//        String name = classification.getName();
-//        Map<String, String> subMenus = classification.getSubMenus();
-//        subMenus.values().forEach(key -> {
-//            subMenuService.deleteById(key);
-//            count.getAndIncrement();
-//        });
-//        log.info("Deleting Classification {} and {} submenus", name, count);
-//        classificationRepo.deleteById(id);
-//        return new MessageResponse("Deleted " + name + " and " + count + " submenus");
-//    }
 
     @Override
     public MessageResponse deleteById(String id) {

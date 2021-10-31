@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.Id;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -28,5 +29,13 @@ public class Classification {
         this.hasSubMenu = hasSubMenu;
         this.listItems = listItems;
         this.subMenus = subMenus;
+    }
+
+    public Classification(String name, Boolean hasSubMenu, List<ListItem> listItems, Map<String, String> subMenus, EType type) {
+        this.name = name;
+        this.hasSubMenu = hasSubMenu;
+        this.listItems = listItems;
+        this.subMenus = subMenus;
+        this.type = type;
     }
 }

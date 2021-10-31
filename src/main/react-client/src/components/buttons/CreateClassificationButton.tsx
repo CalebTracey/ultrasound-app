@@ -3,15 +3,14 @@ import React, { useState, FC, useCallback } from 'react'
 import { FiPlusSquare } from 'react-icons/fi'
 import { useForm, Resolver } from 'react-hook-form'
 import CreateModal from '../CreateModal'
-import { useAppSelector, useAppDispatch } from '../../redux/hooks'
-import { createSubMenu } from '../../redux/slices/subMenu'
+import { useAppDispatch } from '../../redux/hooks'
+import { createClassification } from '../../redux/slices/classification'
 
 type TFormValues = { name: string }
 
-const CreateSubMenuButton: FC = () => {
+const CreateClassificationButton: FC = () => {
     const [modal, setModal] = useState(false)
     const dispatch = useAppDispatch()
-    const { classification } = useAppSelector((state) => state)
 
     const resolver: Resolver<TFormValues> = async (values) => {
         return {
@@ -20,7 +19,7 @@ const CreateSubMenuButton: FC = () => {
                 ? {
                       name: {
                           type: 'required',
-                          message: 'New submenu name is required.',
+                          message: 'New classification name is required.',
                       },
                   }
                 : {},
@@ -40,8 +39,7 @@ const CreateSubMenuButton: FC = () => {
         const { name } = formValues
         if (!errors.name) {
             dispatch(
-                createSubMenu({
-                    classification: classification.selected._id,
+                createClassification({
                     name,
                 })
             )
@@ -71,7 +69,7 @@ const CreateSubMenuButton: FC = () => {
                 </big>
             </button>
             <CreateModal
-                actionText="Add Submenu"
+                actionText="Create new Classification"
                 register={register}
                 onSubmit={onSubmit}
                 handleSubmit={handleSubmit}
@@ -82,4 +80,4 @@ const CreateSubMenuButton: FC = () => {
     )
 }
 
-export default CreateSubMenuButton
+export default CreateClassificationButton

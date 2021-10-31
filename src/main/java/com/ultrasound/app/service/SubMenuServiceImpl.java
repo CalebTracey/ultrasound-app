@@ -55,7 +55,6 @@ public class SubMenuServiceImpl implements SubMenuService{
         int count = subMenu.getItemList().size();
         log.info("Deleting Submenu {} and {} listItems",name, count);
         subMenuRepo.delete(subMenu);
-//        classificationService.deleteSubMenu(classification.get_id(), subMenu.get_id());
         return new MessageResponse("Deleted submenu " + name + " and " + count + " list items");
     }
 

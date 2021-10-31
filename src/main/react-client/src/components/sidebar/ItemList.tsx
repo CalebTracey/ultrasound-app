@@ -15,7 +15,7 @@ interface Props {
     parentId: string
 }
 
-const ListItemGroup: FC<Props> = ({ parentId, listItems }) => {
+const ItemList: FC<Props> = ({ parentId, listItems }) => {
     const { contentPath } = useAppSelector((state) => state.auth)
     const history = useHistory()
     const dispatch = useAppDispatch()
@@ -49,4 +49,4 @@ const ListItemGroup: FC<Props> = ({ parentId, listItems }) => {
     return <>{subMenuGroup}</>
 }
 
-export default ListItemGroup
+export default ItemList

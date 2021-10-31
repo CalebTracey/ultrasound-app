@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 import { Badge } from 'reactstrap'
 import { IClassification } from '../../schemas'
 import SubMenuList from './SubMenuList'
-import ListItemGroup from './ItemList'
+import ItemList from './ItemList'
 import { useAppSelector, useAppDispatch } from '../../redux/hooks'
 import {
     selectedClassification,
@@ -111,9 +111,9 @@ const ClassificationItem: FC<Props> = ({ classification }) => {
                                 >
                                     Submenus{'  '}
                                 </span>
-                                <Badge pill>
+                                {/* <Badge pill>
                                     {Object.keys(subMenus).length}
-                                </Badge>
+                                </Badge> */}
                             </SidebarHeader>
                             <SubMenuList
                                 key={`sm-ig${_id}`}
@@ -138,9 +138,9 @@ const ClassificationItem: FC<Props> = ({ classification }) => {
                                 >
                                     Scans{'  '}
                                 </span>
-                                <Badge pill>{listItems.length}</Badge>
+                                {/* <Badge pill>{listItems.length}</Badge> */}
                             </SidebarHeader>
-                            <ListItemGroup
+                            <ItemList
                                 key={`l-ig${_id}`}
                                 parentId={_id}
                                 listItems={listItems}

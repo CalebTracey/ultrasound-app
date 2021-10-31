@@ -34,5 +34,4 @@ public class S3Controller {
                 .path("/api/S3/update/").toUriString());
        return ResponseEntity.created(uri).body(s3Service.initializeMongoDatabase());
     }
-
 }

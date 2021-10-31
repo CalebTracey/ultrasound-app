@@ -18,6 +18,7 @@ type TFormValues = {
 }
 
 const Register: FC = () => {
+    const [isLoading, setIsLoading] = useState(false)
     const [successful, setSuccessful] = useState(false)
     const message = useAppSelector((state) => {
         return state.auth.error || ''
@@ -56,11 +57,14 @@ const Register: FC = () => {
     })
 
     const onSubmit = (data: TFormValues) => {
+        setIsLoading(true)
         dispatch(userRegister(data))
             .then(() => {
+                setIsLoading(false)
                 setSuccessful(true)
             })
             .catch(() => {
+                setIsLoading(false)
                 setSuccessful(false)
             })
     }
@@ -71,6 +75,7 @@ const Register: FC = () => {
                 <HomeButton />
             </div>
             <RegisterForm
+                isLoading={isLoading}
                 successful={successful}
                 message={message}
                 onSubmit={onSubmit}

@@ -102,16 +102,13 @@ public class AuthController {
         }
         user.setRoles(roles);
         userRepository.save(user);
-
         // now log them in
         return getAuthenticatedResponse(registerRequest.getUsername(),registerRequest.getPassword());
     }
 
     protected ResponseEntity<?> getAuthenticatedResponse(String userName, String password) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userName, password));
-
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
         String jwt = jwtUtils.generateJwtToken(authentication);
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();

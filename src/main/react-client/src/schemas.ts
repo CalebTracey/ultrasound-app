@@ -5,6 +5,7 @@ export interface IListItem {
     name: string
     title: string
     link: string
+    patientId: string
     type: 'subMenu' | 'classification'
 }
 export interface ISubMenu {

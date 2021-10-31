@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable react/prop-types */
 
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC } from 'react'
 import {
     ProSidebar,
     Menu,
@@ -10,30 +10,18 @@ import {
     SidebarFooter,
 } from 'react-pro-sidebar'
 import ClassificationList from '../components/sidebar/ClassificationList'
-import eventBus from '../common/EventBus'
+import CreateClassificationButton from '../components/buttons/CreateClassificationButton'
+import { useAppSelector } from '../redux/hooks'
 
 const Sidebar: FC = () => {
-    const [editState, setEditState] = useState(true)
-
-    useEffect(() => {
-        const toggle = () => setEditState(!editState)
-
-        const ac = new AbortController()
-
-        eventBus.on('toggleEdit', ac, () => {
-            toggle()
-        })
-        return () => {
-            ac.abort()
-            eventBus.remove('toggleEdit', toggle)
-        }
-    }, [editState])
+    const { showEdit } = useAppSelector((state) => state.auth)
 
     return (
         <div className="sidebar">
             <ProSidebar>
                 <div className="sidebar___header">
                     <SidebarHeader style={{ display: 'flex' }}>
+                        {showEdit && <CreateClassificationButton />}
                         <p className="sidebar___header___text">
                             Classifications
                         </p>

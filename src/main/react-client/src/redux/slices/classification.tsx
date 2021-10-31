@@ -12,6 +12,7 @@ import { api } from '../../service/api'
 import { newError } from './message'
 import { itemType } from './item'
 
+type TNewClassification = { name: string }
 interface classificationSliceState {
     entities: IClassification[] | []
     selected: IClassification | Record<string, never>
@@ -66,6 +67,15 @@ export const getOneClassification = createAsyncThunk(
     async (id: string) => {
         const response = await api.get(`classifications/${id}`)
         return response.data
+    }
+)
+
+export const createClassification = createAsyncThunk(
+    'classifications/create',
+    async (data: TNewClassification, thunkApi) => {
+        const response = await api.post(`classification/create`, data)
+        thunkApi.dispatch(getAllClassifications())
+        return response
     }
 )
 

@@ -14,6 +14,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.jetbrains.annotations.NotNull;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,8 @@ import java.util.stream.Collectors;
 public class S3ServiceImpl implements S3Service {
 
     private final AmazonS3Client s3Client;
-    private final String BUCKET_NAME = "ultrasound-files";
+//    private final String BUCKET_NAME = "ultrasound-files";
+    private final String BUCKET_NAME = "ultrasound-test-2";
 
     @Autowired
     private ClassificationServiceImpl classificationService;
@@ -54,7 +56,6 @@ public class S3ServiceImpl implements S3Service {
     public MessageResponse initializeMongoDatabase() {
         List<String> s3FileNames = s3FileNames().stream().map(S3ObjectSummary::getKey)     // keys = title of file
                 .collect(Collectors.toList());
-
         return createAndSaveMongoData(s3FileNames);
     }
 
@@ -77,18 +78,21 @@ public class S3ServiceImpl implements S3Service {
 
             Map<String, String> newClassificationSubMenuMap = new TreeMap<>();
             Boolean hasSubMenus = currentData.getHasSubMenu();
-            boolean hasClassificationScans = currentData.getClassificationScans().size() != 0;
+            boolean hasClassificationScans = currentData.getClassificationScans().size() > 0;
 
             Classification newClassification = new Classification();
             newClassification.setName(key);
-            newClassification.setHasSubMenu(hasSubMenus);
+
 
             if (hasClassificationScans) {
                 FileStructureDataContainer condenseData = condenseDataContainer(currentData);
                 currentData.setSubMenus(condenseData.getSubMenus());
                 newClassification.setListItems(condenseData.getClassificationScans());
+                hasSubMenus = condenseData.getHasSubMenu();
                 scanCount.addAndGet(condenseData.getClassificationScans().size());
             }
+
+            newClassification.setHasSubMenu(hasSubMenus);
 
             if (hasSubMenus) {
                 ListIterator<FileStructureSubMenu> subMenuListIterator = currentData.getSubMenus().listIterator();
@@ -141,7 +145,7 @@ public class S3ServiceImpl implements S3Service {
             List<ListItem> commonScanList = commonScanNames.get(commonName);
             FileStructureSubMenu newSubMenu = new FileStructureSubMenu();
 
-            if (commonScanList.size() > 1) {
+            if (commonScanList.size() > 2) {
                 newSubMenu.setName(commonName);
                 newSubMenu.setClassification(dataContainer.getClassification());
                 newSubMenu.setItemList(commonScanList);
@@ -403,71 +407,153 @@ public class S3ServiceImpl implements S3Service {
         ArrayList<ListItem> subMenuItems = new ArrayList<>();
         FileStructureSubMenu subMenu = new FileStructureSubMenu();
 
-        String fileNoDash = StringUtils.replaceChars(file, "-", " ");
-        String fileNoDashNormalized = StringUtils.normalizeSpace(fileNoDash);
-        StringUtils.replace(" w ", fileNoDashNormalized, "with", -1);
-        String[] splitFile = StringUtils.split(fileNoDashNormalized, null);
-        String[] splitFileSubParts = ArrayUtils.subarray(splitFile, 1, splitFile.length);
-        String classificationName = ArrayUtils.get(splitFile, 0);
-        // filter predicates
+        String fileNormalized = StringUtils.normalizeSpace(file);
+        String[] splitFilePre = StringUtils.split(fileNormalized, "-");
+        List<String> splitFileNoSpace =
+                Arrays.stream(splitFilePre).map(StringUtils::trim).collect(Collectors.toList());
+
         Predicate<String> noMp4 = String -> !String.contains("mp4");
-        Predicate<String> noNumber = String -> !NumberUtils.isCreatable(String) && String.length() > 2;
-        Predicate<String> noNumberLong = String -> !NumberUtils.isCreatable(String);
+        Predicate<String> notNumber = String -> !NumberUtils.isCreatable(String) && String.length() > 2;
+        Predicate<String> notPatientId = String -> !StringUtils.startsWith(String, "e");
 
-        List<String> filteredSubParts = Arrays.stream(splitFileSubParts)
-                .filter(noMp4.and(noNumber)).collect(Collectors.toList());
-        List<String> titleParts = Arrays.stream(splitFile)
-                .filter(noMp4.and(noNumberLong)).collect(Collectors.toList());
-        int subPartsLength = filteredSubParts.size();
+        List<String> splitFile = splitFileNoSpace.stream().filter(noMp4).collect(Collectors.toList());
+        int fileLength = splitFile.size();
 
-        fileStructure.setClassification(classificationName);
+        List<String> titleParts = splitFile.stream().filter(
+                noMp4.and(notNumber).and(notPatientId)).collect(Collectors.toList());
+        fileStructure.setClassification(splitFile.get(0)); // set Classification name
+
         listItem.setTitle(StringUtils.join(titleParts, " "));
         listItem.setLink(file);
 
-        if (subPartsLength >= 4) {
-            int halfLength = subPartsLength / 2;
-            List<String> subMenuNameParts = filteredSubParts.subList(0, 2);
-            List<String> scanNameParts = filteredSubParts.subList(2,
-                    subPartsLength).stream().filter(noNumber).collect(Collectors.toList());
-
-            String scanName = StringUtils.join(scanNameParts, " ");
-            String subMenuName = StringUtils.join(subMenuNameParts, " ");
-
+        if (fileLength == 3) {
+            // No submenu + patient id
+            if (fileHasPatientId(splitFile.get(2))) {
+                listItem.setName(splitFile.get(1));
+                listItem.setPatientId(splitFile.get(2));
+                listItem.setType(EType.TYPE_CLASSIFICATION);
+                fileStructure.setScan(listItem);
+                fileStructure.setHasSubMenu(false);
+                fileStructure.setHasScan(true);
+            // Submenu + no patient id
+            } else {
+                subMenu.setClassification(fileStructure.getClassification());
+                subMenu.setName(splitFile.get(1));
+                listItem.setName(splitFile.get(2));
+                listItem.setType(EType.TYPE_SUB_MENU);
+                subMenuItems.add(listItem);
+                subMenu.setItemList(subMenuItems);
+                fileStructure.setHasSubMenu(true);
+                fileStructure.setHasScan(false);
+                fileStructure.setSubMenu(subMenu);
+            }
+        }
+        // Submenu + patient id
+        if (fileLength == 4 && fileHasPatientId(splitFile.get(3))) {
+            subMenu.setClassification(fileStructure.getClassification());
+            subMenu.setName(splitFile.get(1));
+            listItem.setName(splitFile.get(2));
+            listItem.setPatientId(splitFile.get(3));
             listItem.setType(EType.TYPE_SUB_MENU);
-            listItem.setName(scanName);
-            subMenu.setName(subMenuName);
             subMenuItems.add(listItem);
             subMenu.setItemList(subMenuItems);
-            subMenu.setClassification(classificationName);
-            fileStructure.setSubMenu(subMenu);
             fileStructure.setHasSubMenu(true);
             fileStructure.setHasScan(false);
+            fileStructure.setSubMenu(subMenu);
 
-        } else if (filteredSubParts.size() >= 1) {
-            StringBuilder stringBuilder = new StringBuilder(listItem.getTitle());
-            stringBuilder.delete(0, classificationName.length());
-
-            String listItemName = stringBuilder.toString();
-            StringUtils.deleteWhitespace(listItemName);
-
-            if (stringBuilder.length() >= 2 && !NumberUtils.isCreatable(listItemName)) {
-                listItem.setName(listItemName);
+        }
+        // No submenu + no patient id
+        if (fileLength == 2) {
+            if (fileHasPatientId(splitFile.get(1))) {
+                listItem.setName(splitFile.get(0) + " Scan");
+                listItem.setPatientId(splitFile.get(1));
             } else {
-                listItem.setName(filteredSubParts.get(0));
+                listItem.setName(splitFile.get(1));
             }
             listItem.setType(EType.TYPE_CLASSIFICATION);
             fileStructure.setScan(listItem);
             fileStructure.setHasSubMenu(false);
             fileStructure.setHasScan(true);
-        } else {
-            listItem.setName(classificationName + " scan");
-            listItem.setType(EType.TYPE_CLASSIFICATION);
-            fileStructure.setScan(listItem);
-            fileStructure.setHasSubMenu(false);
-            fileStructure.setHasScan(true);
         }
-        fileStructure.setLink(file);
+
         return fileStructure;
+    }
+//    private SingleFileStructure normalizeFileStructure(String file) {
+//        SingleFileStructure fileStructure = new SingleFileStructure();
+//        ListItem listItem = new ListItem();
+//        ArrayList<ListItem> subMenuItems = new ArrayList<>();
+//        FileStructureSubMenu subMenu = new FileStructureSubMenu();
+//
+//        String fileNoDash = StringUtils.replaceChars(file, "-", " ");
+//        String fileNoDashNormalized = StringUtils.normalizeSpace(fileNoDash);
+//        StringUtils.replace(" w ", fileNoDashNormalized, "with", -1);
+//        String[] splitFile = StringUtils.split(fileNoDashNormalized, null);
+//        String[] splitFileSubParts = ArrayUtils.subarray(splitFile, 1, splitFile.length);
+//        String classificationName = ArrayUtils.get(splitFile, 0);
+//        // filter predicates
+//        Predicate<String> noMp4 = String -> !String.contains("mp4");
+//        Predicate<String> noNumber = String -> !NumberUtils.isCreatable(String) && String.length() > 2;
+//        Predicate<String> noNumberLong = String -> !NumberUtils.isCreatable(String);
+//
+//        List<String> filteredSubParts = Arrays.stream(splitFileSubParts)
+//                .filter(noMp4.and(noNumber)).collect(Collectors.toList());
+//        List<String> titleParts = Arrays.stream(splitFile)
+//                .filter(noMp4.and(noNumberLong)).collect(Collectors.toList());
+//        int subPartsLength = filteredSubParts.size();
+//
+//        fileStructure.setClassification(classificationName);
+//        listItem.setTitle(StringUtils.join(titleParts, " "));
+//        listItem.setLink(file);
+//
+//        if (subPartsLength >= 4) {
+//            int halfLength = subPartsLength / 2;
+//            List<String> subMenuNameParts = filteredSubParts.subList(0, 2);
+//            List<String> scanNameParts = filteredSubParts.subList(2,
+//                    subPartsLength).stream().filter(noNumber).collect(Collectors.toList());
+//
+//            String scanName = StringUtils.join(scanNameParts, " ");
+//            String subMenuName = StringUtils.join(subMenuNameParts, " ");
+//
+//            listItem.setType(EType.TYPE_SUB_MENU);
+//            listItem.setName(scanName);
+//            subMenu.setName(subMenuName);
+//            subMenuItems.add(listItem);
+//            subMenu.setItemList(subMenuItems);
+//            subMenu.setClassification(classificationName);
+//            fileStructure.setSubMenu(subMenu);
+//            fileStructure.setHasSubMenu(true);
+//            fileStructure.setHasScan(false);
+//
+//        } else if (filteredSubParts.size() >= 1) {
+//            StringBuilder stringBuilder = new StringBuilder(listItem.getTitle());
+//            stringBuilder.delete(0, classificationName.length());
+//
+//            String listItemName = stringBuilder.toString();
+//            StringUtils.deleteWhitespace(listItemName);
+//
+//            if (stringBuilder.length() >= 2 && !NumberUtils.isCreatable(listItemName)) {
+//                listItem.setName(listItemName);
+//            } else {
+//                listItem.setName(filteredSubParts.get(0));
+//            }
+//            listItem.setType(EType.TYPE_CLASSIFICATION);
+//            fileStructure.setScan(listItem);
+//            fileStructure.setHasSubMenu(false);
+//            fileStructure.setHasScan(true);
+//        } else {
+//            listItem.setName(classificationName + " scan");
+//            listItem.setType(EType.TYPE_CLASSIFICATION);
+//            fileStructure.setScan(listItem);
+//            fileStructure.setHasSubMenu(false);
+//            fileStructure.setHasScan(true);
+//        }
+//        fileStructure.setLink(file);
+//        return fileStructure;
+//    }
+
+    private @NotNull Boolean fileHasPatientId(@NotNull String lastFileValue) {
+        return lastFileValue.length() == 7 &&
+                NumberUtils.isCreatable(lastFileValue) || StringUtils.startsWith(lastFileValue, "e");
     }
 
     private Boolean checkIfSameLink(ListItem item1, ListItem item2) {
@@ -539,9 +625,7 @@ public class S3ServiceImpl implements S3Service {
     public static void main(String[] args) {
         AmazonS3Client s3Client = S3Config.amazonS3Client();
         S3ServiceImpl s3ServiceTest = new S3ServiceImpl(s3Client);
-
 //        singleFileTest(s3ServiceTest);
-
 //        multiFileTest(s3ServiceTest);
 //        duplicateSubMenuTest(s3ServiceTest);
         duplicateListItems(s3ServiceTest);
@@ -634,8 +718,8 @@ public class S3ServiceImpl implements S3Service {
         ListItem l5 = new ListItem("different item", "test item title 5", "aws.test.link.5");
         ListItem l6 = new ListItem("different item", "test item title 6", "aws.test.link.6");
 
-        List<ListItem> testList = new ArrayList<ListItem>(Arrays.asList(l1,l2,l3));
-        List<ListItem> testList1 = new ArrayList<ListItem>(Arrays.asList(l4,l5,l6));
+        List<ListItem> testList = new ArrayList<>(Arrays.asList(l1,l2,l3));
+        List<ListItem> testList1 = new ArrayList<>(Arrays.asList(l4,l5,l6));
         FileStructureSubMenu subMenuTest1 = new FileStructureSubMenu(classification, name, testList);
         FileStructureSubMenu subMenuTest2 = new FileStructureSubMenu(classification, name, testList1);
 
@@ -666,7 +750,7 @@ public class S3ServiceImpl implements S3Service {
         ListItem l4 = new ListItem("different item", "test item title 5", "aws.test.link.5");
         ListItem l5 = new ListItem("different item", "test item title 6", "aws.test.link.6");
 
-        List<ListItem> testList = new ArrayList<ListItem>(Arrays.asList(l1,l2,l3, l4, l5));
+        List<ListItem> testList = new ArrayList<>(Arrays.asList(l1,l2,l3, l4, l5));
 
 
 
