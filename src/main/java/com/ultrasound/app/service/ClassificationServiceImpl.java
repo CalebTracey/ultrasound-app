@@ -1,5 +1,6 @@
 package com.ultrasound.app.service;
 
+import com.ultrasound.app.controller.util.ItemLink;
 import com.ultrasound.app.exceptions.ClassificationNotFoundException;
 import com.ultrasound.app.model.data.Classification;
 import com.ultrasound.app.model.data.EType;
@@ -69,6 +70,34 @@ public class ClassificationServiceImpl implements ClassificationService {
     public String save(@NotNull Classification classification) {
         log.info("Saving classification: {}", classification.getName());
         return classificationRepo.save(classification).get_id();
+    }
+
+    @Override
+    public List<ListItem> allDatabaseScans() {
+        List<Classification> allClassifications = classificationRepo.findAll();
+        List<ListItem> scanList = new ArrayList<>();
+        allClassifications.forEach(classification -> {
+            if (classification.getHasSubMenu()) {
+                List<SubMenu> subMenus = classification.getSubMenus().values().stream().map(
+                        id -> subMenuService.getById(id)).collect(Collectors.toList());
+                subMenus.forEach(subMenu -> scanList.addAll(subMenu.getItemList()));
+            }
+            scanList.addAll(classification.getListItems());
+        });
+        log.info("Found " + scanList.size() + " scans in the database");
+        return scanList;
+    }
+
+    @Override
+    public List<String> allDatabaseScanLinks() {
+        List<ListItem> allItems = allDatabaseScans();
+        return allItems.stream().map(ListItem::getLink).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<SubMenu> subMenuObjects(Classification classification) {
+        List<String> subMenuIds = (List<String>) classification.getSubMenus().values();
+        return subMenuIds.stream().map(id -> subMenuService.getById(id)).collect(Collectors.toList());
     }
 
     @Override

@@ -32,4 +32,10 @@ public class SubMenu {
         this.itemList = itemList;
         this.type = type;
     }
+
+    public SubMenu(String classification, String name, List<ListItem> itemList) {
+        this.classification = classification;
+        this.name = name;
+        this.itemList = itemList;
+    }
 }

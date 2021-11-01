@@ -5,6 +5,7 @@ import com.ultrasound.app.service.ClassificationServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -33,5 +34,12 @@ public class S3Controller {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/api/S3/update/").toUriString());
        return ResponseEntity.created(uri).body(s3Service.initializeMongoDatabase());
+    }
+
+    @GetMapping("/update/newData")
+    public ResponseEntity<?> updateBucketNewData() {
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/api/S3/update/newData").toUriString());
+        return ResponseEntity.created(uri).body(s3Service.updateMongoDatabase());
     }
 }
