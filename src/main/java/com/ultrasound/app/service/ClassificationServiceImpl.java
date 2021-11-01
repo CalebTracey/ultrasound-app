@@ -92,13 +92,12 @@ public class ClassificationServiceImpl implements ClassificationService {
     public List<String> allDatabaseScanLinks() {
         List<ListItem> allItems = allDatabaseScans().orElseThrow(
                 () -> new UpdateDatabaseException("Problem fetching all scan files from database"));
-//                .orElseThrow(() -> new UpdateDatabaseException(""));
         return allItems.stream().map(ListItem::getLink).collect(Collectors.toList());
     }
 
     @Override
-    public List<SubMenu> subMenuObjects(Classification classification) {
-        List<String> subMenuIds = (List<String>) classification.getSubMenus().values();
+    public List<SubMenu> subMenuObjects(@NotNull Map<String, String> subMenuMap) {
+        List<String> subMenuIds = new ArrayList<>(new LinkedHashSet<>(subMenuMap.values()));
         return subMenuIds.stream().map(id -> subMenuService.getById(id)).collect(Collectors.toList());
     }
 
@@ -109,7 +108,6 @@ public class ClassificationServiceImpl implements ClassificationService {
         log.info("Changing Classification name {} to {}",origName, name);
         classificationRepo.save(classification);
         return new MessageResponse("Changed Classification name " + origName + " to " + name);
-
     }
 
     @Override
@@ -127,8 +125,9 @@ public class ClassificationServiceImpl implements ClassificationService {
             itemList.add(item);
         }
         item.setName(name);
+        item.setTitle(classification.getName() + " " + name);
         itemList.add(item);
-        classification.setListItems(itemList);
+        classification.setListItems(new ArrayList<>(new LinkedHashSet<>(itemList)));
         save(classification);
         return new MessageResponse("Saved " + currentName + " as " + name + " in " + className);
     }

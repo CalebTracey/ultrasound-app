@@ -3,6 +3,8 @@ import { Button, InputGroupAddon } from 'reactstrap'
 import EditDataNameForm from './EditDataNameForm'
 import { useAppDispatch } from '../../redux/hooks'
 import { editDataName } from '../../redux/slices/edit'
+import eventBus from '../../common/EventBus'
+import { getAllClassifications } from '../../redux/slices/classification'
 
 interface Props {
     id: string
@@ -16,6 +18,8 @@ const EditDataName: FC<Props> = ({ currentName, id, type }) => {
 
     const onSubmit = () => {
         dispatch(editDataName({ id, textValue, type }))
+        eventBus.dispatch('updateItems')
+        dispatch(getAllClassifications())
     }
 
     return (

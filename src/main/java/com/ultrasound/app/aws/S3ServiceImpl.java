@@ -104,11 +104,11 @@ public class S3ServiceImpl implements S3Service {
             newClassification.setName(key);
 
             if (hasClassificationScans) {
-                FileStructureDataContainer condenseData = condenseDataContainer(currentData);
-                currentData.setSubMenus(condenseData.getSubMenus());
-                newClassification.setListItems(condenseData.getClassificationScans());
-                hasSubMenus = condenseData.getHasSubMenu();
-                scanCount.addAndGet(condenseData.getClassificationScans().size());
+//                FileStructureDataContainer condenseData = condenseDataContainer(currentData);
+//                currentData.setSubMenus(condenseData.getSubMenus());
+                newClassification.setListItems(currentData.getClassificationScans());
+                hasSubMenus = currentData.getHasSubMenu();
+                scanCount.addAndGet(currentData.getClassificationScans().size());
             } else {
                 currentData.setClassificationScans(new ArrayList<>());
             }
@@ -158,46 +158,51 @@ public class S3ServiceImpl implements S3Service {
 
         fileStructureDataMap.keySet().forEach(key -> {
             FileStructureDataContainer currentData = fileStructureDataMap.get(key);
-            boolean hasClassificationScans = currentData.getClassificationScans().isEmpty();
-            Boolean hasSubMenus = currentData.getHasSubMenu();
+            boolean newClassificationScans = !currentData.getClassificationScans().isEmpty();
+            Boolean newSubMenus = currentData.getHasSubMenu();
 
             if (classificationService.classificationExists(key)) {
                 Classification classification = classificationService.getByName(key);
-                List<ListItem> mongoClassificationScanList = classification.getListItems();
+                List<ListItem> currentScanList = classification.getListItems();
 
-                if (hasClassificationScans) {
-                    FileStructureDataContainer condenseData = condenseDataContainer(currentData);
-                    if (condenseData.getHasSubMenu()) {
-                        currentData.setSubMenus(condenseData.getSubMenus());
-                        currentData.setHasSubMenu(true);
-                        if (currentData.getClassificationScans().isEmpty()) {
-                            currentData.setClassificationScans(new ArrayList<>());
-                        }
-                    }
-                    currentData.setClassificationScans(condenseData.getClassificationScans());
-                    mongoClassificationScanList.addAll(condenseData.getClassificationScans());
-                    classification.setListItems(mongoClassificationScanList);
-                    newScanCount.addAndGet(condenseData.getClassificationScans().size());
-                } else {
-                    classification.setListItems(new ArrayList<>());
+                if (newClassificationScans) {
+//                    FileStructureDataContainer condenseData = condenseDataContainer(currentData);
+//                    if (condenseData.getHasSubMenu()) {
+//                    currentData.setSubMenus(condenseData.getSubMenus());
+//                    currentData.setHasSubMenu(true);
+////                        if (currentData.getClassificationScans().isEmpty()) {
+////                            currentData.setClassificationScans(new ArrayList<>());
+////                        }
+//                    }
+//                    currentData.setClassificationScans(condenseData.getClassificationScans());
+                    currentScanList.addAll(currentData.getClassificationScans());
+                    classification.setListItems(currentScanList);
+                    newScanCount.addAndGet(currentData.getClassificationScans().size());
                 }
-
-                if (hasSubMenus) {
+//                else {
+//                    classification.setListItems(new ArrayList<>());
+//                }
+                // if there are new submenus
+                if (newSubMenus) {
                     ListIterator<FileStructureSubMenu> subMenuListIterator = currentData.getSubMenus().listIterator();
                     subMenuListIterator.forEachRemaining(subMenu -> {
+                        // if the current classification has submenus
                         if (classification.getHasSubMenu()) {
                             Predicate<SubMenu> nameMatch = SubMenu -> SubMenu.getName().equals(subMenu.getName());
-                            List<SubMenu> subMenus = classificationService.subMenuObjects(classification);
+                            List<SubMenu> subMenus = classificationService.subMenuObjects(classification.getSubMenus());
+                            // check to see if new submenu matches any current ones
                             if (subMenus.stream().anyMatch(nameMatch)) {
                                 SubMenu updatedSubMenu =
                                         subMenuService.getById(classification.getSubMenus().get(subMenu.getName()));
                                 List<ListItem> items = updatedSubMenu.getItemList();
                                 items.addAll(subMenu.getItemList());
                                 updatedSubMenu.setItemList(items);
-                                classification.setListItems(currentData.getClassificationScans());
-                                classificationService.save(classification);
+//                                classification.setListItems(currentData.getClassificationScans());
+//                                classificationService.save(classification);
+                                log.info("Updating submenu: {}", updatedSubMenu);
                                 subMenuService.save(updatedSubMenu);
                                 newScanCount.addAndGet(subMenu.getItemList().size());
+                                // if not then create a new submenu obj and add to db and classification.
                             } else {
                                 SubMenu newSubMenu =
                                         new SubMenu(subMenu.getClassification(), subMenu.getName(), subMenu.getItemList());
@@ -205,18 +210,25 @@ public class S3ServiceImpl implements S3Service {
                                 Map<String, String> currentSubMenuMap = classification.getSubMenus();
                                 currentSubMenuMap.put(subMenu.getName(), newId);
                                 classification.setSubMenus(currentSubMenuMap);
-                                classification.setListItems(currentData.getClassificationScans());
-                                classificationService.save(classification);
+//                                classification.setListItems(currentData.getClassificationScans());
+//                                classificationService.save(classification);
                                 newSubMenuCount.getAndIncrement();
                                 newScanCount.addAndGet(subMenu.getItemList().size());
                             }
+                        } else {
+                            Map<String, String> newSubMenuMap = new TreeMap<>();
+                            SubMenu newSubMenu =
+                                    new SubMenu(subMenu.getClassification(), subMenu.getName(), subMenu.getItemList());
+                            String newId = subMenuService.save(newSubMenu).get_id();
+                            newSubMenuMap.put(subMenu.getName(), newId);
+                            classification.setSubMenus(newSubMenuMap);
+                            newSubMenuCount.getAndIncrement();
+                            newScanCount.addAndGet(subMenu.getItemList().size());
                         }
                     });
-                } else {
-                    classification.setHasSubMenu(false);
-                    classificationService.save(classification);
+                    classification.setHasSubMenu(true);
                 }
-
+                classificationService.save(classification);
             } else {
                 Classification classification = new Classification();
                 classification.setName(currentData.getClassification());

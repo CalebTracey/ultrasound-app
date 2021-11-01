@@ -9,6 +9,7 @@ import com.ultrasound.app.model.data.SubMenu;
 import com.ultrasound.app.payload.response.MessageResponse;
 import com.ultrasound.app.repo.SubMenuRepo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -118,8 +119,9 @@ public class SubMenuServiceImpl implements SubMenuService{
             itemList.add(item);
         }
         item.setName(name);
+        item.setTitle(subMenu.getClassification() + " " + subMenu.getName() + " " + name);
         itemList.add(item);
-        subMenu.setItemList(itemList);
+        subMenu.setItemList(new ArrayList<>(new LinkedHashSet<>(itemList)));
         save(subMenu);
         return new MessageResponse("Saved " + currentName + " as " + name + " in " + subName);
     }

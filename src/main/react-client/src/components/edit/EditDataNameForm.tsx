@@ -15,8 +15,8 @@ const EditDataNameForm: FC<Props> = (props: Props) => {
     }
     return (
         <Input
-            type="email"
-            name="email"
+            type="text"
+            name={`dataForm/${currentName}`}
             id="dataForm"
             placeholder={currentName}
             value={textValue}

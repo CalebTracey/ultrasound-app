@@ -48,14 +48,12 @@ export const editDataName = createAsyncThunk(
     async (data: TDataNameProps, thunkApi) => {
         const { type, id, textValue } = data
         const newName = { name: textValue }
-        api.post<TDataNamePayload, AxiosResponse>(
+        const response = await api.post<TDataNamePayload, AxiosResponse>(
             `/edit/${type}/name/${id}`,
             newName
-            // headers
-        ).then((res: AxiosResponse<IMessageResponse>) => {
-            thunkApi.dispatch(getAllClassifications())
-            thunkApi.dispatch(newMessage(res.data.message))
-        })
+        )
+        // thunkApi.dispatch(getAllClassifications())
+        thunkApi.dispatch(newMessage(response.data.message))
     }
 )
 
@@ -64,15 +62,12 @@ export const editItemName = createAsyncThunk(
     async (data: TItemNameProps, thunkApi) => {
         const { type, id, item, textValue } = data
         const newName = { newName: textValue, link: item.link, name: item.name }
-        api.post<TDataNamePayload, AxiosResponse>(
+        const response = await api.post<TDataNamePayload, AxiosResponse>(
             `/edit/${type}/item/name/${id}`,
             newName
-            // headers
-        ).then((res: AxiosResponse<IMessageResponse>) => {
-            thunkApi.dispatch(getAllClassifications())
-            thunkApi.dispatch(resetItemSelection())
-            thunkApi.dispatch(newMessage(res.data.message))
-        })
+        )
+        // thunkApi.dispatch(getAllClassifications())
+        thunkApi.dispatch(newMessage(response.data.message))
     }
 )
 
