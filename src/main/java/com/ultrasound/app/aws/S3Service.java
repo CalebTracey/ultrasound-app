@@ -4,6 +4,7 @@ import com.amazonaws.services.s3.model.ObjectListing;
 import com.ultrasound.app.payload.response.MessageResponse;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface S3Service {
 

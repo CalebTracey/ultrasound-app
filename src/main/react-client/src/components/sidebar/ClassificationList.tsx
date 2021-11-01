@@ -29,12 +29,12 @@ const ClassificationList: FC = () => {
         isClassifications(classifications) &&
         classifications.map((classification: IClassification) => {
             return (
-                <div id={`cl-item-${classification._id}`}>
-                    <ClassificationItem
-                        key={`cl-item-${classification._id}`}
-                        classification={classification}
-                    />
-                </div>
+                // <div id={`cl-wrapper-${classification._id}`}>
+                <ClassificationItem
+                    key={`cl-item-${classification._id}`}
+                    classification={classification}
+                />
+                // </div>
             )
         })
 

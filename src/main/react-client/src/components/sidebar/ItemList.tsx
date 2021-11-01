@@ -42,7 +42,11 @@ const ItemList: FC<Props> = ({ parentId, listItems }) => {
     const subMenuGroup =
         listItems &&
         listItems.map((item) => (
-            <Item menuItem={item} handleItemClick={handleItemClick}>
+            <Item
+                key={item.link}
+                menuItem={item}
+                handleItemClick={handleItemClick}
+            >
                 {item.name}
             </Item>
         ))

@@ -6,40 +6,50 @@ import Switch from 'react-switch'
 import Logout from '../buttons/LogoutButton'
 import UserInfoHeader from '../UserInfoHeader'
 import { useAppSelector, useAppDispatch } from '../../redux/hooks'
-import { importData } from '../../redux/slices/edit'
+import { importData, updateData } from '../../redux/slices/edit'
 import { clearMessage } from '../../redux/slices/message'
 import { api } from '../../service/api'
 import { IAppUser } from '../../schemas'
 import { userRegister, showEditToggle } from '../../redux/slices/auth'
 import WarningModal from '../WarningModal'
 import eventBus from '../../common/EventBus'
+import DatabaseDropdown from '../DatabaseDropdown'
 
 const Header: FC = () => {
     const { message, auth } = useAppSelector((state) => state)
     const { user, showEdit } = auth
     const [content, setContent] = useState<string | null>(null)
-    const [modal, setModal] = useState(false)
-    const [checked, setChecked] = useState(false)
-    const dispatch = useAppDispatch()
-
-    const handleChange = () => {
-        dispatch(showEditToggle())
-        setChecked(!checked)
-    }
-
-    const toggle = useCallback(() => {
-        setModal(!modal)
-        eventBus.dispatch('toggleEdit')
-    }, [modal])
-
+    const [initModal, setInitModal] = useState(false)
+    const [updateModal, setUpdateModal] = useState(false)
+    const [dropDownOpen, setDropdownOpen] = useState(false)
+    const [switchChecked, setSwitchChecked] = useState(false)
     const isAdmin = user.roles?.includes('ROLE_ADMIN')
-
+    const dispatch = useAppDispatch()
     const isUser = (value: unknown): value is IAppUser => {
         return !!value && !!(value as IAppUser)
     }
-    const handleImport = () => {
+    const handleSwitchChange = () => {
+        dispatch(showEditToggle())
+        setSwitchChecked(!switchChecked)
+    }
+    const dropDownToggle = () => setDropdownOpen(!dropDownOpen)
+
+    const databaseInitToggle = useCallback(() => {
+        setInitModal(!initModal)
+    }, [initModal])
+
+    const databaseUpdateToggle = useCallback(() => {
+        setUpdateModal(!updateModal)
+    }, [updateModal])
+
+    const handleDatabaseInit = () => {
         dispatch(importData())
-        toggle()
+        databaseInitToggle()
+    }
+
+    const handleDatabaseUpdate = () => {
+        dispatch(updateData())
+        databaseUpdateToggle()
     }
 
     useEffect(() => {
@@ -58,10 +68,10 @@ const Header: FC = () => {
     }, [message, dispatch])
 
     useEffect(() => {
-        if (checked !== showEdit) {
-            setChecked(showEdit)
+        if (switchChecked !== showEdit) {
+            setSwitchChecked(showEdit)
         }
-    }, [checked, showEdit])
+    }, [switchChecked, showEdit])
 
     return (
         <>
@@ -80,9 +90,12 @@ const Header: FC = () => {
                                 className="form-group"
                                 style={{ marginLeft: '1rem' }}
                             >
-                                <Button color="warning" onClick={toggle}>
-                                    Import
-                                </Button>
+                                <DatabaseDropdown
+                                    dropDownOpen={dropDownOpen}
+                                    dropDownToggle={dropDownToggle}
+                                    databaseInitToggle={databaseInitToggle}
+                                    databaseUpdateToggle={databaseUpdateToggle}
+                                />
                             </div>
                         )}
 
@@ -102,8 +115,8 @@ const Header: FC = () => {
                                         height={14}
                                         width={28}
                                         handleDiameter={12}
-                                        onChange={handleChange}
-                                        checked={checked}
+                                        onChange={handleSwitchChange}
+                                        checked={switchChecked}
                                     />
                                 </label>
                             </div>
@@ -115,9 +128,16 @@ const Header: FC = () => {
             <WarningModal
                 actionText="Reset the "
                 itemText="database"
-                setModal={modal}
-                toggleCallback={toggle}
-                modalAction={handleImport}
+                setModal={initModal}
+                toggleCallback={databaseInitToggle}
+                modalAction={handleDatabaseInit}
+            />
+            <WarningModal
+                actionText="Update the "
+                itemText="database"
+                setModal={updateModal}
+                toggleCallback={databaseUpdateToggle}
+                modalAction={handleDatabaseUpdate}
             />
         </>
     )

@@ -1,7 +1,7 @@
 package com.ultrasound.app.service;
 
-import com.ultrasound.app.controller.util.ItemLink;
 import com.ultrasound.app.exceptions.ClassificationNotFoundException;
+import com.ultrasound.app.exceptions.UpdateDatabaseException;
 import com.ultrasound.app.model.data.Classification;
 import com.ultrasound.app.model.data.EType;
 import com.ultrasound.app.model.data.ListItem;
@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
@@ -73,7 +72,7 @@ public class ClassificationServiceImpl implements ClassificationService {
     }
 
     @Override
-    public List<ListItem> allDatabaseScans() {
+    public @NotNull Optional<List<ListItem>> allDatabaseScans() {
         List<Classification> allClassifications = classificationRepo.findAll();
         List<ListItem> scanList = new ArrayList<>();
         allClassifications.forEach(classification -> {
@@ -85,12 +84,15 @@ public class ClassificationServiceImpl implements ClassificationService {
             scanList.addAll(classification.getListItems());
         });
         log.info("Found " + scanList.size() + " scans in the database");
-        return scanList;
+        return Optional.of(new ArrayList<>(scanList));
     }
+
 
     @Override
     public List<String> allDatabaseScanLinks() {
-        List<ListItem> allItems = allDatabaseScans();
+        List<ListItem> allItems = allDatabaseScans().orElseThrow(
+                () -> new UpdateDatabaseException("Problem fetching all scan files from database"));
+//                .orElseThrow(() -> new UpdateDatabaseException(""));
         return allItems.stream().map(ListItem::getLink).collect(Collectors.toList());
     }
 

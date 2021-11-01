@@ -118,6 +118,15 @@ export const importData = createAsyncThunk('edit/import', async (_, thunkApi) =>
     })
 )
 
+export const updateData = createAsyncThunk('edit/update', async (_, thunkApi) =>
+    api
+        .post('/S3/update/newData')
+        .then((res: AxiosResponse<IMessageResponse>) => {
+            thunkApi.dispatch(getAllClassifications())
+            thunkApi.dispatch(newMessage(res.data.message))
+        })
+)
+
 const editSlice = createSlice({
     name: 'edit',
     initialState: initialSliceState,

@@ -59,7 +59,7 @@ const ClassificationItem: FC<Props> = ({ classification }) => {
     }, [showEdit])
     return (
         <>
-            <div style={{ display: 'flex' }}>
+            <div key={`classification-item/${_id}`} style={{ display: 'flex' }}>
                 {roles && roles.includes('ROLE_ADMIN') && showEdit && (
                     <button
                         key={`edit-button${_id}`}
@@ -116,7 +116,7 @@ const ClassificationItem: FC<Props> = ({ classification }) => {
                                 </Badge> */}
                             </SidebarHeader>
                             <SubMenuList
-                                key={`sm-ig${_id}`}
+                                key={`sm-list${_id}`}
                                 subMenus={subMenus}
                             />
                         </>
@@ -141,7 +141,7 @@ const ClassificationItem: FC<Props> = ({ classification }) => {
                                 {/* <Badge pill>{listItems.length}</Badge> */}
                             </SidebarHeader>
                             <ItemList
-                                key={`l-ig${_id}`}
+                                key={`item-list${_id}`}
                                 parentId={_id}
                                 listItems={listItems}
                             />

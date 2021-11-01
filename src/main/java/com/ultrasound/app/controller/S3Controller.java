@@ -36,7 +36,7 @@ public class S3Controller {
        return ResponseEntity.created(uri).body(s3Service.initializeMongoDatabase());
     }
 
-    @GetMapping("/update/newData")
+    @PostMapping("/update/newData")
     public ResponseEntity<?> updateBucketNewData() {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/api/S3/update/newData").toUriString());

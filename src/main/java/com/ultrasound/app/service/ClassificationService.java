@@ -4,8 +4,10 @@ import com.ultrasound.app.model.data.Classification;
 import com.ultrasound.app.model.data.ListItem;
 import com.ultrasound.app.model.data.SubMenu;
 import com.ultrasound.app.payload.response.MessageResponse;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ClassificationService {
     void insert(Classification classification);
@@ -15,7 +17,7 @@ public interface ClassificationService {
     Classification getById(String id);
     Classification getByName(String name);
     String save(Classification classification);
-    List<ListItem> allDatabaseScans();
+    @NotNull Optional<List<ListItem>> allDatabaseScans();
     List<String> allDatabaseScanLinks();
     List<SubMenu> subMenuObjects(Classification classification);
     MessageResponse editName(Classification classification, String name);
