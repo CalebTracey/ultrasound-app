@@ -1,6 +1,7 @@
 package com.ultrasound.app.service;
 
 import com.ultrasound.app.model.data.Classification;
+import com.ultrasound.app.model.data.ListItem;
 import com.ultrasound.app.model.data.SubMenu;
 import com.ultrasound.app.payload.response.MessageResponse;
 
@@ -11,6 +12,7 @@ public interface SubMenuService {
     SubMenu getById(String id);
     String insert(SubMenu subMenu);
     boolean existsById(String id);
+    MessageResponse moveSubMenuItem(String oldParentId, String newParentId, ListItem item);
     MessageResponse deleteById(String id);
     MessageResponse createNew(String classificationId, String name);
     MessageResponse deleteByIdClassification(String classificationId, String subMenuId);

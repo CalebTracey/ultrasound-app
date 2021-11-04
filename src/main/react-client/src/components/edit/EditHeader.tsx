@@ -2,8 +2,8 @@ import React, { FC } from 'react'
 import { InputGroup, InputGroupAddon, InputGroupText } from 'reactstrap'
 import EditDataName from './EditDataName'
 import { IClassification } from '../../schemas'
-import ItemListDropdownContainer from '../edit-dropdowns/ItemListDropdownContainer'
-import SubMenuDropdownContainer from '../edit-dropdowns/SubMenuDropdownContainer'
+import ItemListDropdownContainer from '../edit-dropdowns/header/item/ItemListDropdownContainer'
+import SubMenuDropdownContainer from '../edit-dropdowns/header/submenu/SubMenuDropdownContainer'
 import { useAppSelector } from '../../redux/hooks'
 
 interface Props {

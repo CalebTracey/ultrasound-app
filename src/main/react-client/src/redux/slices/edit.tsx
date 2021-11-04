@@ -11,7 +11,7 @@ import {
     editingClassification,
 } from './classification'
 import { removeListItem } from './subMenu'
-import { resetItemSelection, removeItem } from './item'
+import { removeItem } from './item'
 import { newMessage } from './message'
 
 type TDeleteItemPayload = {
@@ -103,14 +103,20 @@ export const deleteItem = createAsyncThunk(
     }
 )
 
-export const importData = createAsyncThunk('edit/import', async (_, thunkApi) =>
-    api.delete('/tables/clear').then(() => {
-        thunkApi.dispatch(newMessage('Initializing the database'))
-        api.post('/S3/update').then((res: AxiosResponse<IMessageResponse>) => {
-            thunkApi.dispatch(getAllClassifications())
-            thunkApi.dispatch(newMessage(res.data.message))
+export const importData = createAsyncThunk(
+    'edit/import',
+    async (_, thunkApi) => {
+        const response = await api.delete('/tables/clear').then(() => {
+            thunkApi.dispatch(newMessage('Initializing the database'))
+            api.post('/S3/update').then(
+                (res: AxiosResponse<IMessageResponse>) => {
+                    thunkApi.dispatch(getAllClassifications())
+                    thunkApi.dispatch(newMessage(res.data.message))
+                }
+            )
         })
-    })
+        return response
+    }
 )
 
 export const updateData = createAsyncThunk('edit/update', async (_, thunkApi) =>

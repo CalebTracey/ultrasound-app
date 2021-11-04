@@ -5,6 +5,7 @@ import com.ultrasound.app.controller.util.Name;
 import com.ultrasound.app.controller.util.NewEmptySubMenu;
 import com.ultrasound.app.controller.util.NewItemName;
 import com.ultrasound.app.model.data.Classification;
+import com.ultrasound.app.model.data.ListItem;
 import com.ultrasound.app.model.data.SubMenu;
 import com.ultrasound.app.service.ClassificationServiceImpl;
 import com.ultrasound.app.service.ItemServiceImpl;
@@ -83,5 +84,14 @@ public class SubMenuController {
                 .path("/api/delete-data/subMenu/{id}").toUriString());
         return ResponseEntity.created(uri).body(subMenuService
                 .deleteByIdClassification(classificationId, subMenuId));
+    }
+
+    @PostMapping("/edit/subMenu/move/{oldParentId}/{newParentId}")
+    public ResponseEntity<?> moveSubMenuItem(@PathVariable String oldParentId,
+                                             @PathVariable String newParentId,
+                                             @RequestBody ListItem item) {
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/api/edit/subMenu/move/{oldParentId}/{newParentId}").toUriString());
+        return ResponseEntity.created(uri).body(subMenuService.moveSubMenuItem(oldParentId, newParentId, item));
     }
 }

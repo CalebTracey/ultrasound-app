@@ -77,9 +77,7 @@ const ClassificationItem: FC<Props> = ({ classification }) => {
                     ref={ref}
                     style={{
                         width,
-                        // width: '100%',
                         fontWeight: 'bold',
-                        // marginLeft: '15%',
                         zIndex: 1,
                         textTransform: 'uppercase',
                         paddingLeft: 0,
@@ -93,7 +91,6 @@ const ClassificationItem: FC<Props> = ({ classification }) => {
                         <>
                             <SidebarHeader
                                 style={{
-                                    // margin: '10px',
                                     lineHeight: '2rem',
                                     display: 'flex',
                                     alignItems: 'center',

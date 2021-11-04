@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import React, { useState, FC } from 'react'
 import { ButtonDropdown, DropdownToggle } from 'reactstrap'
-import { useAppSelector } from '../../redux/hooks'
+import { useAppSelector } from '../../../../redux/hooks'
 import SubMenuDropdown from './SubMenuDropdown'
 
 interface Props {

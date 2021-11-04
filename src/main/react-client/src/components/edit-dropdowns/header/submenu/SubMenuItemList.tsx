@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import React, { FC } from 'react'
-import { useAppSelector } from '../../redux/hooks'
+import { useAppSelector } from '../../../../redux/hooks'
 import SubMenuDropdownItem from './SubMenuDropdownItem'
 
 const SubMenuItemList: FC = () => {

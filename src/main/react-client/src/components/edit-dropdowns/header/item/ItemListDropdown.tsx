@@ -1,9 +1,9 @@
 import React, { FC, useEffect, useState } from 'react'
 import { DropdownMenu } from 'reactstrap'
 import ItemListComponentList from './ItemListComponentList'
-import { useAppSelector } from '../../redux/hooks'
-import { IListItem } from '../../schemas'
-import eventBus from '../../common/EventBus'
+import { useAppSelector } from '../../../../redux/hooks'
+import { IListItem } from '../../../../schemas'
+import eventBus from '../../../../common/EventBus'
 
 const ItemListDropdown: FC = () => {
     const [items, setItems] = useState<IListItem[] | []>([])

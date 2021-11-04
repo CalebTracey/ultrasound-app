@@ -4,29 +4,22 @@ import com.ultrasound.app.model.user.ERole;
 import com.ultrasound.app.security.jwt.AuthEntryPointJwt;
 import com.ultrasound.app.security.service.UserDetailsServiceImpl;
 import com.ultrasound.app.security.jwt.AuthTokenFilter;
-import com.ultrasound.app.security.util.CustomAccessDeniedHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
-import org.springframework.security.config.annotation.web.HttpSecurityBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.header.HeaderWriter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -35,7 +28,6 @@ import java.util.*;
 
 @Slf4j
 @Configuration
-//@EnableAutoConfiguration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(
 //        securedEnabled = true,
@@ -55,7 +47,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
+    public void configure(@NotNull AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
         authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
     }
 
@@ -71,13 +63,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        String[] noAuthRoutes =
-                new String[]{"/", "/api/date", "/api/auth/sign-up", "/api/auth/sign-in", "/api/S3/update/newData"};
-        String[] userAuthRoutes =
-                new String[]{"/api/classifications", "/api/classifications/**", "/api/subMenu/**", "/api/user/**", "/api/S3/link/**"};
-        String[] adminAuthRoutes =
-                new String[]{"/**", "/api/**", "/api/tables/clear", "/api/admin/**", "/api/delete-data/classification/*", "/api/delete-data/subMenu/*"};
+    protected void configure(@NotNull HttpSecurity http) throws Exception {
+        String[] noAuthRoutes = new String[]{
+                        "/api/S3/export", "/", "/api/date", "/api/auth/sign-up", "/api/auth/sign-in", "/api/S3/update/newData"
+        };
+        String[] userAuthRoutes = new String[]{
+                        "/api/classifications", "/api/classifications/**", "/api/subMenu/**", "/api/user/**", "/api/S3/link/**"
+        };
+        String[] adminAuthRoutes = new String[]{
+                "/**", "/api/**", "/api/tables/clear", "/api/admin/**", "/api/delete-data/classification/*", "/api/delete-data/subMenu/*"
+        };
 
                 http.cors().configurationSource(corsConfigurationSource())
                         .and()
@@ -106,7 +101,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         configuration.setAllowCredentials(true);
         configuration.setAllowedOrigins(Arrays.asList(
                 // TODO Config for cors "cross-origin"
-              "http://localhost:3000"
+                "http://localhost:3000"
 //                "http://localhost"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));

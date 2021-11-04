@@ -1,6 +1,7 @@
 package com.ultrasound.app.controller;
 
 import com.ultrasound.app.aws.S3ServiceImpl;
+import com.ultrasound.app.aws.util.S3UtilsImpl;
 import com.ultrasound.app.service.ClassificationServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,8 @@ public class S3Controller {
 
     @Autowired
     private S3ServiceImpl s3Service;
+    @Autowired
+    private S3UtilsImpl s3Utils;
     @Autowired
     private ClassificationServiceImpl classificationService;
 
@@ -41,5 +44,19 @@ public class S3Controller {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/api/S3/update/newData").toUriString());
         return ResponseEntity.created(uri).body(s3Service.updateMongoDatabase());
+    }
+
+    @PostMapping("/clean-extensions")
+    public ResponseEntity<?> cleanUnwantedS3Extensions() {
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/api/S3/clean-extensions").toUriString());
+        return ResponseEntity.created(uri).body(s3Utils.cleanBucketFileExtensions());
+    }
+
+    @PostMapping("/export")
+    public  ResponseEntity<?> exportCurrentData() {
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/api/S3/export").toUriString());
+        return ResponseEntity.created(uri).body(s3Utils.updateFileNamesAndExport());
     }
 }

@@ -2,10 +2,10 @@
 /* eslint-disable no-underscore-dangle */
 import React, { FC, useCallback } from 'react'
 import { DropdownItem } from 'reactstrap'
-import { useAppDispatch } from '../../redux/hooks'
-import { editingSubMenu } from '../../redux/slices/subMenu'
-import useSubMenu from '../../hooks/useSubMenu'
-import { editingItems } from '../../redux/slices/item'
+import { useAppDispatch } from '../../../../redux/hooks'
+import { editingSubMenu } from '../../../../redux/slices/subMenu'
+import useSubMenu from '../../../../hooks/useSubMenu'
+import { editingItems } from '../../../../redux/slices/item'
 
 interface Props {
     id: string

@@ -1,6 +1,6 @@
 /* eslint-disable react/require-default-props */
 import React, { FC } from 'react'
-import { IListItem } from '../../schemas'
+import { IListItem } from '../../../../schemas'
 import ListItem from './ListItem'
 
 interface Props {

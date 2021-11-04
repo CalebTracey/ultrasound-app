@@ -16,7 +16,7 @@ type TNewSubMenu = { classification: string; name: string }
 type TNewSubMenuLocation = {
     newParentId: string
     oldParentId: string
-    subMenuId: string
+    item: IListItem
 }
 interface subMenuSliceState {
     selected: ISubMenuObj | Record<string, never>
@@ -64,10 +64,14 @@ export const createSubMenu = createAsyncThunk(
     }
 )
 
-export const changeSubmenuParent = createAsyncThunk(
+export const moveSubMenuItem = createAsyncThunk(
     'subMenu/move',
     async (data: TNewSubMenuLocation) => {
-        const response = await api.post('subMenu/move', data)
+        const { oldParentId, newParentId, item } = data
+        const response = await api.post(
+            `/edit/subMenu/move/${oldParentId}/${newParentId}`,
+            item
+        )
         return response.data
     }
 )

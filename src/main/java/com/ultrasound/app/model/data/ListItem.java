@@ -13,7 +13,6 @@ public class ListItem {
     private String name;
     private String title;
     private String link;
-    private String patientId;
     private EType type = EType.TYPE_ITEM;
 
     public ListItem(String name, String title, String link) {

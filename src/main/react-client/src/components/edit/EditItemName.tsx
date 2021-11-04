@@ -6,7 +6,6 @@ import { useAppDispatch } from '../../redux/hooks'
 import { editItemName } from '../../redux/slices/edit'
 import { IListItem } from '../../schemas'
 import eventBus from '../../common/EventBus'
-import subMenu from '../../redux/slices/subMenu'
 import { getAllClassifications } from '../../redux/slices/classification'
 
 interface Props {

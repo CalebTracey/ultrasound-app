@@ -3,11 +3,12 @@
 import React, { FC, useEffect, useState, useCallback } from 'react'
 import { Button, Alert } from 'reactstrap'
 import Switch from 'react-switch'
+import { AxiosError, AxiosResponse } from 'axios'
 import Logout from '../buttons/LogoutButton'
 import UserInfoHeader from '../UserInfoHeader'
 import { useAppSelector, useAppDispatch } from '../../redux/hooks'
 import { importData, updateData } from '../../redux/slices/edit'
-import { clearMessage } from '../../redux/slices/message'
+import { clearMessage, newError } from '../../redux/slices/message'
 import { api } from '../../service/api'
 import { IAppUser } from '../../schemas'
 import { userRegister, showEditToggle } from '../../redux/slices/auth'
@@ -43,7 +44,9 @@ const Header: FC = () => {
     }, [updateModal])
 
     const handleDatabaseInit = () => {
-        dispatch(importData())
+        dispatch(importData()).catch((res: AxiosResponse<AxiosError>) => {
+            dispatch(newError(res.data.message))
+        })
         databaseInitToggle()
     }
 

@@ -3,13 +3,9 @@ import React, { FC, lazy, Suspense } from 'react'
 import { Route, Switch, Redirect } from 'react-router-dom'
 import SyncLoader from 'react-spinners/SyncLoader'
 import { useAppSelector } from '../redux/hooks'
-// import Edit from '../containers/Edit'
-// import VideoPlayer from '../components/content/VideoPlayer'
-// import ContentHome from '../components/content/ContentHome'
-// import Classification from '../containers/Classification'
-// import ProtectedRouteAdmin from './ProtectedRouteAdmin'
 
 const Edit = lazy(() => import('../containers/Edit'))
+const EditObject = lazy(() => import('../containers/EditObject'))
 const VideoPlayer = lazy(() => import('../components/content/VideoPlayer'))
 const Classification = lazy(() => import('../containers/Classification'))
 const ContentHome = lazy(() => import('../components/content/ContentHome'))
@@ -46,6 +42,10 @@ const ContentRoutes: FC<Props> = ({ routePath }) => {
                     path={`${routePath}/edit/:id`}
                     authenticationPath={`${routePath}`}
                     component={Edit}
+                />
+                <Route
+                    path="/dashboard/admin/move/:id"
+                    component={EditObject}
                 />
                 {/* <Route path="/dashboard/admin/edit/:id" component={Edit} /> */}
                 {/* <ProtectedRoute

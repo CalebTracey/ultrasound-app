@@ -3,7 +3,7 @@
 import React, { FC, useState, useEffect } from 'react'
 import { ButtonDropdown, DropdownToggle } from 'reactstrap'
 import ItemListDropdown from './ItemListDropdown'
-import { useAppSelector } from '../../redux/hooks'
+import { useAppSelector } from '../../../../redux/hooks'
 
 const ItemListDropdownContainer: FC = () => {
     const { classification, item } = useAppSelector((state) => state)

@@ -49,9 +49,14 @@ public class SubMenuServiceImpl implements SubMenuService{
     }
 
     @Override
+    public MessageResponse moveSubMenuItem(String oldParentId, String newParentId, ListItem item) {
+        return null;
+    }
+
+    @Override
     public MessageResponse deleteById(String id) {
         SubMenu subMenu = getById(id);
-        Classification classification = classificationService.getByName(subMenu.getClassification());
+//        Classification classification = classificationService.getByName(subMenu.getClassification());
         String name = subMenu.getName();
         int count = subMenu.getItemList().size();
         log.info("Deleting Submenu {} and {} listItems",name, count);

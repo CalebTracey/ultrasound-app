@@ -4,7 +4,7 @@ import EditSubMenuContainer from './EditSubMenuContainer'
 import EditItemList from './EditListItem'
 import { useAppDispatch, useAppSelector } from '../../redux/hooks'
 import eventBus from '../../common/EventBus'
-
+// RouteComponentProps
 interface Props {
     hasSubMenu: boolean
     editing: boolean

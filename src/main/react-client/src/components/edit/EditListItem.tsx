@@ -6,6 +6,7 @@ import {
     InputGroupText,
     Container,
 } from 'reactstrap'
+import { useHistory } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '../../redux/hooks'
 import EditItemName from './EditItemName'
 import { deleteItem, deleteData } from '../../redux/slices/edit'
@@ -17,8 +18,9 @@ const EditItemList: FC = () => {
     const { selected, itemType, parentId } = useAppSelector(
         (state) => state.item
     )
-    const { subMenu } = useAppSelector((state) => state)
+    const { subMenu, auth } = useAppSelector((state) => state)
     const { name, link } = selected
+    const history = useHistory()
     const dispatch = useAppDispatch()
 
     const isItem = (value: unknown): value is IListItem => {
@@ -29,10 +31,13 @@ const EditItemList: FC = () => {
         setModal(!modal)
     }, [modal])
 
+    const handleEditItemParent = () => {
+        history.push(`${auth.contentPath}/move/${link}`)
+    }
+
     const handleDelete = () => {
         if (selected !== undefined && parentId && isItem(selected)) {
             if (link && name) {
-                // const loc = history.location.pathname
                 dispatch(
                     deleteItem({
                         id: parentId,
@@ -59,9 +64,17 @@ const EditItemList: FC = () => {
                 <span className="span-header___capital">{`"${name}"`}</span>
                 <Button
                     style={{ marginLeft: '1rem' }}
-                    className="danger-btn-edit"
+                    type="button"
                     outline
+                    color="primary"
+                    onClick={handleEditItemParent}
+                >
+                    <span>Move</span>
+                </Button>
+                <Button
+                    style={{ marginLeft: '1rem' }}
                     color="danger"
+                    outline
                     onClick={toggle}
                 >
                     <span>Delete</span>

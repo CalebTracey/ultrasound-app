@@ -1,8 +1,8 @@
 import React, { FC } from 'react'
 import { DropdownItem } from 'reactstrap'
-import { useAppSelector, useAppDispatch } from '../../redux/hooks'
-import { selectedItem, editingItems } from '../../redux/slices/item'
-import { IListItem } from '../../schemas'
+import { useAppSelector, useAppDispatch } from '../../../../redux/hooks'
+import { selectedItem, editingItems } from '../../../../redux/slices/item'
+import { IListItem } from '../../../../schemas'
 
 interface Props {
     item: IListItem
