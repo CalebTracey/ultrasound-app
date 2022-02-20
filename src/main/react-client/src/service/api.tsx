@@ -10,7 +10,7 @@ import axios, {
 
 import TokenService from './token-service'
 import EventBus from '../common/EventBus'
-import { messageSlice } from '../redux/slices/message'
+import { messageSlice, newError } from '../redux/slices/message'
 
 enum StatusCode {
     Unauthorized = 401,
@@ -114,24 +114,23 @@ class Http {
         switch (response) {
             case StatusCode.InternalServerError:
                 // history.push('/home')
-                EventBus.dispatch('logout')
-                messageSlice.actions.newError('Internal Server Error')
+                // EventBus.dispatch('logout')
+                // newError('Internal Server Error')
                 // Promise.reject(new Error('Internal Server Error'))
                 break
 
             case StatusCode.Forbidden:
                 // history.push('/home')
                 EventBus.dispatch('logout')
-                messageSlice.actions.newError('Forbidden')
+                // newError('Forbidden')
                 break
 
             case StatusCode.Unauthorized:
                 // history.push('/home')
                 EventBus.dispatch('logout')
-                messageSlice.actions.newError('Unauthorized')
+                // newError('Unauthorized')
 
                 break
-
             // case StatusCode.TooManyRequests:
             // Handle TooManyRequests
             // break

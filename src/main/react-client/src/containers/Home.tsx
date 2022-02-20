@@ -52,8 +52,7 @@ const Home: FC = () => {
                         <Media body>
                             <Media heading>
                                 <div className="content___header">
-                                    Maine Medical Center Emergency Ultrasound
-                                    Training Application
+                                    Emergency Ultrasound Training Application
                                 </div>
                                 <hr className="my-2" />
                             </Media>

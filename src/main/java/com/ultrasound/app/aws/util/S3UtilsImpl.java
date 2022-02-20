@@ -1,32 +1,35 @@
 package com.ultrasound.app.aws.util;
 
+import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.S3Resource;
-import com.amazonaws.services.s3.internal.S3DirectSpi;
+
 import com.amazonaws.services.s3.model.*;
-import com.ultrasound.app.aws.S3Service;
+
 import com.ultrasound.app.model.data.ListItem;
 import com.ultrasound.app.payload.response.MessageResponse;
 import com.ultrasound.app.service.ClassificationServiceImpl;
 import com.ultrasound.app.service.SubMenuServiceImpl;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class S3UtilsImpl implements S3Utils {
 
-    private final AmazonS3Client s3Client;
-    private final String BUCKET_NAME = "ultrasound-files";
+    private final AmazonS3 s3Client;
+    private final String BUCKET_NAME = "ultrasound-files-export";
     //    private final String BUCKET_NAME = "ultrasound-test-2";
 
     @Autowired
@@ -38,8 +41,14 @@ public class S3UtilsImpl implements S3Utils {
         return s3Client.listObjectsV2(BUCKET_NAME);
     }
 
-    public S3UtilsImpl(AmazonS3Client s3Client) {
+    public S3UtilsImpl(AmazonS3 s3Client) {
         this.s3Client = s3Client;
+    }
+
+    public void changeS3FileName(String newKey, String oldKey) {
+        pushToBucket(newKey, oldKey);
+        s3Client.deleteObject(new DeleteObjectRequest(BUCKET_NAME, oldKey));
+        log.info("changed filename \"{}\" to \"{}\"", newKey, oldKey);
     }
 
     @Override
@@ -64,8 +73,9 @@ public class S3UtilsImpl implements S3Utils {
                 classificationService.subMenuObjects(classification.getSubMenus())
                         .forEach(subMenu -> {
                     subMenu.getItemList().forEach(listItem -> {
-                        String newFileName = StringUtils.join(new String[]{
-                                classification.getName(), subMenu.getName(), listItem.getName(), ".mp4"}, " - ");
+                        List<String> fileParts = new ArrayList<>(List.of(classification.getName(), subMenu.getName(), listItem.getName()));
+                        fileParts.add(".mp4");
+                        String newFileName = StringUtils.join(finalizeScanTitleParts(fileParts), " - ");
                         pushToBucket(newFileName, listItem.getLink());
                         fileCount.getAndIncrement();
                     });
@@ -90,6 +100,21 @@ public class S3UtilsImpl implements S3Utils {
 
     private @NotNull Boolean usableExtensions(@NotNull S3ObjectSummary objectSummary) {
         return FilenameUtils.isExtension(objectSummary.getKey(), "mp4");
+    }
+
+    private List<String> finalizeScanTitleParts(@NotNull List<String> titleParts) {
+        return titleParts.stream().map(titlePart -> {
+            String returnVal = titlePart;
+            if (StringUtils.containsWhitespace(titlePart)) {
+                Predicate<String> numberPredicate = String -> NumberUtils.isDigits(String) && String.length() == 7;
+                Predicate<String> patientId = String -> StringUtils.startsWith(String,"e") &&
+                        !NumberUtils.isCreatable(String.substring(1, StringUtils.length(String)));
+                List<String> titlePartArray = Arrays.stream(StringUtils.split(StringUtils.trim(titlePart), " "))
+                        .filter(Predicate.not(numberPredicate).or(patientId)).collect(Collectors.toList());
+                returnVal = StringUtils.join(titlePartArray, " ");
+            }
+            return returnVal;
+        }).collect(Collectors.toList());
     }
 
 }

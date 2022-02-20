@@ -40,23 +40,26 @@ const VideoPlayer: FC = () => {
                     {!editing && selected.title}
                 </h2>
             </div>
-            {ReactPlayer.canPlay(url) ? (
-                <div className="player">
-                    <ReactPlayer
-                        className="react-player"
-                        url={url}
-                        volume={0}
-                        muted
-                        playing
-                        loop
-                        width="85%"
-                        height="85%"
-                        controls
-                    />
-                </div>
-            ) : (
+            {/* {ReactPlayer.canPlay(url) ? ( */}
+            <div className="player">
+                <ReactPlayer
+                    className="react-player"
+                    url={url}
+                    volume={0}
+                    muted
+                    playing
+                    loop
+                    width="85%"
+                    height="85%"
+                    controls
+                    onError={() =>
+                        dispatch(newError('Error playing scan file'))
+                    }
+                />
+            </div>
+            {/* ) : (
                 dispatch(newError('Error playing scan file'))
-            )}
+            )} */}
         </div>
     ) : (
         <div className="spinner">

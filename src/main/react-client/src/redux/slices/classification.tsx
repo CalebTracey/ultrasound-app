@@ -46,7 +46,7 @@ export const getAllClassifications = createAsyncThunk<IClassification[], void>(
                     if (err.isAxiosError) {
                         thunkApi.dispatch(newError(err.message))
                     }
-                    Promise.reject(err)
+                    Promise.reject(err.message)
                 } else {
                     thunkApi.dispatch(newError('Server Error'))
                 }

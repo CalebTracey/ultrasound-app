@@ -4,8 +4,8 @@ import React, { FC } from 'react'
 const Footer: FC = () => (
     <footer>
         <small>
-            &copy; Copyright {new Date().getFullYear()}, MMC Division of
-            Emergency Ultrasound
+            &copy; Copyright {new Date().getFullYear()}, Division of Emergency
+            Ultrasound
         </small>
     </footer>
 )

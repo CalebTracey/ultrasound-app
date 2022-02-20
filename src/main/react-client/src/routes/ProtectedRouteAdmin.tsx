@@ -13,8 +13,6 @@ const ProtectedRouteAdmin: FC<ProtectedRouteProps> = ({
     authenticationPath,
     ...routeProps
 }: ProtectedRouteProps) => {
-    console.log(`ADMIN ROUTE === AUTHENTICATED? ${isAuthenticated}`)
-
     if (isAuthenticated) {
         return <Route {...routeProps} />
     }

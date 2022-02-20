@@ -47,13 +47,6 @@ const ContentRoutes: FC<Props> = ({ routePath }) => {
                     path="/dashboard/admin/move/:id"
                     component={EditObject}
                 />
-                {/* <Route path="/dashboard/admin/edit/:id" component={Edit} /> */}
-                {/* <ProtectedRoute
-                        isAuthenticated={isAuth}
-                        path=`${routePath}`
-                        authenticationPath=`/login`
-                        component={Dashboard}
-                    /> */}
                 <Route
                     path={`${routePath}/video/:id`}
                     component={VideoPlayer}

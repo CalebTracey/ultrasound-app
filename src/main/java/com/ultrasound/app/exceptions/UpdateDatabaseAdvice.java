@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
-public class UpdateDatabaseExceptionAdvice {
+public class UpdateDatabaseAdvice {
     @ResponseBody
     @ExceptionHandler(UpdateDatabaseException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)

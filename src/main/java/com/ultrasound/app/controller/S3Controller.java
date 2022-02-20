@@ -2,6 +2,7 @@ package com.ultrasound.app.controller;
 
 import com.ultrasound.app.aws.S3ServiceImpl;
 import com.ultrasound.app.aws.util.S3UtilsImpl;
+import com.ultrasound.app.exceptions.PresignedUrlException;
 import com.ultrasound.app.service.ClassificationServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,8 @@ public class S3Controller {
     public ResponseEntity<?> getPreSignedUrl(@PathVariable String link) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/api/S3/link/{link}").toUriString());
-        return ResponseEntity.created(uri).body(s3Service.getPreSignedUrl(link));
+        return ResponseEntity.created(uri).body(s3Service.getPreSignedUrl(link)
+                .orElseThrow(()-> new PresignedUrlException(link)));
     }
 
     @PostMapping("/update")

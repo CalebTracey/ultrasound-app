@@ -2,7 +2,6 @@ import { SubMenu, SidebarHeader } from 'react-pro-sidebar'
 import React, { FC, useCallback, useRef, useEffect, useState } from 'react'
 import { FiEdit3 } from 'react-icons/fi'
 import { Link } from 'react-router-dom'
-import { Badge } from 'reactstrap'
 import { IClassification } from '../../schemas'
 import SubMenuList from './SubMenuList'
 import ItemList from './ItemList'
@@ -62,6 +61,7 @@ const ClassificationItem: FC<Props> = ({ classification }) => {
             <div key={`classification-item/${_id}`} style={{ display: 'flex' }}>
                 {roles && roles.includes('ROLE_ADMIN') && showEdit && (
                     <button
+                        style={{ marginLeft: '.5ch' }}
                         key={`edit-button${_id}`}
                         type="button"
                         className="btn btn-outline-secondary menu-button"
@@ -87,56 +87,60 @@ const ClassificationItem: FC<Props> = ({ classification }) => {
                     title={name}
                     onClick={handleClassificationClick}
                 >
-                    {hasSubMenu && (
-                        <>
-                            <SidebarHeader
-                                style={{
-                                    lineHeight: '2rem',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                }}
-                            >
+                    {hasSubMenu &&
+                        Object.keys(classification.subMenus).length !== 0 && (
+                            <>
+                                {/* <SidebarHeader
+                                    style={{
+                                        borderRadius: '5px',
+                                        backgroundColor: '#D0D6DC',
+                                        lineHeight: '2rem',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                    }}
+                                > */}
                                 {roles &&
                                     roles.includes('ROLE_ADMIN') &&
                                     showEdit && <CreateSubMenuButton />}
-                                <span
+                                {/* <span
                                     style={{
                                         margin: '10px',
                                         fontSize: '14px',
                                     }}
-                                    className="span-text___light"
+                                    className="span-text___italic"
                                 >
                                     Submenus{'  '}
-                                </span>
+                                </span> */}
                                 {/* <Badge pill>
                                     {Object.keys(subMenus).length}
                                 </Badge> */}
-                            </SidebarHeader>
-                            <SubMenuList
-                                key={`sm-list${_id}`}
-                                subMenus={subMenus}
-                            />
-                        </>
-                    )}
-                    {listItems && (
+                                {/* </SidebarHeader> */}
+                                <SubMenuList
+                                    key={`sm-list${_id}`}
+                                    subMenus={subMenus}
+                                />
+                            </>
+                        )}
+                    {listItems && classification.listItems.length !== 0 && (
                         <>
-                            <SidebarHeader
+                            {/* <SidebarHeader
                                 style={{
+                                    backgroundColor: '#D0D6DC',
                                     // margin: '10px',
                                     lineHeight: '2rem',
                                 }}
+                            > */}
+                            {/* <span
+                                style={{
+                                    margin: '10px',
+                                    fontSize: '14px',
+                                }}
+                                className="span-text___italic"
                             >
-                                <span
-                                    style={{
-                                        margin: '10px',
-                                        fontSize: '14px',
-                                    }}
-                                    className="span-text___light"
-                                >
-                                    Scans{'  '}
-                                </span>
-                                {/* <Badge pill>{listItems.length}</Badge> */}
-                            </SidebarHeader>
+                                Scans{'  '}
+                            </span> */}
+                            {/* <Badge pill>{listItems.length}</Badge> */}
+                            {/* </SidebarHeader> */}
                             <ItemList
                                 key={`item-list${_id}`}
                                 parentId={_id}

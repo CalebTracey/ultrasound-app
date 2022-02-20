@@ -3,13 +3,13 @@ import React, { FC, useEffect, useCallback, useState } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import { useAppSelector, useAppDispatch } from './redux/hooks'
 import eventBus from './common/EventBus'
-import Routes from './routes/Routes'
 import './styles.scss'
 import { logout, defineContentPath } from './redux/slices/auth'
 import useItems from './hooks/useItems'
 import { clearMessage } from './redux/slices/message'
 import { IAppUser } from './schemas'
 import useSubMenu from './hooks/useSubMenu'
+import RoutesContainer from './containers/RoutesContainer'
 
 const App: FC = () => {
     const { isAuth, loading, user, contentPath } = useAppSelector(
@@ -32,14 +32,12 @@ const App: FC = () => {
     const isString = (value: unknown): value is string => {
         return !!value && !!(value as string)
     }
-
     const [itemResponse, getItems] = useItems({
         parentId: '',
         list: [],
         isLoading: false,
         error: null,
     })
-
     const [subMenuResponse, getSubMenu] = useSubMenu({
         id: subId,
         subMenuObj: {},
@@ -112,6 +110,6 @@ const App: FC = () => {
         }
     }, [getItems, itemResponse])
 
-    return <Routes />
+    return <RoutesContainer />
 }
 export default App

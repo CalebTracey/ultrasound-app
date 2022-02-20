@@ -48,7 +48,7 @@ const SubMenuComponent: FC<Props> = ({ id, title }) => {
 
     return (
         <SubMenu
-            style={{ zIndex: 5 }}
+            style={{ zIndex: 5, backgroundColor: '#DEE2E6' }}
             key={`sm${id}`}
             title={title}
             onClick={onClickHandler}

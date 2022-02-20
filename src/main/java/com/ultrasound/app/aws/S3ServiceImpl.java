@@ -1,8 +1,10 @@
 package com.ultrasound.app.aws;
 
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.SdkClientException;
+import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.*;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.ultrasound.app.aws.util.S3UtilsImpl;
 import com.ultrasound.app.exceptions.UpdateDatabaseException;
 import com.ultrasound.app.model.data.*;
@@ -13,24 +15,17 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.awt.event.ItemListener;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
@@ -40,7 +35,7 @@ import java.util.stream.Collectors;
 @Service
 public class S3ServiceImpl implements S3Service {
 
-    private final AmazonS3Client s3Client;
+    private final AmazonS3 s3Client;
 //    private final String BUCKET_NAME = "ultrasound-files";
     private final String BUCKET_NAME = "ultrasound-files-export";
     private final AtomicInteger normalizeCount = new AtomicInteger(0);
@@ -52,22 +47,22 @@ public class S3ServiceImpl implements S3Service {
     @Autowired
     private SubMenuService subMenuService;
 
-    public S3ServiceImpl(AmazonS3Client s3Client) {
+    public S3ServiceImpl(AmazonS3 s3Client) {
         this.s3Client = s3Client;
     }
 
     private @NotNull List<S3ObjectSummary> s3FileNames() {
 //        s3Utils.cleanBucketFileExtensions();
-        ListObjectsV2Result objectListing = listObjectsV2();
-        log.info("Object listing count: {}", objectListing.getKeyCount());
-        return objectListing.getObjectSummaries().stream()
+        List<S3ObjectSummary> objectListing = s3ListObjects();
+        log.info("Object listing count: {}", objectListing.size());
+        return objectListing.stream()
                 .filter(this::filterExtensions).collect(Collectors.toList());
     }
 
     private @NotNull List<S3ObjectSummary> newS3FileNames() throws UpdateDatabaseException{
-        ListObjectsV2Result objectListing = listObjectsV2();
+        List<S3ObjectSummary> objectListing = s3ListObjects();
         List<String> allDatabaseLinks = classificationService.allDatabaseScanLinks();
-        List<S3ObjectSummary> newFileSummaries = objectListing.getObjectSummaries().stream().filter(
+        List<S3ObjectSummary> newFileSummaries = objectListing.stream().filter(
                 sum -> allDatabaseLinks.stream().noneMatch(
                         link -> link.equals(sum.getKey())))
                 .collect(Collectors.toList());
@@ -103,6 +98,7 @@ public class S3ServiceImpl implements S3Service {
         AtomicInteger subMenuCount = new AtomicInteger(0);
         AtomicInteger scanCount = new AtomicInteger(0);
         log.info("Total files from S3: {}\n", s3FileNames.size());
+
         Map<String, FileStructureDataContainer> fileStructureDataMap = createFileStructureMap(s3FileNames);
         // Use the data map generated from "createFileStructureMap()" to upload data to mongo
         fileStructureDataMap.keySet().forEach(key -> {
@@ -110,27 +106,31 @@ public class S3ServiceImpl implements S3Service {
             Map<String, String> newClassificationSubMenuMap = new TreeMap<>();
             Boolean hasSubMenus = currentData.getHasSubMenu();
             boolean hasClassificationScans = currentData.getClassificationScans().size() > 0;
+            List<FileStructureSubMenu> subMenuListItr = currentData.getSubMenus();
+
             Classification newClassification = new Classification();
             newClassification.setName(key);
+
             if (hasClassificationScans) {
                 newClassification.setListItems(currentData.getClassificationScans());
                 hasSubMenus = currentData.getHasSubMenu();
-                scanCount.addAndGet(currentData.getClassificationScans().size());
+                scanCount.addAndGet(newClassification.getListItems().size());
             } else {
                 currentData.setClassificationScans(new ArrayList<>());
             }
             newClassification.setHasSubMenu(hasSubMenus);
             // if the new data has submenus
             if (hasSubMenus) {
-                ListIterator<FileStructureSubMenu> subMenuListIterator = currentData.getSubMenus().listIterator();
-                subMenuListIterator.forEachRemaining(subMenu -> {
+//                ListIterator<FileStructureSubMenu> subMenuListIterator = currentData.getSubMenus().listIterator();
+//                subMenuListIterator.forEachRemaining(subMenu -> {
+                subMenuListItr.forEach(subMenu -> {
                     SubMenu newSubMenuObj = new SubMenu();
                     newSubMenuObj.setName(subMenu.getName());
                     newSubMenuObj.setItemList(subMenu.getItemList());
                     newSubMenuObj.setClassification(currentData.getClassification());
                     newClassificationSubMenuMap.put(subMenu.getName(), subMenuService.save(newSubMenuObj).get_id());
                     subMenuCount.getAndIncrement();
-                    scanCount.addAndGet(subMenu.getItemList().size());
+                    scanCount.addAndGet(newSubMenuObj.getItemList().size());
                 });
                 newClassification.setHasSubMenu(true);
             } else {
@@ -249,7 +249,6 @@ public class S3ServiceImpl implements S3Service {
                 newClassificationCount.getAndIncrement();
             }
         });
-
         return new MessageResponse("Added " + newClassificationCount +
                 " new Classifications, " + newSubMenuCount +
                 " new submenus, and " + newScanCount +
@@ -327,10 +326,9 @@ public class S3ServiceImpl implements S3Service {
     private @NotNull Map<String, FileStructureDataContainer> createFileStructureMap(@NotNull List<String> fileMapKeys) {
         Map<String, FileStructureDataContainer> fileStructureReturnMap = new TreeMap<>();
         fileMapKeys.forEach(key -> {
-            SingleFileStructure newFileStructure = normalizeFileStructure(key).orElseThrow(
+            SingleFileStructure newFileStructure = normalizeFileData(key).orElseThrow(
                         () -> new UpdateDatabaseException("Error parsing the file: " + key));
             // if the classification object has already been created
-            assert newFileStructure != null;
             String mapKey = newFileStructure.getClassification();
             if (fileStructureReturnMap.containsKey(mapKey)) {
                 FileStructureDataContainer fileData = fileStructureReturnMap.get(mapKey);
@@ -432,7 +430,6 @@ public class S3ServiceImpl implements S3Service {
                 } else {
                     newDataContainer.setHasSubMenu(false);
                 }
-
                 fileStructureReturnMap.put(newDataContainer.getClassification(), newDataContainer);
             }
         });
@@ -493,9 +490,12 @@ public class S3ServiceImpl implements S3Service {
                 String currentScanLink = scan.getLink();
                 String scanIndex = (RegExUtils.removeAll(currentScanName, "[A-Za-z]"));
                 StringUtils.deleteWhitespace(scanIndex);
+                //
                 if (!scanIndex.equals(" ") &&
                         NumberUtils.isCreatable(scanIndex) &&
-                        !currentScanLink.equals(newScanItemLink)) {
+                        !currentScanLink.equals(newScanItemLink)
+                        && !fileHasPatientId(scanIndex))
+                {
                     if (currentScanName.equals(newScanItemName)) {
                         log.info("Scan Index: {} Length: {}", scanIndex, scanIndex.length());
                         int scanDigits = Integer.parseInt(scanIndex);
@@ -515,9 +515,14 @@ public class S3ServiceImpl implements S3Service {
                     scan.setName(scan.getName() + " " + 1);
                     newScanItem.setName(newName);
                     returnList.add(newScanItem);
-                } else if (!returnList.contains(newScanItem)){
+                } else {
                     returnList.add((newScanItem));
                 }
+//                else {
+//                    log.error("Error in combineFileStructureListItems for scan iteration: {}", scan);
+//                    log.error("Error in combineFileStructureListItems for new scan: {}", scan);
+//                    log.error("=====================================================================================");
+//                }
             });
         } else {
             ListItem singletonCurrentScan = currentScans.get(0);
@@ -547,11 +552,12 @@ public class S3ServiceImpl implements S3Service {
      * @param file The original file name. Also the key for file in S3 Bucket.
      * @return A new SingleFileStructure object.
      */
-    private @NotNull Optional<SingleFileStructure> normalizeFileStructure(String file) throws UpdateDatabaseException {
+    private @NotNull Optional<SingleFileStructure> normalizeFileData(String file) throws UpdateDatabaseException {
         SingleFileStructure fileStructure = new SingleFileStructure();
         ArrayList<ListItem> subMenuItems = new ArrayList<>();
         FileStructureSubMenu subMenu = new FileStructureSubMenu();
         ListItem listItem = new ListItem();
+        String scanLink = file;
         String fileNormalized = StringUtils.normalizeSpace(file);
         String[] splitFilePre = StringUtils.split(fileNormalized, "-");
         Predicate<String> noMp4 = String -> !String.contains(".mp4");
@@ -560,21 +566,26 @@ public class S3ServiceImpl implements S3Service {
                 Arrays.stream(splitFilePre).map(StringUtils::trim).filter(noMp4).collect(Collectors.toList());
 
         Predicate<String> notPatientId = String -> !fileHasPatientId(String);
+
         List<String> titleParts = splitFile.stream().filter(
                 notPatientId).collect(Collectors.toList());
         if (titleParts.size() == 0) {
             return Optional.empty();
         }
         fileStructure.setClassification(splitFile.get(0)); // set Classification name
-//        log.info("New title parts: {}", titleParts);
-//        log.info("New file name parts: {}", newFileNameParts);
-//        log.info("New file name: {}", newFileName);
-//        List<String> titlePartsFinal =
-        String title = StringUtils.join(titleParts, " ");
-        listItem.setTitle(title);
-        listItem.setLink(file);
+        // check for, and remove patientId by word
+        List<String> titlePartsFinal = finalizeScanTitleParts(titleParts);
 
-        int fileLength = titleParts.size();
+        // if a patient id was found, update link for client and for database/S3
+        if (!titlePartsFinal.equals(titleParts)) {
+            scanLink = StringUtils.join(titlePartsFinal, " - ") + " - .mp4";
+            s3Utils.changeS3FileName(scanLink, file); //update S3 bucket with new filename
+        }
+        String title = StringUtils.join(titlePartsFinal, " ");
+        listItem.setTitle(title);
+        listItem.setLink(scanLink);
+
+        int fileLength = titlePartsFinal.size();
 
         if (fileLength <= 1) {
             listItem.setName(fileStructure.getClassification() + " Scan");
@@ -584,7 +595,7 @@ public class S3ServiceImpl implements S3Service {
             fileStructure.setHasScan(true);
         }
         if (fileLength == 2) {
-            listItem.setName(titleParts.get(1));
+            listItem.setName(titlePartsFinal.get(1));
             listItem.setType(EType.TYPE_CLASSIFICATION);
             fileStructure.setScan(listItem);
             fileStructure.setHasSubMenu(false);
@@ -592,8 +603,8 @@ public class S3ServiceImpl implements S3Service {
         }
         if (fileLength == 3) {
             subMenu.setClassification(fileStructure.getClassification());
-            subMenu.setName(splitFile.get(1));
-            listItem.setName(splitFile.get(2));
+            subMenu.setName(titlePartsFinal.get(1));
+            listItem.setName(titlePartsFinal.get(2));
             listItem.setType(EType.TYPE_SUB_MENU);
             subMenuItems.add(listItem);
             subMenu.setItemList(subMenuItems);
@@ -604,84 +615,108 @@ public class S3ServiceImpl implements S3Service {
         normalizeCount.getAndIncrement();
         return Optional.of(fileStructure);
     }
-//    private SingleFileStructure normalizeFileStructure(String file) {
-//        SingleFileStructure fileStructure = new SingleFileStructure();
-//        ListItem listItem = new ListItem();
-//        ArrayList<ListItem> subMenuItems = new ArrayList<>();
-//        FileStructureSubMenu subMenu = new FileStructureSubMenu();
-//
-//        String fileNoDash = StringUtils.replaceChars(file, "-", " ");
-//        String fileNoDashNormalized = StringUtils.normalizeSpace(fileNoDash);
-//        StringUtils.replace(" w ", fileNoDashNormalized, "with", -1);
-//        String[] splitFile = StringUtils.split(fileNoDashNormalized, null);
-//        String[] splitFileSubParts = ArrayUtils.subarray(splitFile, 1, splitFile.length);
-//        String classificationName = ArrayUtils.get(splitFile, 0);
-//        // filter predicates
-//        Predicate<String> noMp4 = String -> !String.contains("mp4");
-//        Predicate<String> noNumber = String -> !NumberUtils.isCreatable(String) && String.length() > 2;
-//        Predicate<String> noNumberLong = String -> !NumberUtils.isCreatable(String);
-//
-//        List<String> filteredSubParts = Arrays.stream(splitFileSubParts)
-//                .filter(noMp4.and(noNumber)).collect(Collectors.toList());
-//        List<String> titleParts = Arrays.stream(splitFile)
-//                .filter(noMp4.and(noNumberLong)).collect(Collectors.toList());
-//        int subPartsLength = filteredSubParts.size();
-//
-//        fileStructure.setClassification(classificationName);
-//        listItem.setTitle(StringUtils.join(titleParts, " "));
-//        listItem.setLink(file);
-//
-//        if (subPartsLength >= 4) {
-//            int halfLength = subPartsLength / 2;
-//            List<String> subMenuNameParts = filteredSubParts.subList(0, 2);
-//            List<String> scanNameParts = filteredSubParts.subList(2,
-//                    subPartsLength).stream().filter(noNumber).collect(Collectors.toList());
-//
-//            String scanName = StringUtils.join(scanNameParts, " ");
-//            String subMenuName = StringUtils.join(subMenuNameParts, " ");
-//
-//            listItem.setType(EType.TYPE_SUB_MENU);
-//            listItem.setName(scanName);
-//            subMenu.setName(subMenuName);
-//            subMenuItems.add(listItem);
-//            subMenu.setItemList(subMenuItems);
-//            subMenu.setClassification(classificationName);
-//            fileStructure.setSubMenu(subMenu);
-//            fileStructure.setHasSubMenu(true);
-//            fileStructure.setHasScan(false);
-//
-//        } else if (filteredSubParts.size() >= 1) {
-//            StringBuilder stringBuilder = new StringBuilder(listItem.getTitle());
-//            stringBuilder.delete(0, classificationName.length());
-//
-//            String listItemName = stringBuilder.toString();
-//            StringUtils.deleteWhitespace(listItemName);
-//
-//            if (stringBuilder.length() >= 2 && !NumberUtils.isCreatable(listItemName)) {
-//                listItem.setName(listItemName);
-//            } else {
-//                listItem.setName(filteredSubParts.get(0));
-//            }
-//            listItem.setType(EType.TYPE_CLASSIFICATION);
-//            fileStructure.setScan(listItem);
-//            fileStructure.setHasSubMenu(false);
-//            fileStructure.setHasScan(true);
-//        } else {
-//            listItem.setName(classificationName + " scan");
-//            listItem.setType(EType.TYPE_CLASSIFICATION);
-//            fileStructure.setScan(listItem);
-//            fileStructure.setHasSubMenu(false);
-//            fileStructure.setHasScan(true);
-//        }
-//        fileStructure.setLink(file);
-//        return fileStructure;
-//    }
+
+    @Deprecated
+    private @NotNull SingleFileStructure normalizeFileStructure(String file) {
+        SingleFileStructure fileStructure = new SingleFileStructure();
+        ListItem listItem = new ListItem();
+        ArrayList<ListItem> subMenuItems = new ArrayList<>();
+        FileStructureSubMenu subMenu = new FileStructureSubMenu();
+
+        String fileNoDash = StringUtils.replaceChars(file, "-", " ");
+        String fileNoDashNormalized = StringUtils.normalizeSpace(fileNoDash);
+        StringUtils.replace(" w ", fileNoDashNormalized, "with", -1);
+        String[] splitFile = StringUtils.split(fileNoDashNormalized, null);
+        String[] splitFileSubParts = ArrayUtils.subarray(splitFile, 1, splitFile.length);
+        String classificationName = ArrayUtils.get(splitFile, 0);
+        // filter predicates
+        Predicate<String> noMp4 = String -> !String.contains("mp4");
+        Predicate<String> noNumber = String -> !NumberUtils.isCreatable(String) && String.length() > 2;
+        Predicate<String> noNumberLong = String -> !NumberUtils.isCreatable(String);
+
+        List<String> filteredSubParts = Arrays.stream(splitFileSubParts)
+                .map(String::trim)
+                .filter(noMp4.and(noNumber))
+                .collect(Collectors.toList());
+        List<String> titleParts = Arrays.stream(splitFile)
+                .filter(noMp4.and(noNumberLong))
+                .collect(Collectors.toList());
+
+        int subPartsLength = filteredSubParts.size();
+
+        fileStructure.setClassification(classificationName);
+        listItem.setTitle(StringUtils.join(titleParts, " "));
+        listItem.setLink(file);
+
+        if (subPartsLength >= 4) {
+            int halfLength = subPartsLength / 2;
+            List<String> subMenuNameParts = filteredSubParts.subList(0, 2);
+            List<String> scanNameParts = filteredSubParts.subList(2,
+                    subPartsLength).stream().filter(noNumber).collect(Collectors.toList());
+
+            String scanName = StringUtils.join(scanNameParts, " ");
+            String subMenuName = StringUtils.join(subMenuNameParts, " ");
+
+            listItem.setType(EType.TYPE_SUB_MENU);
+            listItem.setName(scanName);
+            subMenu.setName(subMenuName);
+            subMenuItems.add(listItem);
+            subMenu.setItemList(subMenuItems);
+            subMenu.setClassification(classificationName);
+            fileStructure.setSubMenu(subMenu);
+            fileStructure.setHasSubMenu(true);
+            fileStructure.setHasScan(false);
+
+        } else if (filteredSubParts.size() >= 1) {
+            StringBuilder stringBuilder = new StringBuilder(listItem.getTitle());
+            stringBuilder.delete(0, classificationName.length());
+
+            String listItemName = stringBuilder.toString();
+            StringUtils.deleteWhitespace(listItemName);
+
+            if (stringBuilder.length() >= 2 && !NumberUtils.isCreatable(listItemName)) {
+                listItem.setName(listItemName);
+            } else {
+                listItem.setName(filteredSubParts.get(0));
+            }
+            listItem.setType(EType.TYPE_CLASSIFICATION);
+            fileStructure.setScan(listItem);
+            fileStructure.setHasSubMenu(false);
+            fileStructure.setHasScan(true);
+        } else {
+            listItem.setName(classificationName + " scan");
+            listItem.setType(EType.TYPE_CLASSIFICATION);
+            fileStructure.setScan(listItem);
+            fileStructure.setHasSubMenu(false);
+            fileStructure.setHasScan(true);
+        }
+        fileStructure.setLink(file);
+        normalizeCount.getAndIncrement();
+        return fileStructure;
+    }
+
+    // Checks for a patient id within title parts that have whitespaces.
+    private List<String> finalizeScanTitleParts(@NotNull List<String> titleParts) {
+        return titleParts.stream().map(titlePart -> {
+            String returnVal = titlePart;
+            if (StringUtils.containsWhitespace(titlePart)) {
+                Predicate<String> numberPredicate = String -> NumberUtils.isDigits(String) && String.length() == 7;
+                Predicate<String> patientId = String -> StringUtils.startsWith(String,"e") &&
+                        !NumberUtils.isCreatable(String.substring(1, StringUtils.length(String)));
+                List<String> titlePartArray = Arrays.stream(StringUtils.split(StringUtils.trim(titlePart), " "))
+                        .filter(Predicate.not(numberPredicate).or(patientId)).collect(Collectors.toList());
+                returnVal = StringUtils.join(titlePartArray, " ");
+            }
+            return returnVal;
+        }).collect(Collectors.toList());
+    }
 
     private @NotNull Boolean fileHasPatientId(@NotNull String fileSection) {
+        String fileString = StringUtils.trim(fileSection);
         Predicate<String> isPatientId = String -> StringUtils.startsWith(String,"e") &&
                 NumberUtils.isCreatable(String.substring(1, StringUtils.length(String)));
-        String[] fileSectionParts = fileSection.split(" ");
-        String number = StringUtils.getDigits(fileSection);
+        String[] fileSectionParts = fileString.split(" ");
+        String number = StringUtils.getDigits(fileString);
         return number.length() == 7 &&
                 NumberUtils.isCreatable(number) || Arrays.stream(fileSectionParts).anyMatch(isPatientId);
     }
@@ -727,33 +762,53 @@ public class S3ServiceImpl implements S3Service {
 
         return classification;
     }
-//    private void changeFileName(String key, String newName) throws IOException {
-//        S3Object file = s3Client.getObject(BUCKET_NAME, key);
-//        LocalDate date = new LocalDate().plusDays(1);
-//        file.setKey(newName);
-////        File convertFile = FileUtils.toFile(s3Client.generatePresignedUrl(BUCKET_NAME, key, date.toDate()));
-//        s3Client.
-////        convertFile
-////        S3ObjectInputStream inputStream = file.getObjectContent();
-//        s3Client.putObject(BUCKET_NAME, key, FileUtils.openInputStream(convertFile), file.getObjectMetadata());
-//    }
 
     @Override
-    public String getPreSignedUrl(String link) {
+    public @NotNull Optional<String> getPreSignedUrl(String link) {
         log.info("Getting pre-signed URL for: {}", link);
-        LocalDate date = new LocalDate().plusDays(1);
-        return s3Client.generatePresignedUrl(BUCKET_NAME, link, date.toDate()).toString();
+        LocalDateTime date = LocalDateTime.now().plusSeconds(100);
+        String presignedUrl = null;
+        try {
+            presignedUrl = s3Client.generatePresignedUrl(BUCKET_NAME, link, date.toDate()).toString();
+        } catch (AmazonS3Exception e) {
+            log.error("AmazonS3Exception: {}", e.getErrorMessage());
+            e.getStackTrace();
+        }
+        assert presignedUrl != null;
+        return Optional.of(presignedUrl);
     }
 
-    @Override
-    public ListObjectsV2Result listObjectsV2() {
-        return s3Client.listObjectsV2(BUCKET_NAME);
+    public List<S3ObjectSummary> s3ListObjects() {
+        List<S3ObjectSummary> summaries = new ArrayList<>();
+        try {
+        ListObjectsV2Request request = new ListObjectsV2Request().withBucketName(BUCKET_NAME);
+        ListObjectsV2Result result = s3Client.listObjectsV2(request);
+            while (result.isTruncated()) {
+                result = s3Client.listObjectsV2(request);
+                summaries.addAll(result.getObjectSummaries());
+                String token = result.getNextContinuationToken();
+                request.setContinuationToken(token);
+            }
+
+        } catch (AmazonServiceException e) {
+            log.error("AmazonServiceException: {}", e.getErrorMessage());
+            // The call was transmitted successfully, but Amazon S3 couldn't process
+            // it, so it returned an error response.
+            e.printStackTrace();
+        } catch (SdkClientException e) {
+            log.error("SdkClientException: {}", e.getLocalizedMessage());
+            // Amazon S3 couldn't be contacted for a response, or the client
+            // couldn't parse the response from Amazon S3.
+            e.printStackTrace();
+        }
+        return summaries;
     }
 
     private @NotNull Boolean filterExtensions(@NotNull S3ObjectSummary objectSummary) {
-        return FilenameUtils.isExtension(objectSummary.getKey(), "mp4");
+//        log.info(FilenameUtils.getExtension(objectSummary.getKey()));
+        String[] extensions = new String[]{"mp4", "*.mp4"};
+        return FilenameUtils.isExtension(objectSummary.getKey(), extensions);
     }
-
 
     @Data
     @AllArgsConstructor
@@ -805,14 +860,14 @@ public class S3ServiceImpl implements S3Service {
         private List<ListItem> itemList;
     }
 
-    public static void main(String[] args) {
-        AmazonS3Client s3Client = S3Config.amazonS3Client();
-        S3ServiceImpl s3ServiceTest = new S3ServiceImpl(s3Client);
-//        singleFileTest(s3ServiceTest);
-//        multiFileTest(s3ServiceTest);
-//        duplicateSubMenuTest(s3ServiceTest);
-        duplicateListItems(s3ServiceTest);
-    }
+//    public static void main(String[] args) {
+//        @NotNull Optional<AmazonS3Client> s3Client = S3Config.amazonS3Client();
+//        S3ServiceImpl s3ServiceTest = new S3ServiceImpl(s3Client);
+////        singleFileTest(s3ServiceTest);
+////        multiFileTest(s3ServiceTest);
+////        duplicateSubMenuTest(s3ServiceTest);
+//        duplicateListItems(s3ServiceTest);
+//    }
 //
 //    private static void singleFileTest(S3ServiceImpl s3ServiceTest) throws IOException {
 //        String testFile ="Echo - MV vegetation - 5751988 - 1_crop.mp4";

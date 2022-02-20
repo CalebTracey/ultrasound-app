@@ -12,7 +12,7 @@ const Item: FC<Props> = ({ menuItem, handleItemClick }) => {
 
     return (
         <MenuItem
-            style={{ zIndex: 10 }}
+            style={{ zIndex: 10, backgroundColor: '#DEE2E6' }}
             key={`mi-${name}/${link}`}
             title={name}
             onClick={() => handleItemClick(menuItem)}
