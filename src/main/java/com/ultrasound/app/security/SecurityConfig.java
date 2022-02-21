@@ -10,6 +10,8 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -34,7 +36,11 @@ import java.util.*;
 //        // jsr250Enabled = true,
         prePostEnabled = true)
 @RequiredArgsConstructor
+@PropertySource("classpath:/application-${spring.profiles.active}.properties")
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Autowired
+    Environment env;
 
     @Autowired
     UserDetailsServiceImpl userDetailsService;
@@ -100,9 +106,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
         configuration.setAllowedOrigins(Arrays.asList(
-                // TODO Config for cors "cross-origin"
-                "http://localhost:3000"
-//                "http://localhost"
+                env.getProperty("ultrasound.app.cors-config.urls").split(",")
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "response-type", "x-access-token", "Access-Control-Allow-Origin", "x-requested-with", "access-control-allow-methods", "Accept", "Accept-Language", "Content-Language", "Content-Type"));
