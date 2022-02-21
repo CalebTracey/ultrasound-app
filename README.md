@@ -19,11 +19,11 @@ Uploading [this file](./roles) through Mongo Express/Compass should do the trick
 <img src=./document-example.png />
 <br />
 <br />
-If you want to use the admin privelages, uncomment the @CommandlineRunner method in the application's main method and then hit run. You'll then be able to login with the same credentials.
+If you want to use the admin privileges, uncomment the @CommandlineRunner method in the application's main method and then hit run. You'll then be able to login with the same credentials.
 <br />
 <br />
 Also, make sure your application.properties file is configured as such:
-<img src=./app.properties-example-local.png />
+<img src=./application-properties.png />
 
 1. Fork/clone this repo
 
