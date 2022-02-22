@@ -176,3 +176,4 @@ sketch
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
+!/src/main/resources/application-prod.properties

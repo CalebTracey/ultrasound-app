@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import software.amazon.awssdk.http.async.SdkAsyncHttpClient;
 import software.amazon.awssdk.http.nio.netty.NettyNioAsyncHttpClient;
 
@@ -28,10 +29,10 @@ import java.util.List;
 @Configuration
 public class S3Config {
     // TODO uncomment for prod
-
-//        private static AWSCredentialsProviderImpl credentialsProvider;
+        private static AWSCredentialsProviderImplProd credentialsProvider;
 
     @Bean
+    @Profile("prod")
     public static AmazonS3 amazonS3Client() throws IOException {
         BucketCrossOriginConfiguration configuration = new BucketCrossOriginConfiguration();
 
@@ -48,8 +49,8 @@ public class S3Config {
         try {
             s3Client = AmazonS3ClientBuilder.standard()
                     .withRegion(Regions.US_EAST_1)
-                    .withCredentials(new DefaultAWSCredentialsProviderChain()) //dev
-//                .withCredentials(credentialsProvider) //prod
+//                    .withCredentials(new DefaultAWSCredentialsProviderChain()) //dev
+                    .withCredentials(credentialsProvider) //prod
                     .build();
 
             String BUCKET_NAME = "ultrasound-files";
