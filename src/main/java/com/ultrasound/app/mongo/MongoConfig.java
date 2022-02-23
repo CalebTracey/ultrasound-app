@@ -21,9 +21,6 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
     @Autowired
     Environment env;
 
-//    @Value("${ultrasound.app.mongoUri}")
-//    private String mongoUri;
-
     @Override
     protected String getDatabaseName() {
         return "ultrasound";
